@@ -1818,7 +1818,10 @@ with tabs[TAB_MANIFEST]:
                 
                 import base64
                 b64_decisiones = base64.b64encode(html_decisiones.encode('utf-8')).decode()
-                href_decisiones = f'<a href="data:text/html;charset=utf-8;base64,{b64_decisiones}" download="decisiones_pendientes_{st.session_state.get(\'proyecto_cliente\', \'PETROLIQUIDOS\')}_{datetime.now().strftime(\"%Y%m%d_%H%M%S\")}.html" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar Decisiones Pendientes en HTML</a>'
+                cliente_nombre = st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
+                fecha_descarga = datetime.now().strftime("%Y%m%d_%H%M%S")
+                nombre_archivo = f"decisiones_pendientes_{cliente_nombre}_{fecha_descarga}.html"
+                href_decisiones = f'<a href="data:text/html;charset=utf-8;base64,{b64_decisiones}" download="{nombre_archivo}" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar Decisiones Pendientes en HTML</a>'
                 st.markdown(href_decisiones, unsafe_allow_html=True)
                 st.markdown("<br>", unsafe_allow_html=True)
         
