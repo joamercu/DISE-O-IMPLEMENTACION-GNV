@@ -1820,9 +1820,33 @@ with tabs[TAB_MANIFEST]:
                 b64_decisiones = base64.b64encode(html_decisiones.encode('utf-8')).decode()
                 cliente_nombre = st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
                 fecha_descarga = datetime.now().strftime("%Y%m%d_%H%M%S")
-                nombre_archivo = f"decisiones_pendientes_{cliente_nombre}_{fecha_descarga}.html"
-                href_decisiones = f'<a href="data:text/html;charset=utf-8;base64,{b64_decisiones}" download="{nombre_archivo}" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar Decisiones Pendientes en HTML</a>'
+                nombre_archivo_html = f"decisiones_pendientes_{cliente_nombre}_{fecha_descarga}.html"
+                href_decisiones = f'<a href="data:text/html;charset=utf-8;base64,{b64_decisiones}" download="{nombre_archivo_html}" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;">📥 Descargar Decisiones Pendientes en HTML</a>'
                 st.markdown(href_decisiones, unsafe_allow_html=True)
+                
+                # Botón para generar PDF
+                try:
+                    from weasyprint import HTML
+                    from io import BytesIO
+                    
+                    # Generar PDF desde HTML
+                    pdf_buffer = BytesIO()
+                    HTML(string=html_decisiones).write_pdf(pdf_buffer)
+                    pdf_buffer.seek(0)
+                    pdf_data = pdf_buffer.read()
+                    b64_pdf = base64.b64encode(pdf_data).decode()
+                    
+                    nombre_archivo_pdf = f"decisiones_pendientes_{cliente_nombre}_{fecha_descarga}.pdf"
+                    href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="{nombre_archivo_pdf}" style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📄 Descargar Decisiones Pendientes en PDF</a>'
+                    st.markdown(href_pdf, unsafe_allow_html=True)
+                    
+                except ImportError:
+                    # Si weasyprint no está instalado, mostrar mensaje informativo
+                    st.info("💡 **Para generar PDF:** Instale la librería `weasyprint` ejecutando: `pip install weasyprint`")
+                except Exception as e:
+                    st.warning(f"⚠️ No se pudo generar el PDF: {str(e)}")
+                    st.info("💡 **Alternativa:** Descargue el HTML y conviértalo a PDF usando su navegador (Archivo > Imprimir > Guardar como PDF)")
+                
                 st.markdown("<br>", unsafe_allow_html=True)
         
         # Resumen de respuestas (solo para administradores)
