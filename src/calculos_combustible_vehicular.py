@@ -417,6 +417,10 @@ with tabs[TAB_CALCULOS]:
         numero_tanques = resultado['numero_tanques']
         peso_adicional_total = resultado['peso_adicional_total']
         
+        # Conversiones de unidades para la presentación
+        temperatura_k = temperatura_operacion + 273.15  # Convertir °C a Kelvin
+        presion_pa = presion_llenado * 100000  # Convertir bar a Pascal (1 bar = 100,000 Pa)
+        
         # Guardar resultados en session_state para el informe
         st.session_state['calculo_resultado'] = {
             'consumo_base': resultado['consumo_base'],
