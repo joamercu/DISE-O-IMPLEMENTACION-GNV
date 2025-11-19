@@ -547,28 +547,29 @@ with tabs[TAB_CALCULOS]:
         if presion_llenado > 220:
             st.info("ℹ️ **Presión elevada**: Presión de {} bar requiere tanques tipo 4 (composite completo), más costosos pero más livianos.".format(presion_llenado))
 
-    # Sección de diagrama P&ID - FUERA del bloque if calcular para que siempre se muestre cuando hay resultados
-    # Usar un enfoque más robusto: siempre verificar y mostrar si hay resultados
-    st.markdown("---")
-    
-    # Verificar si hay resultados de cálculo
-    if 'calculo_resultado' in st.session_state and st.session_state.get('calculo_resultado'):
-        # Si hay resultados, mostrar siempre visible (sin expander) para evitar que se cierre
-        st.subheader("📊 Diagrama P&ID del Sistema GNV")
-        # Asegurar que el estado se mantenga siempre visible
-        st.session_state['diagram_expander_open'] = True
-        st.session_state['diagram_visible'] = True
+    # Sección de diagrama P&ID - Solo visible para Administradores
+    # Los clientes no tienen acceso a esta funcionalidad
+    if st.session_state.get('user_role') == 'Administrador':
+        st.markdown("---")
         
-        # Usar un container con key para mantener el contenido siempre visible
-        with st.container():
-            show_diagram_generator(
-                st.session_state['calculo_resultado'],
-                st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
-            )
-    else:
-        # Solo mostrar mensaje si nunca se ha calculado
-        with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=False):
-            st.info("ℹ️ Realice un cálculo del sistema primero para generar el diagrama P&ID.")
+        # Verificar si hay resultados de cálculo
+        if 'calculo_resultado' in st.session_state and st.session_state.get('calculo_resultado'):
+            # Si hay resultados, mostrar siempre visible (sin expander) para evitar que se cierre
+            st.subheader("📊 Diagrama P&ID del Sistema GNV")
+            # Asegurar que el estado se mantenga siempre visible
+            st.session_state['diagram_expander_open'] = True
+            st.session_state['diagram_visible'] = True
+            
+            # Usar un container con key para mantener el contenido siempre visible
+            with st.container():
+                show_diagram_generator(
+                    st.session_state['calculo_resultado'],
+                    st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
+                )
+        else:
+            # Solo mostrar mensaje si nunca se ha calculado
+            with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=False):
+                st.info("ℹ️ Realice un cálculo del sistema primero para generar el diagrama P&ID.")
 
 # ============================================
 # TAB: DATOS DEL CLIENTE
