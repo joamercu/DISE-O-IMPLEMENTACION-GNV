@@ -45,7 +45,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
     if 'diagram_action' not in st.session_state:
         st.session_state['diagram_action'] = None
     if 'diagram_expander_open' not in st.session_state:
-        st.session_state['diagram_expander_open'] = False
+        st.session_state['diagram_expander_open'] = True  # Abrir por defecto si hay resultados
     
     col1, col2, col3 = st.columns(3)
     
@@ -57,6 +57,10 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             disabled=bool(missing_keys),
             key="btn_generate_diagram"
         )
+        # Establecer estado inmediatamente cuando se hace clic
+        if generate_btn:
+            st.session_state['diagram_action'] = 'generate'
+            st.session_state['diagram_expander_open'] = True
     
     with col2:
         view_vars_btn = st.button(
@@ -65,6 +69,10 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             disabled=bool(missing_keys),
             key="btn_view_vars"
         )
+        # Establecer estado inmediatamente cuando se hace clic
+        if view_vars_btn:
+            st.session_state['diagram_action'] = 'view_vars'
+            st.session_state['diagram_expander_open'] = True
     
     with col3:
         download_btn = st.button(
@@ -72,19 +80,10 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             width='stretch',
             key="btn_download_diagram"
         )
-    
-    # Ejecutar acciones directamente cuando se presiona el botón
-    if generate_btn:
-        st.session_state['diagram_action'] = 'generate'
-        st.session_state['diagram_expander_open'] = True
-    
-    if view_vars_btn:
-        st.session_state['diagram_action'] = 'view_vars'
-        st.session_state['diagram_expander_open'] = True
-    
-    if download_btn:
-        st.session_state['diagram_action'] = 'download'
-        st.session_state['diagram_expander_open'] = True
+        # Establecer estado inmediatamente cuando se hace clic
+        if download_btn:
+            st.session_state['diagram_action'] = 'download'
+            st.session_state['diagram_expander_open'] = True
     
     # Ejecutar acciones basadas en session_state
     if st.session_state.get('diagram_action') == 'generate':
@@ -140,7 +139,8 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             st.session_state['diagram_generated'] = True
             # Mantener el expander abierto después de generar
             st.session_state['diagram_expander_open'] = True
-            # No limpiar la acción inmediatamente para mantener el expander abierto
+            # Mantener la acción para que el expander se mantenga abierto
+            # No limpiar la acción para mantener el expander abierto
                 
         except Exception as e:
             st.error(f"❌ **Error al generar diagrama**")

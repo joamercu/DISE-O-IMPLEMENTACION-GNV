@@ -549,16 +549,25 @@ with tabs[TAB_CALCULOS]:
         
         # Sección de diagrama P&ID
         st.markdown("---")
-        # Mantener expander abierto si hay una acción activa, si ya se generó un diagrama, o si el usuario lo dejó abierto
-        has_action = st.session_state.get('diagram_action') is not None
-        has_generated = st.session_state.get('diagram_generated', False)
-        was_open = st.session_state.get('diagram_expander_open', False)
-        expander_expanded = has_action or has_generated or was_open
-        with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=expander_expanded):
+        
+        # Verificar si hay resultados de cálculo
+        has_results = 'calculo_resultado' in st.session_state and bool(st.session_state.get('calculo_resultado'))
+        
+        if has_results:
+            # Si hay resultados, mostrar siempre visible (sin expander) para evitar que se cierre
+            st.subheader("📊 Diagrama P&ID del Sistema GNV")
             show_diagram_generator(
                 st.session_state['calculo_resultado'],
                 st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
             )
+        else:
+            # Si no hay resultados, usar expander colapsado
+            with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=False):
+                st.info("ℹ️ Realice un cálculo del sistema primero para generar el diagrama P&ID.")
+                show_diagram_generator(
+                    {},
+                    st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
+                )
 
 # ============================================
 # TAB: DATOS DEL CLIENTE
