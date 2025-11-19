@@ -104,13 +104,6 @@ def show_login_page():
                     else:
                         st.error("❌ Credenciales incorrectas o rol no coincide")
         
-        st.markdown("---")
-        st.info("""
-        **Usuarios de prueba:**
-        - **Administrador:** usuario: `admin`, contraseña: `admin123`
-        - **Cliente:** usuario: `cliente`, contraseña: `cliente123`
-        """)
-        
         # Mostrar opción para limpiar usuario recordado si existe
         if load_remembered_user()[0]:
             st.markdown("---")
