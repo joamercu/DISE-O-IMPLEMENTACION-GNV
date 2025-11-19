@@ -1,0 +1,465 @@
+{
+  "project": {
+    "name": "Sistema GNV para Vehículos Pesados - PETROLIQUIDOS",
+    "client": "PETROLIQUIDOS",
+    "version": "1.0",
+    "date_created": "2024-12-19",
+    "status": "Draft - Pendiente validación cliente",
+    "engineer": "Ingeniería de Sistemas GNV"
+  },
+  "deliverables": {
+    "informe_tecnico": {
+      "filename": "PETROLIQUIDOS_GNV_Informe_v1.md",
+      "format": "Markdown",
+      "status": "Completo",
+      "sections": [
+        "Introducción y relevancia",
+        "Alcance y supuestos",
+        "Análisis técnico (regulación 2 etapas, equipo, P&ID)",
+        "Cálculos (volumen, masa CH4, número y volumen de tanques, peso adicional)",
+        "Sensibilidades y escenarios (±10% / ±20%)",
+        "Comparativa GNV vs GNL (técnica y económica)",
+        "Regulaciones y certificaciones aplicables",
+        "Riesgos, plan de pruebas, cronograma y conclusiones",
+        "Decisiones pendientes / checklist para cliente"
+      ],
+      "word_count": "~15,000",
+      "pages_estimated": 25
+    },
+    "hoja_calculo": {
+      "filename": "PETROLIQUIDOS_GNV_BOM_v1.xlsx",
+      "format": "Excel (.xlsx)",
+      "status": "Completo",
+      "sheets": [
+        {
+          "name": "Assumptions",
+          "description": "Parámetros editables y supuestos técnicos",
+          "rows": 26
+        },
+        {
+          "name": "Calculations",
+          "description": "Fórmulas operativas y cálculos para 3 configuraciones",
+          "rows": "Variable (según configuraciones)"
+        },
+        {
+          "name": "BOM",
+          "description": "Lista de materiales con precios, proveedores y lead times",
+          "rows": 28
+        },
+        {
+          "name": "Sensitivity",
+          "description": "Análisis de sensibilidad (±10%, ±20%)",
+          "rows": "Variable (múltiples análisis)"
+        },
+        {
+          "name": "Summary",
+          "description": "Resumen ejecutivo y costos estimados",
+          "rows": 20
+        }
+      ]
+    },
+    "pid": {
+      "filename": "PETROLIQUIDOS_GNV_PID_v1.drawio.xml",
+      "format": "Draw.io XML",
+      "status": "Completo",
+      "description": "Diagrama P&ID del sistema GNV completo",
+      "components_included": [
+        "Tanques CNG (23 unidades tipo 3)",
+        "Manifold de distribución",
+        "Válvula shut-off automática",
+        "Regulador 1ra etapa (200-250 bar → 20-40 bar) con calentador",
+        "Filtro de gas alta presión",
+        "Regulador 2da etapa (20-40 bar → 7-10 bar)",
+        "ECU (Engine Control Unit)",
+        "Inyectores de gas secuenciales",
+        "Sensores (presión, temperatura, lambda)",
+        "Válvulas de alivio de presión",
+        "Válvula de llenado",
+        "Motor diésel convertido"
+      ],
+      "editable_in": "draw.io (app.diagrams.net)"
+    },
+    "manifest": {
+      "filename": "PETROLIQUIDOS_GNV_manifest_v1.json",
+      "format": "JSON",
+      "status": "Completo",
+      "description": "Metadatos y control de cambios del proyecto"
+    }
+  },
+  "technical_parameters": {
+    "pressure_ranges": {
+      "tank_filling": {
+        "min": 200,
+        "max": 250,
+        "unit": "bar",
+        "psi_equivalent": {
+          "min": 2900,
+          "max": 3625
+        },
+        "justification": "UNECE R110 estándar, 200 bar estándar Colombia, 250 bar opcional para mayor densidad"
+      },
+      "stage1_regulator": {
+        "input": {
+          "min": 200,
+          "max": 250,
+          "unit": "bar"
+        },
+        "output": {
+          "min": 20,
+          "max": 40,
+          "unit": "bar",
+          "psi_equivalent": {
+            "min": 290,
+            "max": 580
+          }
+        },
+        "justification": "Reducción inicial estándar para vehículos pesados"
+      },
+      "stage2_regulator": {
+        "input": {
+          "min": 20,
+          "max": 40,
+          "unit": "bar"
+        },
+        "output": {
+          "min": 7,
+          "max": 10,
+          "unit": "bar",
+          "psi_equivalent": {
+            "min": 100,
+            "max": 145
+          }
+        },
+        "justification": "Presión adecuada para inyección en motores diésel convertidos"
+      }
+    },
+    "configurations_analyzed": [
+      {
+        "name": "Tractor 4x2 (carretera)",
+        "consumption_diesel": 35,
+        "autonomy": 800,
+        "n_tanks": 23,
+        "weight_additional": 1840,
+        "volume_total": 1.82
+      },
+      {
+        "name": "Tractor 6x4 (mixto)",
+        "consumption_diesel": 40,
+        "autonomy": 700,
+        "n_tanks": 23,
+        "weight_additional": 1840,
+        "volume_total": 1.82
+      },
+      {
+        "name": "Volqueta 6x4 (obra)",
+        "consumption_diesel": 45,
+        "autonomy": 600,
+        "n_tanks": 22,
+        "weight_additional": 1760,
+        "volume_total": 1.76
+      }
+    ],
+    "assumptions_confidence": {
+      "high": [
+        "Poder calorífico diésel (35.8 MJ/L)",
+        "LHV CH4 (50.0 MJ/kg)",
+        "Presión de llenado (200 bar)",
+        "Temperatura de operación (25°C)",
+        "Constantes físicas (R, M)"
+      ],
+      "medium": [
+        "Consumo de combustible (35-45 L/100km)",
+        "Factor de compresibilidad Z (0.85)",
+        "Eficiencia conversión GNV (95%)",
+        "Volumen unitario tanque (0.080 m³)",
+        "Peso unitario tanque (65 kg)"
+      ],
+      "low": [
+        "Autonomía deseada (600-800 km)",
+        "Tasa de cambio USD/COP (4000)",
+        "Precios de componentes (estimados de mercado)"
+      ]
+    }
+  },
+  "regulations_compliance": {
+    "national_colombia": [
+      {
+        "code": "Resolución 957/2012",
+        "title": "Reglamento Técnico para talleres, equipos y procesos de conversión a gas natural comprimido",
+        "status": "Aplicable",
+        "requirements": [
+          "Talleres certificados",
+          "Equipos UNECE R110 o equivalentes",
+          "Inspección técnica vehicular"
+        ]
+      },
+      {
+        "code": "Resolución 180540/2010",
+        "title": "Reglamento para la conversión de vehículos a gas natural",
+        "status": "Aplicable",
+        "requirements": [
+          "Certificación de componentes",
+          "Registro en RUNT"
+        ]
+      },
+      {
+        "code": "NTC 3949",
+        "title": "Estaciones de regulación de presión de gas combustible",
+        "status": "Aplicable (infraestructura)",
+        "requirements": []
+      },
+      {
+        "code": "RETIE",
+        "title": "Reglamento Técnico de Instalaciones Eléctricas",
+        "status": "Aplicable (instalaciones eléctricas)",
+        "requirements": [
+          "Protecciones eléctricas adecuadas",
+          "Certificación de instalaciones"
+        ]
+      }
+    ],
+    "international": [
+      {
+        "code": "UNECE R110",
+        "title": "Uniform provisions concerning approval of CNG components and vehicles",
+        "status": "Aplicable - Principal",
+        "requirements": [
+          "Certificación de tanques (tipo 3 o 4)",
+          "Certificación de reguladores",
+          "Certificación de válvulas de seguridad",
+          "Pruebas de presión y fatiga"
+        ]
+      },
+      {
+        "code": "ISO 11439",
+        "title": "Gas cylinders — High pressure cylinders for CNG",
+        "status": "Aplicable",
+        "requirements": []
+      },
+      {
+        "code": "ISO 15500",
+        "title": "Road vehicles — Compressed natural gas (CNG) fuel systems",
+        "status": "Aplicable",
+        "requirements": []
+      },
+      {
+        "code": "SAE J1616",
+        "title": "Recommended Practice for Compressed Natural Gas Vehicle Fuel",
+        "status": "Aplicable",
+        "requirements": []
+      }
+    ]
+  },
+  "risks_identified": [
+    {
+      "id": "RISK-001",
+      "description": "Falta de disponibilidad de estaciones GNV en rutas",
+      "probability": "Media",
+      "impact": "Alto",
+      "severity": "Alta",
+      "mitigation": "Mapear rutas y estaciones antes de conversión"
+    },
+    {
+      "id": "RISK-002",
+      "description": "Peso adicional afecta capacidad de carga",
+      "probability": "Alta",
+      "impact": "Alto",
+      "severity": "Alta",
+      "mitigation": "Evaluar impacto en capacidad de carga; considerar tanques tipo 4"
+    },
+    {
+      "id": "RISK-003",
+      "description": "Sobredimensionamiento de sistema",
+      "probability": "Alta",
+      "impact": "Medio",
+      "severity": "Media",
+      "mitigation": "Validar consumo y autonomía real con cliente"
+    },
+    {
+      "id": "RISK-004",
+      "description": "Fallo de componentes",
+      "probability": "Baja",
+      "impact": "Muy Alto",
+      "severity": "Alta",
+      "mitigation": "Usar solo componentes certificados UNECE R110"
+    },
+    {
+      "id": "RISK-005",
+      "description": "No cumplimiento normativo",
+      "probability": "Baja",
+      "impact": "Muy Alto",
+      "severity": "Alta",
+      "mitigation": "Verificar certificaciones antes de compra"
+    }
+  ],
+  "pending_decisions": {
+    "high_priority": [
+      {
+        "question": "Modelos específicos de vehículos (marca, modelo, año)",
+        "impact": "Crítico para dimensionamiento final",
+        "status": "Pendiente respuesta cliente"
+      },
+      {
+        "question": "Presupuesto máximo por unidad",
+        "impact": "Define alcance y tipo de componentes",
+        "status": "Pendiente respuesta cliente"
+      },
+      {
+        "question": "Perfil operativo real (km/día, % carretera vs urbano)",
+        "impact": "Afecta consumo y autonomía",
+        "status": "Pendiente respuesta cliente"
+      },
+      {
+        "question": "Tipo de conversión (bi-fuel vs dedicado)",
+        "impact": "Define arquitectura del sistema",
+        "status": "Pendiente respuesta cliente"
+      },
+      {
+        "question": "Plazo objetivo para primera unidad piloto",
+        "impact": "Define cronograma y prioridades",
+        "status": "Pendiente respuesta cliente"
+      }
+    ],
+    "medium_priority": [
+      {
+        "question": "Validar consumo real de combustible",
+        "impact": "Afecta dimensionamiento",
+        "status": "Pendiente validación"
+      },
+      {
+        "question": "Validar autonomía mínima aceptable",
+        "impact": "Afecta número de tanques y costo",
+        "status": "Pendiente validación"
+      },
+      {
+        "question": "Preferencia por tanques tipo 3 vs tipo 4",
+        "impact": "Afecta peso y costo",
+        "status": "Pendiente decisión"
+      }
+    ]
+  },
+  "cost_estimates": {
+    "currency_base": "USD",
+    "exchange_rate": 4000,
+    "currency_local": "COP",
+    "note": "Tasa de cambio estimada - actualizar al momento de cotización",
+    "breakdown": {
+      "subtotal_components": {
+        "usd": 28000,
+        "cop": 112000000,
+        "note": "Estimado basado en BOM - requiere validación con proveedores"
+      },
+      "contingency": {
+        "percentage": 15,
+        "usd": 4200,
+        "cop": 16800000
+      },
+      "margin": {
+        "percentage": 20,
+        "usd": 6440,
+        "cop": 25760000
+      },
+      "total_estimated": {
+        "usd": 38640,
+        "cop": 154560000,
+        "uncertainty": "Alta - precios estimados, requieren cotización formal"
+      }
+    }
+  },
+  "change_log": [
+    {
+      "version": "1.0",
+      "date": "2024-12-19",
+      "author": "Ingeniería de Sistemas GNV",
+      "changes": [
+        "Creación inicial del paquete de trabajo",
+        "Verificación y corrección de rangos de presión (200-250 bar → 20-40 bar → 7-10 bar)",
+        "Cálculos para 3 configuraciones representativas (Tractor 4x2, 6x4, Volqueta 6x4)",
+        "Análisis de sensibilidad (±10%, ±20%)",
+        "BOM preliminar con precios estimados",
+        "P&ID completo en formato Draw.io",
+        "Identificación de riesgos y plan de mitigación",
+        "Lista de decisiones pendientes priorizadas",
+        "Revisión de normativas nacionales e internacionales"
+      ],
+      "status": "Draft - Pendiente validación cliente"
+    }
+  ],
+  "next_steps": [
+    {
+      "step": 1,
+      "description": "Presentar informe a cliente PETROLIQUIDOS",
+      "priority": "Alta",
+      "estimated_duration": "1 semana"
+    },
+    {
+      "step": 2,
+      "description": "Validar supuestos críticos con cliente (consumo, autonomía, modelos de vehículos)",
+      "priority": "Alta",
+      "estimated_duration": "1 semana"
+    },
+    {
+      "step": 3,
+      "description": "Ajustar dimensionamiento basado en validaciones",
+      "priority": "Alta",
+      "estimated_duration": "1 semana"
+    },
+    {
+      "step": 4,
+      "description": "Obtener cotizaciones formales de proveedores",
+      "priority": "Media",
+      "estimated_duration": "2-3 semanas"
+    },
+    {
+      "step": 5,
+      "description": "Seleccionar taller certificado para instalación",
+      "priority": "Media",
+      "estimated_duration": "1 semana"
+    },
+    {
+      "step": 6,
+      "description": "Detallar plan de pruebas específico para vehículos del cliente",
+      "priority": "Media",
+      "estimated_duration": "1 semana"
+    }
+  ],
+  "quality_assurance": {
+    "pid_verification": {
+      "status": "Pendiente",
+      "note": "Verificar que el archivo .drawio.xml abre correctamente en draw.io"
+    },
+    "excel_verification": {
+      "status": "Completo",
+      "note": "Fórmulas operativas verificadas, hojas completas: BOM, Summary, Assumptions, Calculations, Sensitivity"
+    },
+    "informe_verification": {
+      "status": "Completo",
+      "note": "Todas las secciones requeridas incluidas, supuestos documentados, fórmulas y resultados numéricos presentes"
+    },
+    "pressure_ranges": {
+      "status": "Completo",
+      "note": "Rangos presentados en bar y psi con referencia de fuente (UNECE R110)"
+    },
+    "quotation": {
+      "status": "Preliminar",
+      "note": "Cotización con rango de incertidumbre y notas de justificación de precios. Requiere validación con proveedores."
+    }
+  },
+  "metadata": {
+    "created_by": "AI Assistant (Auto)",
+    "created_date": "2024-12-19T00:00:00Z",
+    "last_modified": "2024-12-19T00:00:00Z",
+    "tools_used": [
+      "Python (openpyxl para Excel)",
+      "Draw.io XML format",
+      "Markdown"
+    ],
+    "file_sizes": {
+      "informe_tecnico": "~150 KB (estimado)",
+      "hoja_calculo": "~50 KB (estimado)",
+      "pid": "~20 KB",
+      "manifest": "~15 KB"
+    }
+  }
+}
+

@@ -1,0 +1,11 @@
+{
+  "cliente": {
+    "nombre": "PETROLIQUIDOS",
+    "rol": "Cliente",
+    "capacidad_de_la_flota": "8",
+    "supuestos": {
+      "operacional": "Consumo promedio: 35-40 L/100km en carretera, 45-50 L/100km en ciudad.\nOperación: 80% carretera, 20% urbano. 15,000 km/mes promedio.\nAltitud: 0-2000 m sobre el nivel del mar.\nAutonomía mínima requerida: 600 km.\nRutas principales: Bogotá-Medellín, con estaciones GNV disponibles.",
+      "componentes": "Tipo de tanques: Tipo 3 (composite con liner metálico).\nPresión de trabajo: 200 bar (estándar).\nRestricción de peso: Máximo 2000 kg adicionales aceptables.\nSistema: Bi-fuel (GNV + diésel) para mantener flexibilidad.\nInyección: Secuencial para mejor eficiencia.\nPrioridad: Balance costo-beneficio, autonomía mínima 600 km."
+    }
+  }
+}

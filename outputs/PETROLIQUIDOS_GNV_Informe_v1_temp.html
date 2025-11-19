@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Petroliquidos Gnv Informe V1 - WELDTECH SOLUTIONS</title>
+    <!-- MathJax para renderizar fórmulas matemáticas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                autoload: {
+                    color: [],
+                    colorv2: ['color']
+                },
+                packages: {'[+]': ['ams', 'newcommand', 'configMacros']}
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process',
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    console.log('MathJax está listo');
+                    // Forzar procesamiento después de que el contenido esté listo
+                    const processMath = () => {
+                        console.log('Procesando fórmulas matemáticas...');
+                        MathJax.typesetPromise().then(() => {
+                            console.log('Fórmulas procesadas exitosamente');
+                        }).catch((err) => {
+                            console.error('Error al procesar fórmulas:', err);
+                        });
+                    };
+                    
+                    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                        // Si el documento ya está cargado, procesar inmediatamente
+                        setTimeout(processMath, 100);
+                    } else {
+                        // Esperar a que el documento cargue
+                        window.addEventListener('load', () => {
+                            setTimeout(processMath, 100);
+                        });
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @media print {
+            @page {
+                size: A4;
+                margin: 2.5cm 2cm;
+            }
+            
+            .header {
+                position: running(header);
+                text-align: center;
+                font-size: 9pt;
+                color: #6B7280;
+                border-bottom: 2px solid #FF7A00;
+                padding-bottom: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .footer {
+                position: running(footer);
+                text-align: center;
+                font-size: 8pt;
+                color: #6B7280;
+                border-top: 1px solid #E5E7EB;
+                padding-top: 5px;
+                margin-top: 10px;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+        
+        @page {
+            @top-center {
+                content: element(header);
+            }
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 9pt;
+            color: #6B7280;
+            border-bottom: 2px solid #FF7A00;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 8pt;
+            color: #6B7280;
+            border-top: 1px solid #E5E7EB;
+            padding-top: 5px;
+            margin-top: 20px;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 10pt;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #0F1216;
+            border-bottom: 3px solid #FF7A00;
+            padding-bottom: 10px;
+            page-break-after: avoid;
+            font-size: 20pt;
+            margin-top: 0;
+        }
+        
+        h2 {
+            color: #0F1216;
+            border-bottom: 2px solid #2AA1FF;
+            padding-bottom: 8px;
+            page-break-after: avoid;
+            font-size: 14pt;
+            margin-top: 20px;
+        }
+        
+        h3 {
+            color: #6B7280;
+            font-size: 12pt;
+            margin-top: 15px;
+            page-break-after: avoid;
+        }
+        
+        /* Estilos para fórmulas matemáticas */
+        .MathJax {
+            font-size: 1.1em !important;
+        }
+        
+        .MathJax_Display {
+            margin: 1.5em 0 !important;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        
+        .MathJax_Display .MathJax {
+            display: inline-block;
+            margin: 0 auto;
+        }
+        
+        /* Fórmulas inline */
+        .MathJax:not(.MathJax_Display) {
+            display: inline;
+            margin: 0 2px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            page-break-inside: auto;
+            font-size: 8.5pt;
+        }
+        
+        thead {
+            display: table-header-group;
+        }
+        
+        tfoot {
+            display: table-footer-group;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        th {
+            background-color: #FF7A00;
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 9pt;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #E5E7EB;
+        }
+        
+        td:first-child strong {
+            color: #0F1216;
+            font-size: 10pt;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 9pt;
+        }
+        
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            page-break-inside: avoid;
+            font-size: 9pt;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        
+        p {
+            margin: 10px 0;
+        }
+        
+        strong {
+            color: #0F1216;
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #FF7A00;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(255, 122, 0, 0.3);
+        }
+        
+        .print-button:hover {
+            background-color: #FF9500;
+            box-shadow: 0 4px 10px rgba(255, 122, 0, 0.5);
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+    <script>
+        function imprimirPDF() {
+            window.print();
+        }
+    </script>
+</head>
+<body>
+    <button class="print-button" onclick="imprimirPDF()">🖨️ Imprimir a PDF</button>
+    
+    <div class="header">
+        Petroliquidos Gnv Informe V1
+    </div>
+    
+    <div class="tex2jax_process">
+        <h1 id="informe-tecnico-sistema-gnv-para-vehiculos-pesados">Informe Técnico: Sistema GNV para Vehículos Pesados</h1>
+<h2 id="cliente-petroliquidos">Cliente: PETROLIQUIDOS</h2>
+<h2 id="version-10">Versión: 1.0</h2>
+<h2 id="fecha-2024-12-19">Fecha: 2024-12-19</h2>
+<hr />
+<h2 id="1-introduccion-y-relevancia">1. Introducción y Relevancia</h2>
+<h3 id="11-contexto">1.1 Contexto</h3>
+<p>Este informe presenta el diseño e implementación de sistemas de Gas Natural Vehicular (GNV) para vehículos pesados, específicamente adaptado al mercado colombiano y cumpliendo con las normativas nacionales e internacionales aplicables.</p>
+<h3 id="12-justificacion-tecnica-y-economica">1.2 Justificación Técnica y Económica</h3>
+<p>La conversión a GNV ofrece ventajas significativas:
+- <strong>Reducción de emisiones</strong>: Hasta 30% menos CO₂, 90% menos NOx y eliminación de material particulado comparado con diésel
+- <strong>Ahorro económico</strong>: Reducción de costos de combustible del 30-50% (dependiendo de precios relativos)
+- <strong>Disponibilidad</strong>: Infraestructura de abastecimiento en crecimiento en Colombia
+- <strong>Rendimiento</strong>: Mantiene potencia y torque del motor original</p>
+<h3 id="13-alcance-del-proyecto">1.3 Alcance del Proyecto</h3>
+<ul>
+<li>Diseño de sistema GNV para vehículos pesados (tractores y volquetas)</li>
+<li>Especificación técnica de componentes</li>
+<li>Análisis de costos y viabilidad económica</li>
+<li>Plan de implementación y pruebas</li>
+<li>Evaluación de migración futura a GNL</li>
+</ul>
+<hr />
+<h2 id="2-alcance-y-supuestos">2. Alcance y Supuestos</h2>
+<h3 id="21-alcance-tecnico">2.1 Alcance Técnico</h3>
+<ul>
+<li><strong>Tipo de vehículos</strong>: Tractores 4x2, 6x4 y volquetas 6x4</li>
+<li><strong>Sistema</strong>: Bi-fuel (GNV + diésel) o dedicado GNV</li>
+<li><strong>Presión de almacenamiento</strong>: 200-250 bar (tanques tipo 3 o 4)</li>
+<li><strong>Regulación</strong>: Dos etapas (200-250 bar → 20-40 bar → 7-10 bar)</li>
+<li><strong>Autonomía objetivo</strong>: 600-800 km según tipo de vehículo</li>
+</ul>
+<h3 id="22-supuestos-criticos">2.2 Supuestos Críticos</h3>
+<h4 id="221-supuestos-de-operacion">2.2.1 Supuestos de Operación</h4>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Valor</th>
+<th>Unidad</th>
+<th>Confianza</th>
+<th>Fuente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consumo diésel (Tractor 4x2)</td>
+<td>35</td>
+<td>L/100 km</td>
+<td>Media</td>
+<td>Estimación basada en vehículos similares</td>
+</tr>
+<tr>
+<td>Consumo diésel (Tractor 6x4)</td>
+<td>40</td>
+<td>L/100 km</td>
+<td>Media</td>
+<td>Estimación basada en vehículos similares</td>
+</tr>
+<tr>
+<td>Consumo diésel (Volqueta 6x4)</td>
+<td>45</td>
+<td>L/100 km</td>
+<td>Media</td>
+<td>Estimación basada en vehículos similares</td>
+</tr>
+<tr>
+<td>Autonomía deseada (Tractor 4x2)</td>
+<td>800</td>
+<td>km</td>
+<td>Baja</td>
+<td><strong>ASUNTO: SUPUESTO</strong> - Requiere validación cliente</td>
+</tr>
+<tr>
+<td>Autonomía deseada (Tractor 6x4)</td>
+<td>700</td>
+<td>km</td>
+<td>Baja</td>
+<td><strong>ASUNTO: SUPUESTO</strong> - Requiere validación cliente</td>
+</tr>
+<tr>
+<td>Autonomía deseada (Volqueta 6x4)</td>
+<td>600</td>
+<td>km</td>
+<td>Baja</td>
+<td><strong>ASUNTO: SUPUESTO</strong> - Requiere validación cliente</td>
+</tr>
+<tr>
+<td>Altitud operativa típica</td>
+<td>0-2000</td>
+<td>m</td>
+<td>Media</td>
+<td>Colombia - zonas principales</td>
+</tr>
+<tr>
+<td>Temperatura ambiente</td>
+<td>15-35</td>
+<td>°C</td>
+<td>Alta</td>
+<td>Clima colombiano</td>
+</tr>
+</tbody>
+</table>
+<h4 id="222-supuestos-tecnicos">2.2.2 Supuestos Técnicos</h4>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Valor</th>
+<th>Unidad</th>
+<th>Confianza</th>
+<th>Fuente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poder calorífico diésel</td>
+<td>35.8</td>
+<td>MJ/L</td>
+<td>Alta</td>
+<td>ASTM D975</td>
+</tr>
+<tr>
+<td>LHV CH₄ (poder calorífico inferior)</td>
+<td>50.0</td>
+<td>MJ/kg</td>
+<td>Alta</td>
+<td>ISO 6976:2016</td>
+</tr>
+<tr>
+<td>Presión de llenado tanques</td>
+<td>200</td>
+<td>bar</td>
+<td>Alta</td>
+<td>UNECE R110 estándar</td>
+</tr>
+<tr>
+<td>Temperatura de operación</td>
+<td>298</td>
+<td>K (25°C)</td>
+<td>Alta</td>
+<td>Condiciones estándar</td>
+</tr>
+<tr>
+<td>Factor de compresibilidad Z (CH₄ a 200 bar, 25°C)</td>
+<td>0.85</td>
+<td>-</td>
+<td>Media</td>
+<td>NIST Chemistry WebBook</td>
+</tr>
+<tr>
+<td>Masa molar CH₄</td>
+<td>16.04</td>
+<td>g/mol</td>
+<td>Alta</td>
+<td>Constante física</td>
+</tr>
+<tr>
+<td>Constante universal gases R</td>
+<td>8.314</td>
+<td>J/(mol·K)</td>
+<td>Alta</td>
+<td>Constante física</td>
+</tr>
+<tr>
+<td>Eficiencia conversión GNV vs diésel</td>
+<td>0.95</td>
+<td>-</td>
+<td>Media</td>
+<td><strong>ASUNTO: SUPUESTO</strong> - Depende del sistema</td>
+</tr>
+</tbody>
+</table>
+<h4 id="223-supuestos-de-componentes">2.2.3 Supuestos de Componentes</h4>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Valor</th>
+<th>Unidad</th>
+<th>Confianza</th>
+<th>Fuente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Volumen unitario tanque tipo 3</td>
+<td>0.080</td>
+<td>m³</td>
+<td>Media</td>
+<td>Proveedores colombianos típicos</td>
+</tr>
+<tr>
+<td>Peso unitario tanque tipo 3 (vacío)</td>
+<td>65</td>
+<td>kg</td>
+<td>Media</td>
+<td><strong>ASUNTO: SUPUESTO</strong> - Varía por fabricante</td>
+</tr>
+<tr>
+<td>Peso soportes y accesorios (por tanque)</td>
+<td>15</td>
+<td>kg</td>
+<td>Baja</td>
+<td><strong>ASUNTO: SUPUESTO</strong> - Requiere diseño específico</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-limitaciones-y-exclusiones">2.3 Limitaciones y Exclusiones</h3>
+<ul>
+<li>No incluye costos de estación de servicio GNV</li>
+<li>No incluye costos de capacitación de operadores (estimado aparte)</li>
+<li>No incluye costos de mantenimiento preventivo (estimado aparte)</li>
+<li>No incluye costos de homologación vehicular (estimado aparte)</li>
+<li>Asume disponibilidad de estaciones de servicio GNV en rutas operativas</li>
+</ul>
+<hr />
+<h2 id="3-analisis-tecnico">3. Análisis Técnico</h2>
+<h3 id="31-regulacion-de-presion-en-dos-etapas">3.1 Regulación de Presión en Dos Etapas</h3>
+<h4 id="311-justificacion-de-rangos-de-presion">3.1.1 Justificación de Rangos de Presión</h4>
+<p><strong>Tanques de almacenamiento CNG:</strong>
+- <strong>Presión de servicio máxima</strong>: 200 bar (≈2,900 psi)
+- <strong>Presión de llenado</strong>: 200-250 bar (≈2,900-3,625 psi)
+- <strong>Justificación</strong>: Cumple con UNECE R110, norma internacional para componentes de vehículos CNG. La presión de 200 bar es estándar en Colombia, mientras que 250 bar permite mayor densidad energética pero requiere tanques tipo 4 (composite) más costosos.</p>
+<p><strong>Primera etapa de regulación:</strong>
+- <strong>Entrada</strong>: 200-250 bar
+- <strong>Salida</strong>: 20-40 bar (≈290-580 psi)
+- <strong>Justificación</strong>: Reducción inicial necesaria para proteger componentes aguas abajo. El rango 20-40 bar es estándar en reguladores de primera etapa para vehículos pesados.</p>
+<p><strong>Segunda etapa de regulación:</strong>
+- <strong>Entrada</strong>: 20-40 bar
+- <strong>Salida</strong>: 7-10 bar (≈100-145 psi)
+- <strong>Justificación</strong>: Presión adecuada para sistemas de inyección de gas en motores diésel convertidos. Para inyección directa, puede requerirse hasta 20 bar (caso especial).</p>
+<p><strong>Excepciones:</strong>
+- Sistemas de inyección directa de gas pueden requerir presiones de inyección de 15-25 bar
+- Motores dedicados GNV pueden operar con presiones ligeramente diferentes según especificaciones del fabricante</p>
+<h4 id="312-componentes-del-sistema-de-regulacion">3.1.2 Componentes del Sistema de Regulación</h4>
+<ol>
+<li><strong>Válvula de cierre rápido (Shut-off valve)</strong>: Ubicada en salida de tanques, cierra automáticamente en caso de emergencia</li>
+<li><strong>Regulador de primera etapa</strong>: Reduce presión de 200-250 bar a 20-40 bar, incluye calentador de gas (vaporizador)</li>
+<li><strong>Filtro de gas</strong>: Protege componentes aguas abajo de impurezas</li>
+<li><strong>Regulador de segunda etapa</strong>: Reduce presión a 7-10 bar para inyección</li>
+<li><strong>ECU (Engine Control Unit)</strong>: Controla mezcla aire-combustible y sincronización</li>
+<li><strong>Inyectores/mezclador</strong>: Suministra gas al motor</li>
+</ol>
+<h3 id="32-equipamiento-principal">3.2 Equipamiento Principal</h3>
+<h4 id="321-tanques-de-almacenamiento">3.2.1 Tanques de Almacenamiento</h4>
+<p><strong>Tipo 3 (Composite con liner metálico):</strong>
+- Material: Liner de aluminio + envoltura de fibra de carbono/epoxy
+- Presión de trabajo: 200 bar (opcional 250 bar)
+- Volumen típico: 60-100 L (0.06-0.10 m³)
+- Peso: 50-80 kg (vacío)
+- Vida útil: 15-20 años o 15,000 ciclos de llenado
+- Certificación: UNECE R110, ISO 11439</p>
+<p><strong>Tipo 4 (Fully composite):</strong>
+- Material: Liner de polímero + envoltura de fibra de carbono/epoxy
+- Presión de trabajo: 200-250 bar
+- Volumen típico: 60-120 L
+- Peso: 40-70 kg (vacío) - más liviano que tipo 3
+- Vida útil: Similar a tipo 3
+- Certificación: UNECE R110, ISO 11439
+- <strong>Ventaja</strong>: Menor peso, mayor resistencia a corrosión
+- <strong>Desventaja</strong>: Mayor costo (20-30% más que tipo 3)</p>
+<p><strong>Recomendación</strong>: Tipo 3 para aplicaciones estándar, Tipo 4 si el peso es crítico.</p>
+<h4 id="322-sistema-de-regulacion">3.2.2 Sistema de Regulación</h4>
+<p><strong>Regulador de primera etapa:</strong>
+- Tipo: Presión reducida con calentador integrado
+- Rango entrada: 200-250 bar
+- Rango salida: 20-40 bar (ajustable)
+- Flujo máximo: 200-300 m³/h (NTP)
+- Calentador: Eléctrico o por refrigerante del motor
+- Certificación: UNECE R110</p>
+<p><strong>Regulador de segunda etapa:</strong>
+- Tipo: Presión reducida
+- Rango entrada: 20-40 bar
+- Rango salida: 7-10 bar (ajustable)
+- Flujo máximo: 200-300 m³/h (NTP)
+- Certificación: UNECE R110</p>
+<h4 id="323-sistema-de-inyeccion">3.2.3 Sistema de Inyección</h4>
+<p><strong>Opción A - Mezclador (Venturi):</strong>
+- Tipo: Mezclador aire-gas antes del turbo
+- Ventajas: Bajo costo, simplicidad
+- Desventajas: Menor eficiencia, pérdida de potencia
+- Aplicación: Conversiones económicas</p>
+<p><strong>Opción B - Inyección secuencial:</strong>
+- Tipo: Inyectores de gas en múltiple de admisión
+- Ventajas: Mejor control, mayor eficiencia
+- Desventajas: Mayor costo, más complejo
+- Aplicación: Conversiones profesionales</p>
+<p><strong>Opción C - Inyección directa:</strong>
+- Tipo: Inyección de gas directamente en cámara de combustión
+- Ventajas: Máxima eficiencia, menor emisiones
+- Desventajas: Mayor costo, requiere motor dedicado o modificación significativa
+- Aplicación: Sistemas de alta gama</p>
+<p><strong>Recomendación</strong>: Opción B (inyección secuencial) para balance costo-beneficio.</p>
+<h4 id="324-ecu-y-sensores">3.2.4 ECU y Sensores</h4>
+<ul>
+<li><strong>ECU</strong>: Controla inyección de gas, sincronización, mezcla aire-combustible</li>
+<li><strong>Sensores</strong>: Presión, temperatura, lambda (O₂), posición del acelerador</li>
+<li><strong>Válvulas de seguridad</strong>: Shut-off automático, válvulas de alivio de presión</li>
+</ul>
+<h3 id="33-diagrama-de-flujo-del-sistema-pid">3.3 Diagrama de Flujo del Sistema (P&amp;ID)</h3>
+<p>Ver archivo: <code>PETROLIQUIDOS_GNV_PID_v1.drawio.xml</code></p>
+<p><strong>Descripción simplificada del flujo:</strong></p>
+<div class="codehilite"><pre><span></span><code>Tanques CNG (200-250 bar)
+    ↓
+Válvula shut-off
+    ↓
+Regulador 1ra etapa (200-250 bar → 20-40 bar) + Calentador
+    ↓
+Filtro de gas
+    ↓
+Regulador 2da etapa (20-40 bar → 7-10 bar)
+    ↓
+ECU (control)
+    ↓
+Inyectores/Mezclador
+    ↓
+Motor
+</code></pre></div>
+
+<hr />
+<h2 id="4-calculos-tecnicos">4. Cálculos Técnicos</h2>
+<h3 id="41-formulas-implementadas">4.1 Fórmulas Implementadas</h3>
+<h4 id="411-energia-requerida">4.1.1 Energía Requerida</h4>
+\[E \, (\text{MJ}) = V_{\text{diesel}} \, (\text{L}) \times E_{\text{diesel}} \, (\text{MJ/L})\]
+
+<p>Donde:
+- \(E_{\text{diesel}} = 35.8 \, \text{MJ/L}\) (poder calorífico diésel)</p>
+<h4 id="412-masa-de-ch4-requerida">4.1.2 Masa de CH₄ Requerida</h4>
+\[m_{\text{CH}_4} \, (\text{kg}) = \frac{E \, (\text{MJ})}{\text{LHV}_{\text{CH}_4} \, (\text{MJ/kg})}\]
+
+<p>Donde:
+- \(\text{LHV}_{\text{CH}_4} = 50.0 \, \text{MJ/kg}\) (poder calorífico inferior metano)</p>
+<h4 id="413-volumen-de-gas-a-presion-de-llenado">4.1.3 Volumen de Gas a Presión de Llenado</h4>
+<p>Utilizando ecuación de estado de gases reales:</p>
+\[pV = Z \frac{mRT}{M}\]
+
+<p>Despejando volumen:</p>
+\[V \, (\text{m}^3) = \frac{m_{\text{CH}_4} \times R \times T}{p \times M \times Z}\]
+
+<p>Donde:
+- \(p = 200 \times 10^5 \, \text{Pa} = 20,000,000 \, \text{Pa}\) (200 bar)
+- \(R = 8.314 \, \text{J/(mol·K)}\)
+- \(T = 298 \, \text{K}\) (25°C)
+- \(M = 16.04 \times 10^{-3} \, \text{kg/mol} = 0.01604 \, \text{kg/mol}\)
+- \(Z = 0.85\) (factor de compresibilidad)</p>
+<p><strong>Simplificación</strong>: Se asume CH₄ puro. En realidad, el gas natural vehicular contiene ~90-95% CH₄, 3-5% etano y trazas de otros hidrocarburos. El factor Z puede variar ligeramente.</p>
+<h4 id="414-numero-de-tanques-requeridos">4.1.4 Número de Tanques Requeridos</h4>
+\[n_{\text{tanques}} = \frac{V_{\text{requerido}} \, (\text{m}^3)}{V_{\text{unitario}} \, (\text{m}^3)}\]
+
+<p>Redondeando hacia arriba (siempre se requiere número entero de tanques).</p>
+<h4 id="415-peso-adicional-estimado">4.1.5 Peso Adicional Estimado</h4>
+\[P_{\text{adicional}} \, (\text{kg}) = n_{\text{tanques}} \times (m_{\text{tanque}} + m_{\text{soportes}} + m_{\text{accesorios}})\]
+
+<p>Donde:
+- \(m_{\text{tanque}} = 65 \, \text{kg}\) (tanque tipo 3, vacío)
+- \(m_{\text{soportes}} = 10 \, \text{kg}\) (estimado por tanque)
+- \(m_{\text{accesorios}} = 5 \, \text{kg}\) (válvulas, conexiones, por tanque)</p>
+<h3 id="42-calculos-para-configuraciones-representativas">4.2 Cálculos para Configuraciones Representativas</h3>
+<h4 id="421-tractor-4x2-carretera">4.2.1 Tractor 4x2 (Carretera)</h4>
+<p><strong>Parámetros de entrada:</strong>
+- Consumo diésel: 35 L/100 km
+- Autonomía deseada: 800 km
+- Volumen diésel equivalente: \(35 \times 8 = 280 \, \text{L}\)</p>
+<p><strong>Cálculos:</strong></p>
+<ol>
+<li>
+<p><strong>Energía requerida:</strong>
+   \[E = 280 \, \text{L} \times 35.8 \, \text{MJ/L} = 10,024 \, \text{MJ}\]
+</p>
+</li>
+<li>
+<p><strong>Masa de CH₄ requerida:</strong>
+   \[m_{\text{CH}_4} = \frac{10,024 \, \text{MJ}}{50.0 \, \text{MJ/kg}} = 200.5 \, \text{kg}\]
+</p>
+</li>
+<li>
+<p><strong>Volumen de gas a 200 bar:</strong>
+   \[V = \frac{200.5 \times 8.314 \times 298}{20,000,000 \times 0.01604 \times 0.85} = \frac{497,000}{272,680} = 1.82 \, \text{m}^3\]
+</p>
+</li>
+<li>
+<p><strong>Número de tanques (\(asumiendo tanques de 0.080 m³\)):</strong>
+   \[n_{\text{tanques}} = \frac{1.82}{0.080} = 22.75 \rightarrow 23 \, \text{tanques}\]
+</p>
+</li>
+<li>
+<p><strong>Peso adicional:</strong>
+   \[P_{\text{adicional}} = 23 \times (65 + 10 + 5) = 23 \times 80 = 1,840 \, \text{kg}\]
+</p>
+</li>
+</ol>
+<p><strong>Resumen Tractor 4x2:</strong>
+- Volumen total requerido: 1.82 m³ (1,820 L)
+- Número de tanques: 23 unidades
+- Peso adicional: 1,840 kg
+- <strong>ASUNTO</strong>: El peso adicional es significativo y puede afectar capacidad de carga</p>
+<h4 id="422-tractor-6x4-mixto">4.2.2 Tractor 6x4 (Mixto)</h4>
+<p><strong>Parámetros de entrada:</strong>
+- Consumo diésel: 40 L/100 km
+- Autonomía deseada: 700 km
+- Volumen diésel equivalente: \(40 \times 7 = 280 \, \text{L}\)</p>
+<p><strong>Cálculos:</strong></p>
+<ol>
+<li>
+<p><strong>Energía requerida:</strong>
+   \[E = 280 \, \text{L} \times 35.8 \, \text{MJ/L} = 10,024 \, \text{MJ}\]
+</p>
+</li>
+<li>
+<p><strong>Masa de CH₄ requerida:</strong>
+   \[m_{\text{CH}_4} = \frac{10,024 \, \text{MJ}}{50.0 \, \text{MJ/kg}} = 200.5 \, \text{kg}\]
+</p>
+</li>
+<li>
+<p><strong>Volumen de gas a 200 bar:</strong>
+   \[V = 1.82 \, \text{m}^3\]</p>
+</li>
+</ol>
+<p>(mismo cálculo que Tractor 4x2)</p>
+<ol>
+<li>
+<p><strong>Número de tanques:</strong>
+   \[n_{\text{tanques}} = 23 \, \text{tanques}\]
+</p>
+</li>
+<li>
+<p><strong>Peso adicional:</strong>
+   \[P_{\text{adicional}} = 1,840 \, \text{kg}\]
+</p>
+</li>
+</ol>
+<p><strong>Resumen Tractor 6x4:</strong>
+- Volumen total requerido: 1.82 m³
+- Número de tanques: 23 unidades
+- Peso adicional: 1,840 kg</p>
+<h4 id="423-volqueta-6x4-obra">4.2.3 Volqueta 6x4 (Obra)</h4>
+<p><strong>Parámetros de entrada:</strong>
+- Consumo diésel: 45 L/100 km
+- Autonomía deseada: 600 km
+- Volumen diésel equivalente: \(45 \times 6 = 270 \, \text{L}\)</p>
+<p><strong>Cálculos:</strong></p>
+<ol>
+<li>
+<p><strong>Energía requerida:</strong>
+   \[E = 270 \, \text{L} \times 35.8 \, \text{MJ/L} = 9,666 \, \text{MJ}\]
+</p>
+</li>
+<li>
+<p><strong>Masa de CH₄ requerida:</strong>
+   \[m_{\text{CH}_4} = \frac{9,666 \, \text{MJ}}{50.0 \, \text{MJ/kg}} = 193.3 \, \text{kg}\]
+</p>
+</li>
+<li>
+<p><strong>Volumen de gas a 200 bar:</strong>
+   \[V = \frac{193.3 \times 8.314 \times 298}{20,000,000 \times 0.01604 \times 0.85} = 1.76 \, \text{m}^3\]
+</p>
+</li>
+<li>
+<p><strong>Número de tanques:</strong>
+   \[n_{\text{tanques}} = \frac{1.76}{0.080} = 22.0 \rightarrow 22 \, \text{tanques}\]
+</p>
+</li>
+<li>
+<p><strong>Peso adicional:</strong>
+   \[P_{\text{adicional}} = 22 \times 80 = 1,760 \, \text{kg}\]
+</p>
+</li>
+</ol>
+<p><strong>Resumen Volqueta 6x4:</strong>
+- Volumen total requerido: 1.76 m³
+- Número de tanques: 22 unidades
+- Peso adicional: 1,760 kg</p>
+<h3 id="43-tabla-resumen-de-calculos">4.3 Tabla Resumen de Cálculos</h3>
+<table>
+<thead>
+<tr>
+<th>Configuración</th>
+<th>Consumo (L/100km)</th>
+<th>Autonomía (km)</th>
+<th>Energía (MJ)</th>
+<th>Masa CH₄ (kg)</th>
+<th>Volumen (m³)</th>
+<th>N° Tanques</th>
+<th>Peso Adicional (kg)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tractor 4x2</td>
+<td>35</td>
+<td>800</td>
+<td>10,024</td>
+<td>200.5</td>
+<td>1.82</td>
+<td>23</td>
+<td>1,840</td>
+</tr>
+<tr>
+<td>Tractor 6x4</td>
+<td>40</td>
+<td>700</td>
+<td>10,024</td>
+<td>200.5</td>
+<td>1.82</td>
+<td>23</td>
+<td>1,840</td>
+</tr>
+<tr>
+<td>Volqueta 6x4</td>
+<td>45</td>
+<td>600</td>
+<td>9,666</td>
+<td>193.3</td>
+<td>1.76</td>
+<td>22</td>
+<td>1,760</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-analisis-de-sensibilidad">5. Análisis de Sensibilidad</h2>
+<h3 id="51-variacion-de-consumo-de-combustible-10-20">5.1 Variación de Consumo de Combustible (±10%, ±20%)</h3>
+<p><strong>Tractor 4x2 - Autonomía 800 km:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Variación</th>
+<th>Consumo (L/100km)</th>
+<th>Energía (MJ)</th>
+<th>Masa CH₄ (kg)</th>
+<th>Volumen (m³)</th>
+<th>N° Tanques</th>
+<th>Peso (kg)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-20%</td>
+<td>28.0</td>
+<td>8,019</td>
+<td>160.4</td>
+<td>1.46</td>
+<td>19</td>
+<td>1,520</td>
+</tr>
+<tr>
+<td>-10%</td>
+<td>31.5</td>
+<td>9,021</td>
+<td>180.4</td>
+<td>1.64</td>
+<td>21</td>
+<td>1,680</td>
+</tr>
+<tr>
+<td>Base</td>
+<td>35.0</td>
+<td>10,024</td>
+<td>200.5</td>
+<td>1.82</td>
+<td>23</td>
+<td>1,840</td>
+</tr>
+<tr>
+<td>+10%</td>
+<td>38.5</td>
+<td>11,026</td>
+<td>220.5</td>
+<td>2.01</td>
+<td>26</td>
+<td>2,080</td>
+</tr>
+<tr>
+<td>+20%</td>
+<td>42.0</td>
+<td>12,029</td>
+<td>240.6</td>
+<td>2.19</td>
+<td>28</td>
+<td>2,240</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Impacto</strong>: Un aumento del 20% en consumo requiere 5 tanques adicionales (+22%) y 400 kg más de peso.</p>
+<h3 id="52-variacion-de-autonomia-10-20">5.2 Variación de Autonomía (±10%, ±20%)</h3>
+<p><strong>Tractor 4x2 - Consumo 35 L/100km:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Variación</th>
+<th>Autonomía (km)</th>
+<th>Energía (MJ)</th>
+<th>Masa CH₄ (kg)</th>
+<th>Volumen (m³)</th>
+<th>N° Tanques</th>
+<th>Peso (kg)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-20%</td>
+<td>640</td>
+<td>8,019</td>
+<td>160.4</td>
+<td>1.46</td>
+<td>19</td>
+<td>1,520</td>
+</tr>
+<tr>
+<td>-10%</td>
+<td>720</td>
+<td>9,021</td>
+<td>180.4</td>
+<td>1.64</td>
+<td>21</td>
+<td>1,680</td>
+</tr>
+<tr>
+<td>Base</td>
+<td>800</td>
+<td>10,024</td>
+<td>200.5</td>
+<td>1.82</td>
+<td>23</td>
+<td>1,840</td>
+</tr>
+<tr>
+<td>+10%</td>
+<td>880</td>
+<td>11,026</td>
+<td>220.5</td>
+<td>2.01</td>
+<td>26</td>
+<td>2,080</td>
+</tr>
+<tr>
+<td>+20%</td>
+<td>960</td>
+<td>12,029</td>
+<td>240.6</td>
+<td>2.19</td>
+<td>28</td>
+<td>2,240</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Impacto</strong>: Similar al consumo. Reducir autonomía en 20% ahorra 4 tanques y 320 kg.</p>
+<h3 id="53-variacion-de-presion-de-llenado">5.3 Variación de Presión de Llenado</h3>
+<p><strong>Tractor 4x2 - Masa CH₄ 200.5 kg:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Presión (bar)</th>
+<th>Presión (psi)</th>
+<th>Factor Z</th>
+<th>Volumen (m³)</th>
+<th>N° Tanques</th>
+<th>Reducción vs 200 bar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>2,900</td>
+<td>0.85</td>
+<td>1.82</td>
+<td>23</td>
+<td>Base</td>
+</tr>
+<tr>
+<td>250</td>
+<td>3,625</td>
+<td>0.80</td>
+<td>1.55</td>
+<td>20</td>
+<td>-13% volumen, -3 tanques</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Impacto</strong>: Aumentar presión a 250 bar reduce volumen en ~15% pero requiere tanques tipo 4 más costosos.</p>
+<h3 id="54-variacion-de-temperatura">5.4 Variación de Temperatura</h3>
+<p><strong>Tractor 4x2 - Masa CH₄ 200.5 kg, Presión 200 bar:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Temperatura (°C)</th>
+<th>Temperatura (K)</th>
+<th>Factor Z</th>
+<th>Volumen (m³)</th>
+<th>N° Tanques</th>
+<th>Variación vs 25°C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td>
+<td>288</td>
+<td>0.87</td>
+<td>1.77</td>
+<td>23</td>
+<td>-2.7%</td>
+</tr>
+<tr>
+<td>25</td>
+<td>298</td>
+<td>0.85</td>
+<td>1.82</td>
+<td>23</td>
+<td>Base</td>
+</tr>
+<tr>
+<td>35</td>
+<td>308</td>
+<td>0.83</td>
+<td>1.87</td>
+<td>24</td>
+<td>+2.7%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Impacto</strong>: Menor que otras variables. La temperatura afecta principalmente durante el llenado.</p>
+<h3 id="55-conclusiones-del-analisis-de-sensibilidad">5.5 Conclusiones del Análisis de Sensibilidad</h3>
+<ol>
+<li><strong>Consumo y autonomía</strong> son los factores más críticos. Reducir autonomía objetivo puede reducir significativamente costo y peso.</li>
+<li><strong>Presión de llenado</strong> a 250 bar ofrece ahorro de espacio pero mayor costo de tanques.</li>
+<li><strong>Temperatura</strong> tiene impacto menor en el diseño final.</li>
+<li><strong>Recomendación</strong>: Validar con cliente consumo real y autonomía mínima aceptable antes de dimensionar definitivamente.</li>
+</ol>
+<hr />
+<h2 id="6-comparativa-gnv-vs-gnl">6. Comparativa GNV vs GNL</h2>
+<h3 id="61-comparativa-tecnica">6.1 Comparativa Técnica</h3>
+<table>
+<thead>
+<tr>
+<th>Aspecto</th>
+<th>GNV (CNG)</th>
+<th>GNL (LNG)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Estado de almacenamiento</strong></td>
+<td>Gas comprimido (200-250 bar)</td>
+<td>Líquido criogénico (-162°C)</td>
+</tr>
+<tr>
+<td><strong>Densidad energética</strong></td>
+<td>~8-10 MJ/L (a 200 bar)</td>
+<td>~22 MJ/L</td>
+</tr>
+<tr>
+<td><strong>Tipo de tanques</strong></td>
+<td>Tipo 3 o 4 (composite)</td>
+<td>Tanques criogénicos (doble pared, vacío)</td>
+</tr>
+<tr>
+<td><strong>Peso sistema</strong></td>
+<td>Alto (tanques pesados)</td>
+<td>Medio (tanques livianos pero aislados)</td>
+</tr>
+<tr>
+<td><strong>Volumen requerido</strong></td>
+<td>Alto (más tanques)</td>
+<td>Bajo (menos tanques)</td>
+</tr>
+<tr>
+<td><strong>Presión operativa</strong></td>
+<td>200-250 bar</td>
+<td>Presión atmosférica (\(con presión interna baja\))</td>
+</tr>
+<tr>
+<td><strong>Temperatura operativa</strong></td>
+<td>Ambiente</td>
+<td>-162°C (requiere aislamiento)</td>
+</tr>
+<tr>
+<td><strong>Autonomía equivalente</strong></td>
+<td>Menor (más volumen)</td>
+<td>Mayor (menos volumen)</td>
+</tr>
+<tr>
+<td><strong>Infraestructura</strong></td>
+<td>Estaciones de compresión</td>
+<td>Estaciones de licuefacción/regasificación</td>
+</tr>
+<tr>
+<td><strong>Disponibilidad en Colombia</strong></td>
+<td>Mayor (más estaciones)</td>
+<td>Menor (pocas estaciones)</td>
+</tr>
+<tr>
+<td><strong>Costo de conversión</strong></td>
+<td>Menor</td>
+<td>Mayor (20-30% más)</td>
+</tr>
+<tr>
+<td><strong>Mantenimiento</strong></td>
+<td>Moderado</td>
+<td>Mayor (sistemas criogénicos)</td>
+</tr>
+<tr>
+<td><strong>Vida útil tanques</strong></td>
+<td>15-20 años</td>
+<td>10-15 años</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-comparativa-economica">6.2 Comparativa Económica</h3>
+<p><strong>Supuestos:</strong>
+- Precio GNV: $1.50 USD/m³ (equivalente energético a diésel)
+- Precio GNL: $1.40 USD/m³ (equivalente energético)
+- Precio diésel: $1.00 USD/L
+- Consumo: 35 L/100 km (diésel)
+- Distancia anual: 100,000 km</p>
+<p><strong>Cálculo anual (Tractor 4x2):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Diésel</th>
+<th>GNV</th>
+<th>GNL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consumo anual</td>
+<td>35,000 L</td>
+<td>28,000 m³</td>
+<td>12,700 L (equivalente)</td>
+</tr>
+<tr>
+<td>Costo combustible</td>
+<td>$35,000</td>
+<td>$42,000</td>
+<td>$17,780</td>
+</tr>
+<tr>
+<td><strong>Ahorro vs diésel</strong></td>
+<td>-</td>
+<td>-$7,000</td>
+<td>+$17,220</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nota</strong>: Los precios son ilustrativos y deben validarse con mercado colombiano actual.</p>
+<h3 id="63-migracion-gnv-gnl">6.3 Migración GNV → GNL</h3>
+<p><strong>Cambios mínimos y críticos:</strong></p>
+<ol>
+<li><strong>Tanques</strong>: Reemplazar tanques CNG por tanques criogénicos (costo: +$15,000-25,000 USD por vehículo)</li>
+<li><strong>Sistema de vaporización</strong>: Agregar vaporizador (costo: +$2,000-3,000 USD)</li>
+<li><strong>Bombas</strong>: Agregar bomba de transferencia (costo: +$1,000-2,000 USD)</li>
+<li><strong>Aislamiento</strong>: Mejorar aislamiento térmico (costo: +$1,000 USD)</li>
+<li><strong>Certificaciones</strong>: Nueva homologación (costo: +$2,000-5,000 USD)</li>
+</ol>
+<p><strong>CAPEX incremental estimado</strong>: 30-40% adicional sobre sistema GNV base.</p>
+<p><strong>Ventaja</strong>: Los sistemas de regulación e inyección pueden reutilizarse parcialmente.</p>
+<p><strong>Recomendación</strong>: Si se planea migración futura a GNL, considerar diseño modular desde el inicio.</p>
+<hr />
+<h2 id="7-regulaciones-y-certificaciones-aplicables">7. Regulaciones y Certificaciones Aplicables</h2>
+<h3 id="71-normativas-nacionales-colombia">7.1 Normativas Nacionales (Colombia)</h3>
+<h4 id="711-resolucion-957-de-2012-mincomercio">7.1.1 Resolución 957 de 2012 (MinComercio)</h4>
+<ul>
+<li><strong>Título</strong>: Reglamento Técnico para talleres, equipos y procesos de conversión a gas natural comprimido para uso vehicular</li>
+<li><strong>Alcance</strong>: Establece requisitos para talleres de conversión, equipos y procesos</li>
+<li><strong>Requisitos clave</strong>:</li>
+<li>Talleres deben estar certificados</li>
+<li>Equipos deben cumplir UNECE R110 o equivalentes</li>
+<li>Inspección técnica vehicular post-conversión</li>
+<li><strong>Fuente</strong>: Ministerio de Comercio, Industria y Turismo</li>
+</ul>
+<h4 id="712-resolucion-180540-de-2010-mintransporte">7.1.2 Resolución 180540 de 2010 (MinTransporte)</h4>
+<ul>
+<li><strong>Título</strong>: Reglamento para la conversión de vehículos a gas natural</li>
+<li><strong>Alcance</strong>: Requisitos técnicos y de seguridad para vehículos convertidos</li>
+<li><strong>Requisitos clave</strong>:</li>
+<li>Certificación de componentes</li>
+<li>Inspección técnica vehicular</li>
+<li>Registro en RUNT (Registro Único Nacional de Tránsito)</li>
+</ul>
+<h4 id="713-ntc-3949">7.1.3 NTC 3949</h4>
+<ul>
+<li><strong>Título</strong>: Estaciones de regulación de presión, líneas de transporte y líneas primarias de redes de distribución de gas combustible</li>
+<li><strong>Alcance</strong>: Aplicable a estaciones de servicio GNV</li>
+<li><strong>Relevancia</strong>: Indirecta (infraestructura de abastecimiento)</li>
+</ul>
+<h4 id="714-retie-reglamento-tecnico-de-instalaciones-electricas">7.1.4 RETIE (Reglamento Técnico de Instalaciones Eléctricas)</h4>
+<ul>
+<li><strong>Alcance</strong>: Instalaciones eléctricas asociadas a sistemas GNV (ECU, sensores, calentadores)</li>
+<li><strong>Requisitos clave</strong>:</li>
+<li>Protecciones eléctricas adecuadas</li>
+<li>Certificación de instalaciones eléctricas</li>
+</ul>
+<h3 id="72-normativas-internacionales">7.2 Normativas Internacionales</h3>
+<h4 id="721-unece-r110">7.2.1 UNECE R110</h4>
+<ul>
+<li><strong>Título</strong>: Uniform provisions concerning the approval of:</li>
+<li>I. Specific components of motor vehicles using compressed natural gas (CNG) in their propulsion system</li>
+<li>II. Vehicles with regard to the installation of specific components for the use of compressed natural gas (CNG) in their propulsion system</li>
+<li><strong>Alcance</strong>: Componentes y vehículos CNG</li>
+<li><strong>Requisitos clave</strong>:</li>
+<li>Certificación de tanques (tipo 3 o 4)</li>
+<li>Certificación de reguladores</li>
+<li>Certificación de válvulas de seguridad</li>
+<li>Pruebas de presión y fatiga</li>
+<li><strong>Vida útil tanques</strong>: 15-20 años o 15,000 ciclos</li>
+<li><strong>Fuente</strong>: United Nations Economic Commission for Europe</li>
+</ul>
+<h4 id="722-iso-11439">7.2.2 ISO 11439</h4>
+<ul>
+<li><strong>Título</strong>: Gas cylinders — High pressure cylinders for the on-board storage of natural gas as a fuel for automotive vehicles</li>
+<li><strong>Alcance</strong>: Especificaciones técnicas para tanques CNG</li>
+<li><strong>Relevancia</strong>: Complementa UNECE R110</li>
+</ul>
+<h4 id="723-iso-15500-series">7.2.3 ISO 15500 (series)</h4>
+<ul>
+<li><strong>Título</strong>: Road vehicles — Compressed natural gas (CNG) fuel systems</li>
+<li><strong>Alcance</strong>: Componentes de sistemas CNG (reguladores, válvulas, etc.)</li>
+<li><strong>Relevancia</strong>: Especificaciones técnicas de componentes</li>
+</ul>
+<h4 id="724-sae-j1616">7.2.4 SAE J1616</h4>
+<ul>
+<li><strong>Título</strong>: Recommended Practice for Compressed Natural Gas Vehicle Fuel</li>
+<li><strong>Alcance</strong>: Especificaciones de calidad de gas natural vehicular</li>
+<li><strong>Relevancia</strong>: Calidad del combustible</li>
+</ul>
+<h3 id="73-certificaciones-requeridas">7.3 Certificaciones Requeridas</h3>
+<ol>
+<li><strong>Tanques CNG</strong>: Certificación UNECE R110 o equivalente</li>
+<li><strong>Reguladores</strong>: Certificación UNECE R110</li>
+<li><strong>Válvulas de seguridad</strong>: Certificación UNECE R110</li>
+<li><strong>Taller de conversión</strong>: Certificación según Resolución 957/2012</li>
+<li><strong>Vehículo convertido</strong>: Inspección técnica vehicular y registro en RUNT</li>
+</ol>
+<h3 id="74-checklist-de-cumplimiento">7.4 Checklist de Cumplimiento</h3>
+<ul>
+<li>[ ] Todos los tanques tienen certificación UNECE R110</li>
+<li>[ ] Reguladores certificados UNECE R110</li>
+<li>[ ] Válvulas de seguridad certificadas</li>
+<li>[ ] Taller de conversión certificado</li>
+<li>[ ] Instalación eléctrica cumple RETIE</li>
+<li>[ ] Inspección técnica vehicular programada</li>
+<li>[ ] Registro en RUNT actualizado</li>
+<li>[ ] Manual de operación y mantenimiento disponible</li>
+</ul>
+<hr />
+<h2 id="8-riesgos-plan-de-pruebas-y-cronograma">8. Riesgos, Plan de Pruebas y Cronograma</h2>
+<h3 id="81-matriz-de-riesgos">8.1 Matriz de Riesgos</h3>
+<table>
+<thead>
+<tr>
+<th>Riesgo</th>
+<th>Probabilidad</th>
+<th>Impacto</th>
+<th>Severidad</th>
+<th>Mitigación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Falta de disponibilidad de estaciones GNV en rutas</strong></td>
+<td>Media</td>
+<td>Alto</td>
+<td>Alta</td>
+<td>Mapear rutas y estaciones antes de conversión; considerar estación propia</td>
+</tr>
+<tr>
+<td><strong>Sobredimensionamiento de sistema (más tanques de los necesarios)</strong></td>
+<td>Alta</td>
+<td>Medio</td>
+<td>Media</td>
+<td>Validar consumo y autonomía real con cliente antes de dimensionar</td>
+</tr>
+<tr>
+<td><strong>Peso adicional afecta capacidad de carga</strong></td>
+<td>Alta</td>
+<td>Alto</td>
+<td>Alta</td>
+<td>Evaluar impacto en capacidad de carga; considerar tanques tipo 4 (más livianos)</td>
+</tr>
+<tr>
+<td><strong>Fallo de componentes (tanques, reguladores)</strong></td>
+<td>Baja</td>
+<td>Muy Alto</td>
+<td>Alta</td>
+<td>Usar solo componentes certificados UNECE R110; mantenimiento preventivo</td>
+</tr>
+<tr>
+<td><strong>No cumplimiento normativo</strong></td>
+<td>Baja</td>
+<td>Muy Alto</td>
+<td>Alta</td>
+<td>Verificar certificaciones antes de compra; asesoría legal/regulatoria</td>
+</tr>
+<tr>
+<td><strong>Retrasos en entrega de componentes</strong></td>
+<td>Media</td>
+<td>Medio</td>
+<td>Media</td>
+<td>Incluir contingencia en cronograma; múltiples proveedores</td>
+</tr>
+<tr>
+<td><strong>Variación de precios de componentes</strong></td>
+<td>Media</td>
+<td>Medio</td>
+<td>Media</td>
+<td>Cotizar múltiples proveedores; incluir contingencia en presupuesto</td>
+</tr>
+<tr>
+<td><strong>Incompatibilidad con motor específico</strong></td>
+<td>Baja</td>
+<td>Alto</td>
+<td>Media</td>
+<td>Validar compatibilidad con fabricante motor antes de conversión</td>
+</tr>
+<tr>
+<td><strong>Dificultad en homologación</strong></td>
+<td>Baja</td>
+<td>Alto</td>
+<td>Media</td>
+<td>Asesoría con taller certificado; documentación completa</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-plan-de-pruebas">8.2 Plan de Pruebas</h3>
+<h4 id="821-pruebas-en-banco-pre-instalacion">8.2.1 Pruebas en Banco (Pre-instalación)</h4>
+<p><strong>Objetivo</strong>: Validar componentes antes de instalación en vehículo.</p>
+<table>
+<thead>
+<tr>
+<th>Prueba</th>
+<th>Criterio de Aceptación</th>
+<th>Método</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prueba de presión tanques</strong></td>
+<td>Sin fugas a 1.5x presión de trabajo (300 bar)</td>
+<td>Presurizar y monitorear caída de presión</td>
+</tr>
+<tr>
+<td><strong>Prueba de flujo reguladores</strong></td>
+<td>Flujo ≥ 200 m³/h a presión nominal</td>
+<td>Medición con flujómetro</td>
+</tr>
+<tr>
+<td><strong>Prueba de calentador</strong></td>
+<td>Temperatura salida ≥ 0°C a flujo máximo</td>
+<td>Medición con termómetro</td>
+</tr>
+<tr>
+<td><strong>Prueba de válvulas de seguridad</strong></td>
+<td>Activación a presión correcta (±5%)</td>
+<td>Presurizar hasta activación</td>
+</tr>
+<tr>
+<td><strong>Prueba de hermeticidad</strong></td>
+<td>Sin fugas detectables (burbujeo)</td>
+<td>Prueba con solución jabonosa</td>
+</tr>
+</tbody>
+</table>
+<h4 id="822-pruebas-en-campo-post-instalacion">8.2.2 Pruebas en Campo (Post-instalación)</h4>
+<p><strong>Objetivo</strong>: Validar funcionamiento del sistema completo en condiciones reales.</p>
+<table>
+<thead>
+<tr>
+<th>Prueba</th>
+<th>Criterio de Aceptación</th>
+<th>Método</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prueba de autonomía</strong></td>
+<td>Autonomía ≥ 90% de autonomía objetivo</td>
+<td>Prueba de ruta con tanque lleno hasta agotamiento</td>
+</tr>
+<tr>
+<td><strong>Prueba de consumo</strong></td>
+<td>Consumo GNV ≤ 1.1x consumo diésel equivalente</td>
+<td>Medición en ruta de 500 km</td>
+</tr>
+<tr>
+<td><strong>Prueba de potencia</strong></td>
+<td>Potencia ≥ 95% de potencia original</td>
+<td>Dinamómetro</td>
+</tr>
+<tr>
+<td><strong>Prueba de emisiones</strong></td>
+<td>Emisiones dentro de límites normativos</td>
+<td>Análisis de gases de escape</td>
+</tr>
+<tr>
+<td><strong>Prueba de seguridad</strong></td>
+<td>Sin fugas, válvulas funcionan correctamente</td>
+<td>Inspección visual y funcional</td>
+</tr>
+<tr>
+<td><strong>Prueba de vibraciones</strong></td>
+<td>Sin daños después de 1,000 km</td>
+<td>Inspección post-prueba</td>
+</tr>
+</tbody>
+</table>
+<h4 id="823-criterios-de-aceptacion-cuantitativos">8.2.3 Criterios de Aceptación Cuantitativos</h4>
+<ul>
+<li><strong>Autonomía</strong>: ≥ 90% de autonomía objetivo</li>
+<li><strong>Consumo</strong>: ≤ 110% de consumo diésel equivalente (energético)</li>
+<li><strong>Potencia</strong>: ≥ 95% de potencia original</li>
+<li><strong>Emisiones NOx</strong>: ≤ 80% de emisiones diésel original</li>
+<li><strong>Emisiones CO</strong>: ≤ 50% de emisiones diésel original</li>
+<li><strong>Fugas</strong>: Cero fugas detectables</li>
+<li><strong>Temperatura operativa</strong>: -10°C a +50°C sin fallos</li>
+</ul>
+<h3 id="83-cronograma-propuesto">8.3 Cronograma Propuesto</h3>
+<p><strong>Fase 1: Estudio y Diseño (4-6 semanas)</strong>
+- Semana 1-2: Validación de requerimientos con cliente
+- Semana 3-4: Diseño detallado y especificaciones
+- Semana 5-6: Revisión y aprobación de diseño</p>
+<p><strong>Fase 2: Adquisición (6-8 semanas)</strong>
+- Semana 7-8: Cotización y selección de proveedores
+- Semana 9-12: Orden de compra y fabricación/importación
+- Semana 13-14: Recepción y verificación de componentes</p>
+<p><strong>Fase 3: Instalación (2-3 semanas)</strong>
+- Semana 15: Preparación de vehículo y montaje de tanques
+- Semana 16: Instalación de sistema de regulación e inyección
+- Semana 17: Cableado, sensores y ECU</p>
+<p><strong>Fase 4: Pruebas y Homologación (3-4 semanas)</strong>
+- Semana 18: Pruebas en banco
+- Semana 19-20: Pruebas en campo
+- Semana 21: Ajustes y optimización
+- Semana 22: Homologación e inspección técnica vehicular</p>
+<p><strong>Total estimado</strong>: 22 semanas (5.5 meses) desde inicio hasta vehículo homologado.</p>
+<p><strong>Hitos críticos:</strong>
+1. Aprobación de diseño (Semana 6)
+2. Orden de compra componentes (Semana 8)
+3. Recepción componentes (Semana 14)
+4. Instalación completa (Semana 17)
+5. Pruebas exitosas (Semana 20)
+6. Homologación (Semana 22)</p>
+<hr />
+<h2 id="9-decisiones-pendientes-checklist-para-cliente">9. Decisiones Pendientes / Checklist para Cliente</h2>
+<h3 id="91-preguntas-prioritarias-alta-prioridad">9.1 Preguntas Prioritarias (ALTA PRIORIDAD)</h3>
+<ol>
+<li><strong>Modelos específicos de vehículos</strong></li>
+<li>¿Marca, modelo y año de los vehículos a convertir?</li>
+<li>¿Potencia y torque del motor?</li>
+<li>
+<p>¿Normativa de emisiones que cumple actualmente (Euro IV, V, VI)?</p>
+</li>
+<li>
+<p><strong>Presupuesto</strong></p>
+</li>
+<li>¿Presupuesto máximo por unidad (COP o USD)?</li>
+<li>
+<p>¿Rango de inversión total para la flota?</p>
+</li>
+<li>
+<p><strong>Perfil operativo real</strong></p>
+</li>
+<li>¿Kilómetros recorridos por día/por mes?</li>
+<li>¿Porcentaje de operación en carretera vs urbano?</li>
+<li>
+<p>¿Altitud típica de operación?</p>
+</li>
+<li>
+<p><strong>Tipo de conversión</strong></p>
+</li>
+<li>¿Bi-fuel (GNV + diésel) o dedicado GNV?</li>
+<li>
+<p>¿Exigencia de compatibilidad inmediata con GNL?</p>
+</li>
+<li>
+<p><strong>Plazos</strong></p>
+</li>
+<li>¿Plazo objetivo para primera unidad piloto?</li>
+<li>¿Plazo objetivo para conversión de flota completa?</li>
+</ol>
+<h3 id="92-validaciones-requeridas-media-prioridad">9.2 Validaciones Requeridas (MEDIA PRIORIDAD)</h3>
+<ul>
+<li>[ ] Validar consumo real de combustible (no estimado)</li>
+<li>[ ] Validar autonomía mínima aceptable</li>
+<li>[ ] Validar disponibilidad de estaciones GNV en rutas operativas</li>
+<li>[ ] Validar impacto de peso adicional en capacidad de carga</li>
+<li>[ ] Validar preferencia por tanques tipo 3 vs tipo 4</li>
+<li>[ ] Validar preferencia por sistema de inyección (mezclador vs secuencial)</li>
+<li>[ ] Validar disponibilidad de taller certificado para instalación</li>
+<li>[ ] Validar requisitos de mantenimiento y disponibilidad de repuestos</li>
+</ul>
+<h3 id="93-supuestos-que-requieren-confirmacion">9.3 Supuestos que Requieren Confirmación</h3>
+<table>
+<thead>
+<tr>
+<th>Supuesto</th>
+<th>Valor Asumido</th>
+<th>Confianza</th>
+<th>Acción Requerida</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consumo diésel Tractor 4x2</td>
+<td>35 L/100 km</td>
+<td>Media</td>
+<td>Validar con datos reales</td>
+</tr>
+<tr>
+<td>Consumo diésel Tractor 6x4</td>
+<td>40 L/100 km</td>
+<td>Media</td>
+<td>Validar con datos reales</td>
+</tr>
+<tr>
+<td>Consumo diésel Volqueta 6x4</td>
+<td>45 L/100 km</td>
+<td>Media</td>
+<td>Validar con datos reales</td>
+</tr>
+<tr>
+<td>Autonomía deseada</td>
+<td>600-800 km</td>
+<td>Baja</td>
+<td><strong>VALIDAR CON CLIENTE</strong></td>
+</tr>
+<tr>
+<td>Eficiencia conversión GNV</td>
+<td>95% vs diésel</td>
+<td>Media</td>
+<td>Validar con pruebas</td>
+</tr>
+<tr>
+<td>Volumen unitario tanque</td>
+<td>0.080 m³</td>
+<td>Media</td>
+<td>Confirmar con proveedor</td>
+</tr>
+<tr>
+<td>Peso unitario tanque</td>
+<td>65 kg</td>
+<td>Media</td>
+<td>Confirmar con proveedor</td>
+</tr>
+<tr>
+<td>Tasa de cambio USD/COP</td>
+<td>4,000</td>
+<td>Baja</td>
+<td>Actualizar al momento de cotización</td>
+</tr>
+</tbody>
+</table>
+<h3 id="94-items-de-alto-riesgo-que-requieren-atencion-inmediata">9.4 Items de Alto Riesgo que Requieren Atención Inmediata</h3>
+<ol>
+<li><strong>Peso adicional (1,760-1,840 kg)</strong>: Puede afectar significativamente capacidad de carga. Evaluar impacto económico.</li>
+<li><strong>Número de tanques (22-23 unidades)</strong>: Requiere espacio significativo. Validar disponibilidad de espacio en chasis.</li>
+<li><strong>Autonomía objetivo</strong>: Si se puede reducir, se ahorra significativamente en costo y peso.</li>
+<li><strong>Disponibilidad de estaciones GNV</strong>: Crítico para viabilidad operativa.</li>
+</ol>
+<hr />
+<h2 id="10-conclusiones-y-recomendaciones">10. Conclusiones y Recomendaciones</h2>
+<h3 id="101-conclusiones-tecnicas">10.1 Conclusiones Técnicas</h3>
+<ol>
+<li>
+<p><strong>Viabilidad técnica</strong>: La conversión a GNV es técnicamente viable para los tres tipos de vehículos considerados.</p>
+</li>
+<li>
+<p><strong>Dimensionamiento</strong>: Para autonomías de 600-800 km, se requieren 22-23 tanques tipo 3, con peso adicional de 1,760-1,840 kg.</p>
+</li>
+<li>
+<p><strong>Impacto de peso</strong>: El peso adicional es significativo y debe evaluarse su impacto en capacidad de carga y economía operativa.</p>
+</li>
+<li>
+<p><strong>Rangos de presión</strong>: Los rangos propuestos (200-250 bar → 20-40 bar → 7-10 bar) son consistentes con normativas internacionales y prácticas del mercado.</p>
+</li>
+</ol>
+<h3 id="102-recomendaciones">10.2 Recomendaciones</h3>
+<ol>
+<li>
+<p><strong>Validar requerimientos reales</strong>: Antes de proceder, validar consumo real, autonomía mínima aceptable y disponibilidad de estaciones GNV.</p>
+</li>
+<li>
+<p><strong>Evaluar impacto de peso</strong>: Realizar análisis económico considerando reducción de capacidad de carga vs ahorro en combustible.</p>
+</li>
+<li>
+<p><strong>Considerar tanques tipo 4</strong>: Si el peso es crítico, evaluar tanques tipo 4 (más livianos pero más costosos).</p>
+</li>
+<li>
+<p><strong>Reducir autonomía si es posible</strong>: Reducir autonomía objetivo puede reducir significativamente costo y peso del sistema.</p>
+</li>
+<li>
+<p><strong>Planificar migración a GNL</strong>: Si se planea migración futura, considerar diseño modular desde el inicio.</p>
+</li>
+<li>
+<p><strong>Cumplimiento normativo</strong>: Asegurar que todos los componentes cumplan UNECE R110 y que el taller de instalación esté certificado.</p>
+</li>
+</ol>
+<h3 id="103-proximos-pasos">10.3 Próximos Pasos</h3>
+<ol>
+<li><strong>Reunión con cliente</strong>: Presentar este informe y validar supuestos críticos.</li>
+<li><strong>Ajuste de diseño</strong>: Ajustar dimensionamiento basado en validaciones del cliente.</li>
+<li><strong>Cotización detallada</strong>: Obtener cotizaciones de proveedores con especificaciones finales.</li>
+<li><strong>Selección de taller</strong>: Identificar y seleccionar taller certificado para instalación.</li>
+<li><strong>Plan de pruebas</strong>: Detallar plan de pruebas específico para vehículos del cliente.</li>
+</ol>
+<hr />
+<h2 id="11-referencias-y-fuentes">11. Referencias y Fuentes</h2>
+<h3 id="111-normativas">11.1 Normativas</h3>
+<ol>
+<li>UNECE R110 - Uniform provisions concerning the approval of specific components of motor vehicles using compressed natural gas (CNG)</li>
+<li>ISO 11439 - Gas cylinders — High pressure cylinders for the on-board storage of natural gas as a fuel for automotive vehicles</li>
+<li>ISO 15500 - Road vehicles — Compressed natural gas (CNG) fuel systems</li>
+<li>SAE J1616 - Recommended Practice for Compressed Natural Gas Vehicle Fuel</li>
+<li>Resolución 957 de 2012 (Colombia) - Reglamento Técnico para talleres, equipos y procesos de conversión a gas natural comprimido</li>
+<li>Resolución 180540 de 2010 (Colombia) - Reglamento para la conversión de vehículos a gas natural</li>
+<li>NTC 3949 - Estaciones de regulación de presión de gas combustible</li>
+<li>RETIE - Reglamento Técnico de Instalaciones Eléctricas</li>
+</ol>
+<h3 id="112-fuentes-tecnicas">11.2 Fuentes Técnicas</h3>
+<ol>
+<li>NIST Chemistry WebBook - Propiedades termodinámicas del metano</li>
+<li>ASTM D975 - Standard Specification for Diesel Fuel</li>
+<li>ISO 6976:2016 - Natural gas — Calculation of calorific values, density, relative density and Wobbe index from composition</li>
+</ol>
+<h3 id="113-datos-asumidos-o-estimados">11.3 Datos Asumidos o Estimados</h3>
+<ul>
+<li>Consumos de combustible: Estimados basados en vehículos similares (confianza media)</li>
+<li>Autonomías deseadas: Asumidas (confianza baja - requiere validación)</li>
+<li>Precios de componentes: Estimados de mercado (confianza media-baja)</li>
+<li>Eficiencia de conversión: Asumida 95% (confianza media)</li>
+</ul>
+<hr />
+<p><strong>Fin del Informe</strong></p>
+<hr />
+<h2 id="anexo-a-glosario-de-terminos">Anexo A: Glosario de Términos</h2>
+<ul>
+<li><strong>GNV</strong>: Gas Natural Vehicular (CNG - Compressed Natural Gas)</li>
+<li><strong>GNL</strong>: Gas Natural Licuado (LNG - Liquefied Natural Gas)</li>
+<li><strong>LHV</strong>: Lower Heating Value (Poder Calorífico Inferior)</li>
+<li><strong>ECU</strong>: Engine Control Unit (Unidad de Control del Motor)</li>
+<li><strong>UNECE</strong>: United Nations Economic Commission for Europe</li>
+<li><strong>NTC</strong>: Norma Técnica Colombiana</li>
+<li><strong>RETIE</strong>: Reglamento Técnico de Instalaciones Eléctricas</li>
+<li><strong>RUNT</strong>: Registro Único Nacional de Tránsito</li>
+<li><strong>P&amp;ID</strong>: Piping and Instrumentation Diagram (Diagrama de Tuberías e Instrumentación)</li>
+</ul>
+<hr />
+<h2 id="anexo-b-conversiones-de-unidades">Anexo B: Conversiones de Unidades</h2>
+<table>
+<thead>
+<tr>
+<th>Magnitud</th>
+<th>SI</th>
+<th>Imperial</th>
+<th>Conversión</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Presión</td>
+<td>1 bar</td>
+<td>14.5 psi</td>
+<td>1 bar = 14.5038 psi</td>
+</tr>
+<tr>
+<td>Volumen</td>
+<td>1 m³</td>
+<td>1,000 L</td>
+<td>1 m³ = 1,000 L</td>
+</tr>
+<tr>
+<td>Masa</td>
+<td>1 kg</td>
+<td>2.20462 lb</td>
+<td>1 kg = 2.20462 lb</td>
+</tr>
+<tr>
+<td>Energía</td>
+<td>1 MJ</td>
+<td>0.2778 kWh</td>
+<td>1 MJ = 0.2778 kWh</td>
+</tr>
+<tr>
+<td>Temperatura</td>
+<td>K = °C + 273.15</td>
+<td>°F = (°C × 9/5) + 32</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>Documento generado el</strong>: 2024-12-19<br />
+<strong>Versión</strong>: 1.0<br />
+<strong>Autor</strong>: Ingeniería de Sistemas GNV<br />
+<strong>Cliente</strong>: PETROLIQUIDOS</p>
+    </div>
+    
+    <div class="footer">
+        Petroliquidos Gnv Informe V1 | Versión 1.0 | 19 de noviembre de 2025<br>
+        Confidencial - Uso exclusivo del cliente
+    </div>
+</body>
+</html>
