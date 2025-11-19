@@ -1594,6 +1594,233 @@ with tabs[TAB_MANIFEST]:
                                 st.session_state['decisiones_respuestas'][f"{question_id_med}_respuesta"] = respuesta_med
                                 st.session_state['decisiones_respuestas'][f"{question_id_med}_estado"] = "Respondido"
                                 st.success("✅ Respuesta guardada")
+            
+            # Botón para descargar decisiones pendientes en HTML
+            if st.session_state.get('decisiones_respuestas'):
+                st.markdown("---")
+                st.subheader("⬇️ Descargar Decisiones Pendientes en HTML")
+                
+                from datetime import datetime
+                fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                # Generar HTML de decisiones pendientes
+                html_decisiones = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset="utf-8">
+                <title>Decisiones Pendientes - {st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')}</title>
+                <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    max-width: 900px;
+                    margin: 40px auto;
+                    padding: 20px;
+                    line-height: 1.6;
+                    color: #333;
+                }}
+                .header {{
+                    border-bottom: 3px solid #FF7A00;
+                    padding-bottom: 15px;
+                    margin-bottom: 30px;
+                }}
+                h1 {{
+                    color: #0F1216;
+                    margin: 0;
+                    font-size: 24pt;
+                }}
+                h2 {{
+                    color: #124272;
+                    border-bottom: 2px solid #2AA1FF;
+                    padding-bottom: 8px;
+                    margin-top: 30px;
+                }}
+                h3 {{
+                    color: #173e62;
+                    margin-top: 25px;
+                }}
+                .info-box {{
+                    background-color: #f4f4f4;
+                    border-left: 4px solid #FF7A00;
+                    padding: 15px;
+                    margin: 20px 0;
+                }}
+                .decision-box {{
+                    background-color: #f9f9f9;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    padding: 15px;
+                    margin: 15px 0;
+                }}
+                .decision-box.high-priority {{
+                    border-left: 5px solid #dc3545;
+                }}
+                .decision-box.medium-priority {{
+                    border-left: 5px solid #ffc107;
+                }}
+                .response-box {{
+                    background-color: #e7f3ff;
+                    border-left: 4px solid #2AA1FF;
+                    padding: 12px;
+                    margin: 10px 0;
+                }}
+                table {{
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin: 20px 0;
+                    font-family: Arial;
+                }}
+                th, td {{
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: #173e62;
+                    color: #fff;
+                    font-weight: bold;
+                }}
+                tr:nth-child(even) {{
+                    background-color: #f9f9f9;
+                }}
+                .valor-destacado {{
+                    font-weight: bold;
+                    color: #0F1216;
+                }}
+                .footer {{
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #ddd;
+                    font-size: 0.9em;
+                    color: #6B7280;
+                    text-align: center;
+                }}
+                .status-badge {{
+                    display: inline-block;
+                    padding: 5px 10px;
+                    border-radius: 3px;
+                    font-size: 0.9em;
+                    font-weight: bold;
+                }}
+                .status-respondido {{
+                    background-color: #d4edda;
+                    color: #155724;
+                }}
+                .status-pendiente {{
+                    background-color: #fff3cd;
+                    color: #856404;
+                }}
+                </style>
+                </head>
+                <body>
+                <div class="header">
+                    <h1>Decisiones Pendientes - Formulario de Respuestas</h1>
+                    <p><strong>Cliente:</strong> {st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')}<br>
+                    <strong>Versión:</strong> {st.session_state.get('proyecto_version', 'v1')}<br>
+                    <strong>Fecha del Proyecto:</strong> {st.session_state.get('proyecto_fecha', 'N/A')}<br>
+                    <strong>Fecha de Generación:</strong> {fecha_actual}</p>
+                </div>
+                """
+                
+                # Agregar decisiones de alta prioridad
+                if 'pending_decisions' in manifest_data and 'high_priority' in manifest_data['pending_decisions']:
+                    html_decisiones += "<h2>🔴 Decisiones de Alta Prioridad</h2>"
+                    for idx, decision in enumerate(manifest_data['pending_decisions']['high_priority']):
+                        question_id = f"high_{idx}"
+                        estado = st.session_state['decisiones_respuestas'].get(f"{question_id}_estado", "Pendiente")
+                        status_class = "status-respondido" if estado == "Respondido" else "status-pendiente"
+                        
+                        html_decisiones += f"""
+                        <div class="decision-box high-priority">
+                            <h3>{idx+1}. {decision.get('question', 'N/A')}</h3>
+                            <p><strong>Impacto:</strong> {decision.get('impact', 'N/A')}</p>
+                            <p><strong>Estado:</strong> <span class="status-badge {status_class}">{estado}</span></p>
+                        """
+                        
+                        # Agregar respuestas guardadas
+                        if estado == "Respondido":
+                            html_decisiones += '<div class="response-box"><strong>Respuestas Guardadas:</strong><ul>'
+                            
+                            # Verificar qué tipo de respuesta es
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_marca"):
+                                html_decisiones += f"<li><strong>Marca:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_marca', 'N/A')}</li>"
+                                html_decisiones += f"<li><strong>Modelo:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_modelo', 'N/A')}</li>"
+                                html_decisiones += f"<li><strong>Año:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_año', 'N/A')}</li>"
+                                html_decisiones += f"<li><strong>Cantidad:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_cantidad', 'N/A')}</li>"
+                            
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_presupuesto_usd"):
+                                html_decisiones += f"<li><strong>Presupuesto USD:</strong> ${st.session_state['decisiones_respuestas'].get(f'{question_id}_presupuesto_usd', 0):,.0f}</li>"
+                                html_decisiones += f"<li><strong>Presupuesto COP:</strong> ${st.session_state['decisiones_respuestas'].get(f'{question_id}_presupuesto_cop', 0):,.0f}</li>"
+                                html_decisiones += f"<li><strong>Prioridad:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_preferencia', 'N/A')}</li>"
+                            
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_km_dia"):
+                                html_decisiones += f"<li><strong>Km/día:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_km_dia', 0):,.0f}</li>"
+                                html_decisiones += f"<li><strong>Km/mes:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_km_mes', 0):,.0f}</li>"
+                                html_decisiones += f"<li><strong>% Carretera:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_pct_carretera', 0)}%</li>"
+                                html_decisiones += f"<li><strong>Altitud:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_altitud', 0)} m.s.n.m.</li>"
+                            
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_tipo"):
+                                html_decisiones += f"<li><strong>Tipo de Conversión:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_tipo', 'N/A')}</li>"
+                                if st.session_state['decisiones_respuestas'].get(f"{question_id}_modo_uso"):
+                                    html_decisiones += f"<li><strong>Modo de Uso:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_modo_uso', 'N/A')}</li>"
+                            
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_fecha"):
+                                html_decisiones += f"<li><strong>Fecha Objetivo:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_fecha', 'N/A')}</li>"
+                                html_decisiones += f"<li><strong>Urgencia:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_urgencia', 'N/A')}</li>"
+                                html_decisiones += f"<li><strong>Unidades Piloto:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_unidades', 'N/A')}</li>"
+                            
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_respuesta"):
+                                html_decisiones += f"<li><strong>Respuesta:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_respuesta', 'N/A')}</li>"
+                            
+                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_observaciones"):
+                                html_decisiones += f"<li><strong>Observaciones:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_observaciones', 'N/A')}</li>"
+                            
+                            html_decisiones += '</ul></div>'
+                        
+                        html_decisiones += "</div>"
+                
+                # Agregar decisiones de prioridad media
+                if 'pending_decisions' in manifest_data and 'medium_priority' in manifest_data['pending_decisions']:
+                    html_decisiones += "<h2>🟡 Decisiones de Prioridad Media</h2>"
+                    for decision in manifest_data['pending_decisions']['medium_priority']:
+                        question_id_med = f"med_{decision.get('question', '')[:20]}"
+                        estado = st.session_state['decisiones_respuestas'].get(f"{question_id_med}_estado", "Pendiente")
+                        status_class = "status-respondido" if estado == "Respondido" else "status-pendiente"
+                        
+                        html_decisiones += f"""
+                        <div class="decision-box medium-priority">
+                            <h3>{decision.get('question', 'N/A')}</h3>
+                            <p><strong>Impacto:</strong> {decision.get('impact', 'N/A')}</p>
+                            <p><strong>Estado:</strong> <span class="status-badge {status_class}">{estado}</span></p>
+                        """
+                        
+                        if estado == "Respondido" and st.session_state['decisiones_respuestas'].get(f"{question_id_med}_respuesta"):
+                            html_decisiones += f"""
+                            <div class="response-box">
+                                <strong>Respuesta:</strong><br>
+                                {st.session_state['decisiones_respuestas'].get(f'{question_id_med}_respuesta', 'N/A')}
+                            </div>
+                            """
+                        
+                        html_decisiones += "</div>"
+                
+                # Footer
+                html_decisiones += f"""
+                <div class="footer">
+                    <p><strong>DECISIONES PENDIENTES - FORMULARIO DE RESPUESTAS</strong></p>
+                    <p>Este documento contiene las decisiones pendientes y las respuestas proporcionadas por el cliente.<br>
+                    <em>Confidencial - Uso exclusivo del cliente {st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')}</em></p>
+                    <p><small>Versión {st.session_state.get('proyecto_version', 'v1')} | Generado el {fecha_actual}</small></p>
+                </div>
+                </body>
+                </html>
+                """
+                
+                import base64
+                b64_decisiones = base64.b64encode(html_decisiones.encode('utf-8')).decode()
+                href_decisiones = f'<a href="data:text/html;charset=utf-8;base64,{b64_decisiones}" download="decisiones_pendientes_{st.session_state.get(\'proyecto_cliente\', \'PETROLIQUIDOS\')}_{datetime.now().strftime(\"%Y%m%d_%H%M%S\")}.html" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar Decisiones Pendientes en HTML</a>'
+                st.markdown(href_decisiones, unsafe_allow_html=True)
+                st.markdown("<br>", unsafe_allow_html=True)
         
         # Resumen de respuestas (solo para administradores)
         if st.session_state.get('user_role') == 'Administrador' and st.session_state.get('decisiones_respuestas'):
