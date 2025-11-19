@@ -47,6 +47,10 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
     if 'diagram_expander_open' not in st.session_state:
         st.session_state['diagram_expander_open'] = True  # Abrir por defecto si hay resultados
     
+    # Asegurar que el expander esté abierto si hay resultados
+    if calculation_results and bool(calculation_results):
+        st.session_state['diagram_expander_open'] = True
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
