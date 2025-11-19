@@ -41,18 +41,52 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
     else:
         st.success("✅ **Datos completos** - Puede generar el diagrama P&ID con los resultados del cálculo.")
     
+    # Inicializar estados en session_state
+    if 'diagram_action' not in st.session_state:
+        st.session_state['diagram_action'] = None
+    if 'diagram_expander_open' not in st.session_state:
+        st.session_state['diagram_expander_open'] = False
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        generate_btn = st.button("🔄 Generar Diagrama Actualizado", use_container_width=True, type="primary", disabled=bool(missing_keys))
+        generate_btn = st.button(
+            "🔄 Generar Diagrama Actualizado", 
+            width='stretch', 
+            type="primary", 
+            disabled=bool(missing_keys),
+            key="btn_generate_diagram"
+        )
+        if generate_btn:
+            st.session_state['diagram_action'] = 'generate'
+            st.session_state['diagram_expander_open'] = True
+            st.rerun()
     
     with col2:
-        view_vars_btn = st.button("📋 Ver Variables", use_container_width=True, disabled=bool(missing_keys))
+        view_vars_btn = st.button(
+            "📋 Ver Variables", 
+            width='stretch', 
+            disabled=bool(missing_keys),
+            key="btn_view_vars"
+        )
+        if view_vars_btn:
+            st.session_state['diagram_action'] = 'view_vars'
+            st.session_state['diagram_expander_open'] = True
+            st.rerun()
     
     with col3:
-        download_btn = st.button("📥 Descargar Diagrama", use_container_width=True)
+        download_btn = st.button(
+            "📥 Descargar Diagrama", 
+            width='stretch',
+            key="btn_download_diagram"
+        )
+        if download_btn:
+            st.session_state['diagram_action'] = 'download'
+            st.session_state['diagram_expander_open'] = True
+            st.rerun()
     
-    if generate_btn:
+    # Ejecutar acciones basadas en session_state
+    if st.session_state.get('diagram_action') == 'generate':
         try:
             # Mostrar información sobre el proceso
             st.info("🔄 **Iniciando generación del diagrama P&ID...**")
@@ -103,6 +137,9 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             # Guardar en session_state para descarga
             st.session_state['diagram_xml'] = xml_content
             st.session_state['diagram_generated'] = True
+            
+            # Limpiar acción para evitar re-ejecución
+            st.session_state['diagram_action'] = None
                 
         except Exception as e:
             st.error(f"❌ **Error al generar diagrama**")
@@ -115,8 +152,10 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             - Intente generar el diagrama nuevamente después de verificar los datos
             """)
             st.exception(e)
+            # Limpiar acción incluso si hay error
+            st.session_state['diagram_action'] = None
     
-    if view_vars_btn:
+    if st.session_state.get('diagram_action') == 'view_vars':
         try:
             st.info("📋 **Cargando variables del diagrama...**")
             agent = DrawIOAgent()
@@ -159,12 +198,17 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             
             st.info("💡 **Nota:** Si necesita modificar estos valores, actualice los parámetros en la pestaña de cálculo y vuelva a ejecutar el cálculo.")
             
+            # Limpiar acción
+            st.session_state['diagram_action'] = None
+            
         except Exception as e:
             st.error(f"❌ **Error al cargar variables**")
             st.error(f"**Detalles:** {str(e)}")
             st.warning("💡 **Sugerencias:** Verifique que los resultados del cálculo estén completos y sean válidos.")
+            # Limpiar acción incluso si hay error
+            st.session_state['diagram_action'] = None
     
-    if download_btn:
+    if st.session_state.get('diagram_action') == 'download':
         if 'diagram_xml' in st.session_state and st.session_state.get('diagram_generated'):
             xml_content = st.session_state['diagram_xml']
             filename = f"diagrama_gnv_{client_name}_{st.session_state.get('proyecto_fecha', 'v1')}.drawio.xml"
@@ -177,7 +221,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
                 data=xml_content,
                 file_name=filename,
                 mime="application/xml",
-                use_container_width=True
+                width='stretch'
             )
         else:
             st.warning("""
@@ -193,6 +237,8 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             
             **Nota:** El diagrama se genera automáticamente con las variables de los cálculos realizados.
             """)
+            # Limpiar acción
+            st.session_state['diagram_action'] = None
     
     # Información adicional
     st.markdown("---")

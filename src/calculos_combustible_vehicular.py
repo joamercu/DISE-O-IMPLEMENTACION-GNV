@@ -81,7 +81,7 @@ def show_login_page():
                 help="Guarda tu nombre de usuario para el próximo inicio de sesión (la contraseña NO se guarda por seguridad)"
             )
             
-            submitted = st.form_submit_button("🚀 Iniciar Sesión", use_container_width=True)
+            submitted = st.form_submit_button("🚀 Iniciar Sesión", width='stretch')
             
             if submitted:
                 if not username or not password:
@@ -107,7 +107,7 @@ def show_login_page():
         # Mostrar opción para limpiar usuario recordado si existe
         if load_remembered_user()[0]:
             st.markdown("---")
-            if st.button("🗑️ Olvidar usuario guardado", use_container_width=True):
+            if st.button("🗑️ Olvidar usuario guardado", width='stretch'):
                 clear_remembered_user()
                 st.success("✅ Usuario recordado eliminado")
                 st.rerun()
@@ -124,7 +124,7 @@ if not st.session_state['authenticated']:
 # Botón de cerrar sesión en el sidebar
 with st.sidebar:
     st.markdown("---")
-    if st.button("🚪 Cerrar Sesión", use_container_width=True):
+    if st.button("🚪 Cerrar Sesión", width='stretch'):
         st.session_state['authenticated'] = False
         st.session_state['username'] = None
         st.session_state['user_role'] = None
@@ -382,7 +382,7 @@ with tabs[TAB_CALCULOS]:
     
     # Botón para calcular
     st.markdown("---")
-    calcular = st.button("🚀 Calcular Sistema GNV", type="primary", use_container_width=True)
+    calcular = st.button("🚀 Calcular Sistema GNV", type="primary", width='stretch')
     
     if calcular:
         # ============================================
@@ -529,7 +529,7 @@ with tabs[TAB_CALCULOS]:
         }
         
         df_resumen = pd.DataFrame(resumen_data)
-        st.dataframe(df_resumen, use_container_width=True, hide_index=True)
+        st.dataframe(df_resumen, width='stretch', hide_index=True)
         
         # Alertas y recomendaciones
         st.markdown("---")
@@ -549,7 +549,9 @@ with tabs[TAB_CALCULOS]:
         
         # Sección de diagrama P&ID
         st.markdown("---")
-        with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=False):
+        # Mantener expander abierto si hay una acción activa
+        expander_expanded = st.session_state.get('diagram_expander_open', False) or st.session_state.get('diagram_action') is not None
+        with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=expander_expanded):
             show_diagram_generator(
                 st.session_state['calculo_resultado'],
                 st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')
@@ -708,7 +710,7 @@ Prioridad: Balance costo-beneficio, autonomía mínima 600 km."""
             placeholder="Ingrese información sobre tipo de tanques, presión, restricciones y preferencias técnicas..."
         )
         
-        submitted = st.form_submit_button("💾 Guardar Datos del Cliente", use_container_width=True)
+        submitted = st.form_submit_button("💾 Guardar Datos del Cliente", width='stretch')
         
         if submitted:
             # Obtener timestamp actual
@@ -1062,7 +1064,7 @@ with tabs[TAB_SENSIBILIDAD]:
             })
         
         df_consumo = pd.DataFrame(variaciones_consumo)
-        st.dataframe(df_consumo, use_container_width=True, hide_index=True)
+        st.dataframe(df_consumo, width='stretch', hide_index=True)
         
         # Análisis de variación de autonomía
         st.subheader("Variación de Autonomía")
@@ -1082,7 +1084,7 @@ with tabs[TAB_SENSIBILIDAD]:
             })
         
         df_autonomia = pd.DataFrame(variaciones_autonomia)
-        st.dataframe(df_autonomia, use_container_width=True, hide_index=True)
+        st.dataframe(df_autonomia, width='stretch', hide_index=True)
         
         # Gráficos de sensibilidad
         st.subheader("Visualización de Sensibilidad")
@@ -1273,7 +1275,7 @@ with tabs[TAB_MANIFEST]:
                 st.markdown("#### Configuraciones Analizadas")
                 configs = tech_params['configurations_analyzed']
                 configs_df = pd.DataFrame(configs)
-                st.dataframe(configs_df, use_container_width=True, hide_index=True)
+                st.dataframe(configs_df, width='stretch', hide_index=True)
         
         # Regulaciones
         if 'regulations_compliance' in manifest_data:
@@ -1309,7 +1311,7 @@ with tabs[TAB_MANIFEST]:
             
             risks = manifest_data['risks_identified']
             risks_df = pd.DataFrame(risks)
-            st.dataframe(risks_df, use_container_width=True, hide_index=True)
+            st.dataframe(risks_df, width='stretch', hide_index=True)
         
         # Decisiones Pendientes - Formularios Interactivos
         if 'pending_decisions' in manifest_data:
@@ -1368,7 +1370,7 @@ with tabs[TAB_MANIFEST]:
                                                             help="Cualquier información adicional sobre los vehículos (configuración, motor, etc.)",
                                                             height=100)
                                 
-                                if st.form_submit_button("💾 Guardar Respuesta", use_container_width=True):
+                                if st.form_submit_button("💾 Guardar Respuesta", width='stretch'):
                                     st.session_state['decisiones_respuestas'][f"{question_id}_marca"] = marca
                                     st.session_state['decisiones_respuestas'][f"{question_id}_modelo"] = modelo
                                     st.session_state['decisiones_respuestas'][f"{question_id}_año"] = año
@@ -1406,7 +1408,7 @@ with tabs[TAB_MANIFEST]:
                                                             help="Restricciones presupuestarias adicionales o consideraciones especiales",
                                                             height=100)
                                 
-                                if st.form_submit_button("💾 Guardar Respuesta", use_container_width=True):
+                                if st.form_submit_button("💾 Guardar Respuesta", width='stretch'):
                                     st.session_state['decisiones_respuestas'][f"{question_id}_presupuesto_usd"] = presupuesto_usd
                                     st.session_state['decisiones_respuestas'][f"{question_id}_presupuesto_cop"] = presupuesto_cop
                                     st.session_state['decisiones_respuestas'][f"{question_id}_preferencia"] = preferencia
@@ -1457,7 +1459,7 @@ with tabs[TAB_MANIFEST]:
                                                             help="Rutas principales, condiciones especiales de operación, etc.",
                                                             height=100)
                                 
-                                if st.form_submit_button("💾 Guardar Respuesta", use_container_width=True):
+                                if st.form_submit_button("💾 Guardar Respuesta", width='stretch'):
                                     st.session_state['decisiones_respuestas'][f"{question_id}_km_dia"] = km_dia
                                     st.session_state['decisiones_respuestas'][f"{question_id}_km_mes"] = km_mes
                                     st.session_state['decisiones_respuestas'][f"{question_id}_pct_carretera"] = pct_carretera
@@ -1493,7 +1495,7 @@ with tabs[TAB_MANIFEST]:
                                                             value=st.session_state['decisiones_respuestas'].get(f"{question_id}_observaciones", ""),
                                                             height=100)
                                 
-                                if st.form_submit_button("💾 Guardar Respuesta", use_container_width=True):
+                                if st.form_submit_button("💾 Guardar Respuesta", width='stretch'):
                                     st.session_state['decisiones_respuestas'][f"{question_id}_tipo"] = tipo_conversion
                                     if tipo_conversion == "Bi-fuel (GNV + Diésel)":
                                         st.session_state['decisiones_respuestas'][f"{question_id}_modo_uso"] = modo_uso
@@ -1527,7 +1529,7 @@ with tabs[TAB_MANIFEST]:
                                                             help="Restricciones de tiempo, eventos importantes, dependencias, etc.",
                                                             height=100)
                                 
-                                if st.form_submit_button("💾 Guardar Respuesta", use_container_width=True):
+                                if st.form_submit_button("💾 Guardar Respuesta", width='stretch'):
                                     if fecha_objetivo:
                                         st.session_state['decisiones_respuestas'][f"{question_id}_fecha"] = fecha_objetivo.isoformat()
                                     st.session_state['decisiones_respuestas'][f"{question_id}_urgencia"] = urgencia
@@ -1547,7 +1549,7 @@ with tabs[TAB_MANIFEST]:
                                                             value=st.session_state['decisiones_respuestas'].get(f"{question_id}_observaciones", ""),
                                                             height=100)
                                 
-                                if st.form_submit_button("💾 Guardar Respuesta", use_container_width=True):
+                                if st.form_submit_button("💾 Guardar Respuesta", width='stretch'):
                                     st.session_state['decisiones_respuestas'][f"{question_id}_respuesta"] = respuesta
                                     st.session_state['decisiones_respuestas'][f"{question_id}_observaciones"] = observaciones
                                     st.session_state['decisiones_respuestas'][f"{question_id}_estado"] = "Respondido"
@@ -1574,7 +1576,7 @@ with tabs[TAB_MANIFEST]:
                             respuesta_med = st.text_area("✍️ Su Respuesta",
                                                           value=st.session_state['decisiones_respuestas'].get(f"{question_id_med}_respuesta", ""),
                                                           height=100)
-                            if st.form_submit_button("💾 Guardar", use_container_width=True):
+                            if st.form_submit_button("💾 Guardar", width='stretch'):
                                 st.session_state['decisiones_respuestas'][f"{question_id_med}_respuesta"] = respuesta_med
                                 st.session_state['decisiones_respuestas'][f"{question_id_med}_estado"] = "Respondido"
                                 st.success("✅ Respuesta guardada")
