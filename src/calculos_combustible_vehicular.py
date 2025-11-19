@@ -549,8 +549,11 @@ with tabs[TAB_CALCULOS]:
         
         # Sección de diagrama P&ID
         st.markdown("---")
-        # Mantener expander abierto si hay una acción activa
-        expander_expanded = st.session_state.get('diagram_expander_open', False) or st.session_state.get('diagram_action') is not None
+        # Mantener expander abierto si hay una acción activa, si ya se generó un diagrama, o si el usuario lo dejó abierto
+        has_action = st.session_state.get('diagram_action') is not None
+        has_generated = st.session_state.get('diagram_generated', False)
+        was_open = st.session_state.get('diagram_expander_open', False)
+        expander_expanded = has_action or has_generated or was_open
         with st.expander("📊 Diagrama P&ID del Sistema GNV", expanded=expander_expanded):
             show_diagram_generator(
                 st.session_state['calculo_resultado'],
