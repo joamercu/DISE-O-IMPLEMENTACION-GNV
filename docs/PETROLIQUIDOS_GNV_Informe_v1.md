@@ -697,7 +697,7 @@ Donde:
 | Eficiencia conversión GNV | 95% vs diésel | Media | Validar con pruebas |
 | Volumen unitario tanque | 0.080 m³ | Media | Confirmar con proveedor |
 | Peso unitario tanque | 65 kg | Media | Confirmar con proveedor |
-| Tasa de cambio USD/COP | 4,000 | Baja | Actualizar al momento de cotización |
+| Tasa de cambio USD/COP | 3,800 | Baja | Actualizar al momento de cotización |
 
 ### 9.4 Items de Alto Riesgo que Requieren Atención Inmediata
 

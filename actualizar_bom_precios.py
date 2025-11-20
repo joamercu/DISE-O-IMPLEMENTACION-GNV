@@ -34,9 +34,9 @@ def actualizar_bom():
     PRECIOS_ACTUALIZADOS = {
         # Tanques CNG Tipo 3, 80L, 200 bar
         # Rango documentado: 3,500,000 - 5,500,000 COP (80L)
-        # Promedio: ~4,500,000 COP = ~1,125 USD (tasa 4000)
+        # Promedio: ~4,500,000 COP = ~1,184 USD (tasa 3800)
         'Tanque CNG': {
-            'precio_usd': 1125,  # Basado en 4,500,000 COP / 4000
+            'precio_usd': 1184,  # Basado en 4,500,000 COP / 3800
             'precio_cop': 4500000,
             'cantidad': NUM_TANQUES,
             'notas': 'Precio actualizado según mercado Colombia 2025. Rango: 3.5M-5.5M COP'
@@ -44,7 +44,7 @@ def actualizar_bom():
         
         # Soporte tanque
         'Soporte tanque': {
-            'precio_usd': 120,
+            'precio_usd': 126,
             'precio_cop': 480000,
             'cantidad': NUM_TANQUES,
             'notas': 'Set completo por tanque'
@@ -53,7 +53,7 @@ def actualizar_bom():
         # Regulador 1ra etapa con calentador
         # Precio documentado: 1,200-1,500 USD típico
         'Regulador 1ra etapa': {
-            'precio_usd': 1350,
+            'precio_usd': 1421,
             'precio_cop': 5400000,
             'cantidad': 1,
             'notas': '200-250 bar → 20-40 bar, con calentador integrado'
@@ -61,7 +61,7 @@ def actualizar_bom():
         
         # Regulador 2da etapa
         'Regulador 2da etapa': {
-            'precio_usd': 850,
+            'precio_usd': 895,
             'precio_cop': 3400000,
             'cantidad': 1,
             'notas': '20-40 bar → 7-10 bar'
@@ -69,7 +69,7 @@ def actualizar_bom():
         
         # Filtro alta presión
         'Filtro alta presión': {
-            'precio_usd': 180,
+            'precio_usd': 189,
             'precio_cop': 720000,
             'cantidad': 1,
             'notas': 'Filtro de gas, alta presión, elemento reemplazable'
@@ -77,7 +77,7 @@ def actualizar_bom():
         
         # Válvula shut-off
         'Válvula shut-off': {
-            'precio_usd': 350,
+            'precio_usd': 368,
             'precio_cop': 1400000,
             'cantidad': 1,
             'notas': 'Electroválvula automática, 200 bar, controlada por ECU'
@@ -85,7 +85,7 @@ def actualizar_bom():
         
         # Válvulas de alivio (PRV)
         'Válvulas de alivio': {
-            'precio_usd': 220,
+            'precio_usd': 232,
             'precio_cop': 880000,
             'cantidad': 3,  # Una por grupo de tanques
             'notas': 'PRV 250 bar, una por cada grupo de tanques'
@@ -93,7 +93,7 @@ def actualizar_bom():
         
         # Manifold de distribución
         'Manifold': {
-            'precio_usd': 600,
+            'precio_usd': 632,
             'precio_cop': 2400000,
             'cantidad': 1,
             'notas': 'Conexión múltiple para 18 tanques, fabricación local recomendada'
@@ -102,7 +102,7 @@ def actualizar_bom():
         # ECU
         # Precio documentado: 1,500-2,000 USD para sistemas profesionales
         'ECU': {
-            'precio_usd': 1750,
+            'precio_usd': 1842,
             'precio_cop': 7000000,
             'cantidad': 1,
             'notas': 'Engine Control Unit para GNV, integración CAN Bus'
@@ -110,7 +110,7 @@ def actualizar_bom():
         
         # Inyectores secuenciales
         'Inyectores': {
-            'precio_usd': 900,
+            'precio_usd': 947,
             'precio_cop': 3600000,
             'cantidad': 1,
             'notas': 'Set 6 unidades, inyección secuencial, control ECU'
@@ -118,7 +118,7 @@ def actualizar_bom():
         
         # Sensores de presión
         'Sensores presión': {
-            'precio_usd': 90,
+            'precio_usd': 95,
             'precio_cop': 360000,
             'cantidad': 3,
             'notas': 'Sensor presión alta (200-250 bar), media (20-40 bar), baja (7-10 bar)'
@@ -126,7 +126,7 @@ def actualizar_bom():
         
         # Sensores de temperatura
         'Sensores temperatura': {
-            'precio_usd': 70,
+            'precio_usd': 74,
             'precio_cop': 280000,
             'cantidad': 2,
             'notas': 'Temperatura alta y baja presión'
@@ -134,7 +134,7 @@ def actualizar_bom():
         
         # Sensor lambda
         'Sensor lambda': {
-            'precio_usd': 180,
+            'precio_usd': 189,
             'precio_cop': 720000,
             'cantidad': 1,
             'notas': 'Sensor O2, control mezcla aire-combustible'
@@ -142,7 +142,7 @@ def actualizar_bom():
         
         # Cableado y conectores
         'Cableado': {
-            'precio_usd': 350,
+            'precio_usd': 368,
             'precio_cop': 1400000,
             'cantidad': 1,
             'notas': 'Kit completo cableado, conectores, protecciones'
@@ -150,7 +150,7 @@ def actualizar_bom():
         
         # Tuberías alta presión
         'Tuberías alta presión': {
-            'precio_usd': 500,
+            'precio_usd': 526,
             'precio_cop': 2000000,
             'cantidad': 1,
             'notas': 'Acero inoxidable, conexiones tipo flare, 200 bar'
@@ -158,7 +158,7 @@ def actualizar_bom():
         
         # Tuberías media presión
         'Tuberías media presión': {
-            'precio_usd': 250,
+            'precio_usd': 263,
             'precio_cop': 1000000,
             'cantidad': 1,
             'notas': 'Acero/cobre, 20-40 bar'
@@ -166,7 +166,7 @@ def actualizar_bom():
         
         # Tuberías baja presión
         'Tuberías baja presión': {
-            'precio_usd': 180,
+            'precio_usd': 189,
             'precio_cop': 720000,
             'cantidad': 1,
             'notas': 'Flexible certificado, 7-10 bar'
@@ -174,7 +174,7 @@ def actualizar_bom():
         
         # Válvula de llenado
         'Válvula llenado': {
-            'precio_usd': 300,
+            'precio_usd': 316,
             'precio_cop': 1200000,
             'cantidad': 1,
             'notas': 'Receptáculo NGV1/NGV2, conexión estación servicio'
@@ -182,7 +182,7 @@ def actualizar_bom():
         
         # Manómetros
         'Manómetros': {
-            'precio_usd': 120,
+            'precio_usd': 126,
             'precio_cop': 480000,
             'cantidad': 3,
             'notas': 'Indicadores presión, tablero y sistema'
@@ -190,7 +190,7 @@ def actualizar_bom():
         
         # Sistema de montaje
         'Sistema montaje': {
-            'precio_usd': 600,
+            'precio_usd': 632,
             'precio_cop': 2400000,
             'cantidad': 1,
             'notas': 'Soportes adicionales, estructura, fijaciones'
@@ -198,7 +198,7 @@ def actualizar_bom():
         
         # Mano de obra instalación
         'Mano de obra': {
-            'precio_usd': 2200,
+            'precio_usd': 2316,
             'precio_cop': 8800000,
             'cantidad': 1,
             'notas': 'Instalación completa, taller certificado, 40-60 horas'
@@ -206,7 +206,7 @@ def actualizar_bom():
         
         # Pruebas y puesta en marcha
         'Pruebas': {
-            'precio_usd': 600,
+            'precio_usd': 632,
             'precio_cop': 2400000,
             'cantidad': 1,
             'notas': 'Pruebas de presión, fugas, calibración ECU, puesta en marcha'
@@ -214,7 +214,7 @@ def actualizar_bom():
         
         # Homologación
         'Homologación': {
-            'precio_usd': 400,
+            'precio_usd': 421,
             'precio_cop': 1600000,
             'cantidad': 1,
             'notas': 'Inspección técnica, certificación, documentación'

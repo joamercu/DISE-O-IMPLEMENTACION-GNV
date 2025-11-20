@@ -48,7 +48,7 @@ DEFAULT_EXCLUSION_IVA_PORCENTAJE = 1.0 # 100% de exclusión si aplica
 # Parámetros de Precios de Combustible (para cálculos económicos)
 DEFAULT_PRECIO_DIESEL_COP_LITRO = 4500.0  # Precio diésel en COP por litro
 DEFAULT_PRECIO_GNV_COP_M3 = 2500.0        # Precio GNV en COP por m³
-DEFAULT_TASA_CAMBIO_USD_COP = 4000.0     # Tasa de cambio USD/COP
+DEFAULT_TASA_CAMBIO_USD_COP = 3800.0     # Tasa de cambio USD/COP
 
 # Parámetros de Análisis Económico
 DEFAULT_ANOS_ANALISIS = 5              # Años para análisis de ROI
@@ -256,7 +256,7 @@ DEFAULT_EXCLUSION_IVA_PORCENTAJE = 1.0 # 100% de exclusión si aplica
 # Valores estimados - deben actualizarse según mercado actual
 DEFAULT_PRECIO_DIESEL_COP_LITRO = 4500.0  # Precio diésel en COP por litro
 DEFAULT_PRECIO_GNV_COP_M3 = 2500.0        # Precio GNV en COP por m³
-DEFAULT_TASA_CAMBIO_USD_COP = 4000.0     # Tasa de cambio USD/COP
+DEFAULT_TASA_CAMBIO_USD_COP = 3800.0     # Tasa de cambio USD/COP
 
 # Parámetros de Análisis Económico
 DEFAULT_ANOS_ANALISIS = 5              # Años para análisis de ROI
@@ -335,7 +335,7 @@ IVA_COLOMBIA = 0.19  # 19% IVA
 ### Precios de Combustible
 - **Precio Diésel:** 4500.0 COP/litro (valor estimado, actualizar según mercado)
 - **Precio GNV:** 2500.0 COP/m³ (valor estimado, actualizar según mercado)
-- **Tasa de Cambio:** 4000.0 COP/USD (valor estimado, actualizar según mercado)
+- **Tasa de Cambio:** 3800.0 COP/USD (valor estimado, actualizar según mercado)
 - **Consideraciones:** Estos valores deben actualizarse regularmente según condiciones de mercado
 
 ### Parámetros de Análisis Económico

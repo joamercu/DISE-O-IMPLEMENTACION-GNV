@@ -18,13 +18,13 @@ Esta propuesta presenta los costos actualizados para la implementación de un si
 
 ### Costo Total del Proyecto
 
-| Concepto | USD | COP (Tasa 4,000) |
+| Concepto | USD | COP (Tasa 3,800) |
 |----------|-----|------------------|
-| **Subtotal Componentes** | $35,380 | $141,520,000 |
-| **Contingencia (15%)** | $5,307 | $21,228,000 |
-| **Subtotal + Contingencia** | $40,687 | $162,748,000 |
-| **Margen Comercial (20%)** | $8,137 | $32,549,600 |
-| **TOTAL FINAL** | **$48,824** | **$195,297,600** |
+| **Subtotal Componentes** | $35,380 | $134,444,000 |
+| **Contingencia (15%)** | $5,307 | $20,166,600 |
+| **Subtotal + Contingencia** | $40,687 | $154,610,600 |
+| **Margen Comercial (20%)** | $8,137 | $30,922,120 |
+| **TOTAL FINAL** | **$48,824** | **$185,532,720** |
 
 ---
 
@@ -197,9 +197,9 @@ Sensores:                                 1.7%  ($590)
 
 ### Costo por Tanque
 
-- **Costo unitario tanque:** $1,125 USD ($4,500,000 COP)
-- **Costo unitario soporte:** $120 USD ($480,000 COP)
-- **Costo total por tanque instalado:** ~$1,245 USD ($4,980,000 COP)
+- **Costo unitario tanque:** $1,184 USD ($4,500,000 COP)
+- **Costo unitario soporte:** $126 USD ($480,000 COP)
+- **Costo total por tanque instalado:** ~$1,310 USD ($4,980,000 COP)
 
 ---
 
@@ -229,7 +229,7 @@ Sensores:                                 1.7%  ($590)
 
 ### Supuestos de la Propuesta
 
-1. **Tasa de cambio:** 4,000 COP/USD (actualizar al momento de cotización)
+1. **Tasa de cambio:** 3,800 COP/USD (actualizar al momento de cotización)
 2. **Disponibilidad de componentes:** 4-8 semanas (lead time)
 3. **Instalación:** Taller certificado disponible
 4. **Certificaciones:** Cumplimiento normativa colombiana

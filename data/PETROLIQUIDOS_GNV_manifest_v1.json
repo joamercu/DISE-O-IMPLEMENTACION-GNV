@@ -176,7 +176,7 @@
       ],
       "low": [
         "Autonomía deseada (600-800 km)",
-        "Tasa de cambio USD/COP (4000)",
+        "Tasa de cambio USD/COP (3800)",
         "Precios de componentes (estimados de mercado)"
       ]
     }
@@ -340,35 +340,35 @@
   },
   "cost_estimates": {
     "currency_base": "USD",
-    "exchange_rate": 4000,
+    "exchange_rate": 3800,
     "currency_local": "COP",
     "note": "Tasa de cambio estimada - actualizar al momento de cotización",
     "breakdown": {
       "subtotal_components": {
         "usd": 35380.0,
-        "cop": 141520000.0,
+        "cop": 134444000.0,
         "note": "Actualizado desde Excel BOM v2 - requiere validación con proveedores"
       },
       "contingency": {
         "percentage": 15,
         "usd": 5307.0,
-        "cop": 21228000.0
+        "cop": 20166600.0
       },
       "margin": {
         "percentage": 20,
         "usd": 8137.4,
-        "cop": 32549600.0
+        "cop": 30922120.0
       },
       "total_estimated": {
         "usd": 48824.4,
-        "cop": 195297600.0,
+        "cop": 185532720.0,
         "uncertainty": "Alta - precios estimados, requieren cotización formal"
       },
       "distribution_by_category": [
         {
           "categoria": "Almacenamiento",
           "total_usd": 22410.0,
-          "total_cop": 89640000.0,
+          "total_cop": 85158000.0,
           "porcentaje": 63.34,
           "componentes": [
             {
@@ -388,7 +388,7 @@
         {
           "categoria": "Regulación y Control",
           "total_usd": 3690.0,
-          "total_cop": 14760000.0,
+          "total_cop": 14022000.0,
           "porcentaje": 10.43,
           "componentes": [
             {
@@ -432,7 +432,7 @@
         {
           "categoria": "Control Electrónico",
           "total_usd": 3590.0,
-          "total_cop": 14360000.0,
+          "total_cop": 13642000.0,
           "porcentaje": 10.15,
           "componentes": [
             {
@@ -476,7 +476,7 @@
         {
           "categoria": "Servicios e Instalación",
           "total_usd": 3200.0,
-          "total_cop": 12800000.0,
+          "total_cop": 12160000.0,
           "porcentaje": 9.04,
           "componentes": [
             {
@@ -502,7 +502,7 @@
         {
           "categoria": "Infraestructura",
           "total_usd": 2130.0,
-          "total_cop": 8520000.0,
+          "total_cop": 8094000.0,
           "porcentaje": 6.02,
           "componentes": [
             {
@@ -540,7 +540,7 @@
         {
           "categoria": "Instrumentación",
           "total_usd": 360.0,
-          "total_cop": 1440000.0,
+          "total_cop": 1368000.0,
           "porcentaje": 1.02,
           "componentes": [
             {

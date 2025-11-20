@@ -176,7 +176,7 @@
       ],
       "low": [
         "Autonomía deseada (600-800 km)",
-        "Tasa de cambio USD/COP (4000)",
+        "Tasa de cambio USD/COP (3800)",
         "Precios de componentes (estimados de mercado)"
       ]
     }
@@ -340,28 +340,28 @@
   },
   "cost_estimates": {
     "currency_base": "USD",
-    "exchange_rate": 4000,
+    "exchange_rate": 3800,
     "currency_local": "COP",
     "note": "Tasa de cambio estimada - actualizar al momento de cotización",
     "breakdown": {
       "subtotal_components": {
         "usd": 35380.0,
-        "cop": 141520000.0,
+        "cop": 134444000.0,
         "note": "Actualizado desde Excel BOM v2 - requiere validación con proveedores"
       },
       "contingency": {
         "percentage": 15,
         "usd": 5307.0,
-        "cop": 21228000.0
+        "cop": 20166600.0
       },
       "margin": {
         "percentage": 20,
         "usd": 8137.4,
-        "cop": 32549600.0
+        "cop": 30922120.0
       },
       "total_estimated": {
         "usd": 48824.4,
-        "cop": 195297600.0,
+        "cop": 185532720.0,
         "uncertainty": "Alta - precios estimados, requieren cotización formal"
       }
     }
