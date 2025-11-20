@@ -178,7 +178,7 @@ P_adicional = n_tanques × (m_tanque + m_soportes + m_accesorios)
 
 ### Tractores 4x2
 - Consumo: 30-40 L/100 km
-- Autonomía: 600-800 km
+- Autonomía: 600 km
 - Presión: 200 bar
 - Tanques: Tipo 3, 80 L
 

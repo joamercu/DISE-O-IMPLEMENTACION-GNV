@@ -1,0 +1,451 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="28.2.8" modified="2025-11-20T10:45:53.371899Z" etag="drawio" type="device">
+  
+  
+  <diagram name="P&amp;ID Sistema GNV - PETROLIQUIDOS" id="PETROLIQUIDOS-GNV-2024-abc123xyz">
+    
+    
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1800" math="0" shadow="0">
+      
+      
+      <root>
+        
+        
+        <mxCell id="0" />
+        
+        
+        <mxCell id="1" parent="0" />
+        
+        
+        <mxCell id="2" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;PDF - Sistema GNV para Vehículos Pesados&lt;br&gt;CLIENTE : PETROLIQUIDOS&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 24px;&quot;&gt;DESARROLLO : WELDTECH SOLUTION&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 24px;&quot;&gt;VERSION: PROPUESTA TECNICA&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 24px;&quot;&gt;REVISION: 0 (PROPUESTA PREELIMINAR)&lt;/span&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="700" y="20" width="500" height="50" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="3" value="Tanque CNG&amp;#xa;Tipo 3&amp;#xa;80L, 200 bar" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;boundedLbl=1;backgroundOutline=1;size=15" vertex="1" parent="1">
+          <mxGeometry x="50.0" y="321.0" width="100.0" height="120.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="4" value="Tanque CNG&amp;#xa;Tipo 3&amp;#xa;80L, 200 bar" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;boundedLbl=1;backgroundOutline=1;size=15" vertex="1" parent="1">
+          <mxGeometry x="200.0" y="321.0" width="100.0" height="120.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="5" value="Tanque CNG&amp;#xa;Tipo 3&amp;#xa;80L, 200 bar" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;boundedLbl=1;backgroundOutline=1;size=15" vertex="1" parent="1">
+          <mxGeometry x="350.0" y="321.0" width="100.0" height="120.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="6" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;(15 tanques más)&lt;br&gt;Total: 18 tanques&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="140.0" y="171.0" width="220.0" height="50.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="7" value="PRV&amp;#xa;250 bar" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="225.0" y="246.0" width="50.0" height="50.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="8" value="Manifold de&amp;#xa;Distribución" style="shape=parallelogram;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;perimeter=parallelogramPerimeter" vertex="1" parent="1">
+          <mxGeometry x="470.0" y="541.0" width="140.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="9" value="Válvula&amp;#xa;Shut-off&amp;#xa;Automática" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="830.0" y="351.0" width="60.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="10" value="Regulador&amp;#xa;1ra Etapa&amp;#xa;200-250 bar →&amp;#xa;20-40 bar&amp;#xa;+ Calentador" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;perimeter=hexagonPerimeter2" vertex="1" parent="1">
+          <mxGeometry x="1100.0" y="321.0" width="160.0" height="120.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="11" value="Filtro de Gas&amp;#xa;Alta Presión" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1400.0" y="321.0" width="100.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="12" value="Regulador&amp;#xa;2da Etapa&amp;#xa;20-40 bar →&amp;#xa;7.0-10.0 bar" style="shape=hexagon;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;perimeter=hexagonPerimeter2" vertex="1" parent="1">
+          <mxGeometry x="1760.0" y="311.0" width="160.0" height="120.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="13" value="ECU&amp;#xa;(Engine Control Unit)" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;dashed=1;dashPattern=8 8" vertex="1" parent="1">
+          <mxGeometry x="1050.0" y="521.0" width="160.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="14" value="PT-HP-101&amp;#xa;P = 200-250 bar" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1110.0" y="1281.0" width="80.0" height="50.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="15" value="TT-HP-201&amp;#xa;T = 25-60 °C" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1110.0" y="1171.0" width="80.0" height="50.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="16" value="PT-IP-102&amp;#xa;P = 20-40 bar" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="850.0" y="1081.0" width="80.0" height="50.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="17" value="TT-IP-202&amp;#xa;T = 20-40 °C" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="725.0" y="996.0" width="80.0" height="50.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="18" value="PT-LP-103&amp;#xa;P = 7-10 bar" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="725.0" y="881.0" width="80.0" height="50.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="19" value="LT-301&amp;#xa;λ = 1.0" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="830.0" y="671.0" width="60.0" height="50.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="20" value="Inyectores de Gas&amp;#xa;Secuenciales&amp;#xa;(6 unidades)" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter" vertex="1" parent="1">
+          <mxGeometry x="1760.0" y="813.5" width="160.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="21" value="Motor&amp;#xa;Diésel&amp;#xa;Convertido" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="2170.0" y="761.0" width="210.0" height="185.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="22" value="Válvula de&amp;#xa;Llenado&amp;#xa;(Receptáculo)" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter;strokeWidth=2" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="60.0" y="611.0" width="80.0" height="80.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="23" value="Gas CNG&amp;#xa;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="3" target="8" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="125.0" y="150.0" /><mxPoint x="1120.0" y="150.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="24" value="Gas CNG&amp;#xa;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="4" target="8" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="350.0" y="150.0" /><mxPoint x="1120.0" y="150.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="25" value="Gas CNG&amp;#xa;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="5" target="8" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="575.0" y="150.0" /><mxPoint x="1120.0" y="150.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="26" value="Gas CNG&amp;#xa;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="8" target="9" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="27" value="Gas CNG&amp;#xa;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="9" target="10" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="1305.0" y="150.0" /><mxPoint x="1730.0" y="150.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="28" value="Gas Regulado&amp;#xa;20-40 bar" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="10" target="11" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="1730.0" y="150.0" /><mxPoint x="2075.0" y="150.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="29" value="Gas Regulado&amp;#xa;20-40 bar" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="11" target="12" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="2075.0" y="150.0" /><mxPoint x="2480.0" y="150.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="30" value="Gas Regulado&amp;#xa;7-10 bar" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="12" target="56" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="31" value="Gas a Motor&amp;#xa;7-10 bar" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#b85450;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="20" target="21" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1440" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="32" value="Control" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d79b00;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="13" target="10" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="1050.0" y="790.0" /><mxPoint x="1050.0" y="360.0" /></Array></mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="33" value="Control" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d79b00;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="13" target="20" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2255.0" y="790.0" /><mxPoint x="2255.0" y="640.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="34" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="14" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1635.0" y="325.0" /><mxPoint x="1635.0" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="35" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="19" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2380.0" y="700.0" /><mxPoint x="2380.0" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="36" value="Llenado" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6c8ebf;dashed=1;fontSize=10;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0" edge="1" source="22" target="3" parent="1">
+          
+          
+          <mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points"><mxPoint x="0.0" y="715.0" /><mxPoint x="0.0" y="360.0" /></Array></mxGeometry>
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="37" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;NOTAS:&lt;br&gt;• Presiones indicadas son rangos operativos&lt;br&gt;• Todos los componentes deben cumplir UNECE R110&lt;br&gt;• Válvulas de alivio (PRV) en cada tanque (250 bar)&lt;br&gt;• Válvula EFC (Exceso de Flujo) en línea principal&lt;br&gt;• Sistema de llenado independiente (no mostrado en detalle)&lt;br&gt;• ECU controla inyección, mezcla y sincronización&lt;br&gt;• Sensores con nomenclatura ISA: PT=Presión, TT=Temperatura, LT=Lambda, FT=Flujo&lt;br&gt;• Tuberías: Acero inoxidable alta presión, Cobre baja presión&lt;/font&gt;" style="text;html=1;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=9" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="90.0" y="1116.0" width="670.0" height="300.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="38" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;VARIABLES DEL PROYECTO:&lt;br&gt;• Número de tanques: 18&lt;br&gt;• Presión de llenado: 200 bar&lt;br&gt;• Volumen total de gas: 1.92 m³&lt;br&gt;• Masa CH₄ requerida: 211.03 kg&lt;br&gt;• Consumo diésel: 35.0 L/100km&lt;br&gt;• Autonomía objetivo: 600 km&lt;/font&gt;" style="text;html=1;strokeColor=#d79b00;fillColor=#fff2cc;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=9" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="215.0" y="1510.0" width="370.0" height="225.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="39" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;LEYENDA&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="1780.0" y="1101.0" width="120.0" height="40.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="40" value="Tanque CNG" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;boundedLbl=1;backgroundOutline=1;size=10" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="1805.0" y="1451.0" width="70.0" height="50.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="41" value="Regulador" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="1805.0" y="1241.0" width="70.0" height="50.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="42" value="Válvula" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="1805.0" y="1171.0" width="70.0" height="50.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="43" value="Sensor" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="1815.0" y="1316.0" width="50.0" height="40.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+        
+        <mxCell id="44" value="ECU" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1" vertex="1" parent="1">
+          
+          
+          <mxGeometry x="1805.0" y="1381.0" width="70.0" height="50.0" as="geometry" />
+          
+        
+        </mxCell>
+        
+      
+        <mxCell id="45" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="15" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1050.0" y="175.0" /><mxPoint x="1050.0" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="46" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="16" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1860.0" y="325.0" /><mxPoint x="1860.0" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="47" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="17" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1935.0" y="175.0" /><mxPoint x="1935.0" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="48" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="18" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2160.0" y="175.0" /><mxPoint x="2160.0" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        
+        <mxCell id="49" value="Válvula EFC&amp;#xa;(Exceso de Flujo)" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="640.0" y="351.0" width="60.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="50" value="XI-401&amp;#xa;Sensor de Fugas&amp;#xa;de Gas" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1110.0" y="1391.0" width="80.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="51" value="Válvula de&amp;#xa;Cierre Rápido&amp;#xa;Manual" style="shape=valve;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;perimeter=valvePerimeter;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="60.0" y="791.0" width="80.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="52" value="Conmutador&amp;#xa;Combustible&amp;#xa;(Diésel/GNV/Dual)" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="1534.0" y="440.0" width="120.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="53" value="Indicador&amp;#xa;Presión Tablero" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="1534.0" y="610.0" width="120.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="54" value="Indicador&amp;#xa;Nivel Tablero" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="1534.0" y="760.0" width="120.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="55" value="FT-401&amp;#xa;Sensor de Flujo&amp;#xa;F = 30-100 Nm³/h" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="715.0" y="741.0" width="90.0" height="100.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="56" value="Filtro de Gas&amp;#xa;Baja Presión" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1790.0" y="611.0" width="100.0" height="80.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="57" value="Punto de Venteo&amp;#xa;Seguridad" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1">
+          <mxGeometry x="960.0" y="246.0" width="80.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="58" value="Sistema de&amp;#xa;Ventilación" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="290.0" y="801.0" width="120.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="59" value="Soportes&amp;#xa;Estructurales" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="490.0" y="801.0" width="100.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="60" value="Puerto OBD-II&amp;#xa;Diagnóstico" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="1240.0" y="811.0" width="120.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="61" value="Sistema de&amp;#xa;Registro de Datos" style="shape=rounded;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;rounded=1" vertex="1" parent="1">
+          <mxGeometry x="1410.0" y="1041.0" width="140.0" height="60.0" as="geometry" />
+        </mxCell>
+        
+        
+        <mxCell id="62" value="Gas CNG&amp;#xa;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="8" target="49" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="230" /><mxPoint x="950" y="230" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="63" value="Detección" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="50" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="922.5" y="900.0" /><mxPoint x="922.5" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="65" value="Gas a Inyectores&amp;#xa;7-10 bar" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="56" target="20" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1850" y="320" /><mxPoint x="1880" y="320" /><mxPoint x="1880" y="400" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="66" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="55" target="13" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2302.5" y="335.0" /><mxPoint x="2302.5" y="790.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="67" value="Control" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d79b00;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="13" target="52" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2470.0" y="790.0" /><mxPoint x="2470.0" y="115.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="68" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="13" target="53" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2470.0" y="790.0" /><mxPoint x="2470.0" y="255.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="69" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="13" target="54" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2470.0" y="790.0" /><mxPoint x="2470.0" y="405.0" /></Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="70" value="Diagnóstico" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d79b00;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10" edge="1" source="13" target="60" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="71" value="Datos" style="endArrow=classic;html=1;strokeWidth=1;strokeColor=#d6b656;dashed=1;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0" edge="1" source="60" target="61" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        
+      <mxCell id="72" value="Gas CNG&#10;200-250 bar" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;jettySize=8;fontSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.5" edge="1" source="49" target="9" parent="1"><mxGeometry width="50" height="50" relative="1" as="geometry"><Array as="points" /></mxGeometry></mxCell></root>
+      
+    
+    </mxGraphModel>
+    
+  
+  </diagram>
+  
+
+</mxfile>

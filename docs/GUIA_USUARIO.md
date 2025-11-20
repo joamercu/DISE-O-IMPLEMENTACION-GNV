@@ -37,7 +37,13 @@
 ### Barra Lateral (Sidebar)
 
 **Información del Proyecto:**
-- Cliente: PETROLIQUIDOS
+- CLIENTE: PETROLIQUIDOS
+DESARROLLO: WELDTECH SOLUTION
+VERSION: PROPUESTA TECNICA
+REVISION: 0 (PROPUESTA PREELIMINAR)
+DESARROLLO: WELDTECH SOLUTION
+VERSION: PROPUESTA TECNICA
+REVISION: 0 (PROPUESTA PREELIMINAR)
 - Versión: 1.0
 - Fecha: 2024-12-19
 
@@ -216,7 +222,7 @@
 2. Vaya a la pestaña **🔢 Cálculos Principales**
 3. Ajuste los parámetros según su caso:
    - Consumo: 35 L/100 km
-   - Autonomía: 800 km
+   - Autonomía: 600 km
    - Presión: 200 bar
 4. Haga clic en **"🚀 Calcular Sistema GNV"**
 5. Revise los resultados y alertas

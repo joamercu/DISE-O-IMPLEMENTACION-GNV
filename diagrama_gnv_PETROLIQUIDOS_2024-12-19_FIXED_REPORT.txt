@@ -1,0 +1,254 @@
+================================================================================
+REPORTE DE CAMBIOS Y REVISIÓN MANUAL
+================================================================================
+
+📊 RESUMEN
+--------------------------------------------------------------------------------
+  • Nodos movidos: 22
+  • Cambios en waypoints: 28
+  • Aristas que requieren revisión: 21
+  • Problemas críticos: 0
+
+📦 CAMBIOS EN POSICIONES DE NODOS
+--------------------------------------------------------------------------------
+  1. XI-401
+Sensor de Fugas
+de Gas
+     ID: 50 | Tipo: sensor
+     Movimiento: (1200.0, 620.0) | Distancia: 1350.7px
+
+  2. LT-301
+λ = 1.0
+     ID: 19 | Tipo: sensor
+     Movimiento: (-1050.0, 50.0) | Distancia: 1051.2px
+
+  3. FT-401
+Sensor de Flujo
+F = 30-100 Nm³/h
+     ID: 55 | Tipo: sensor
+     Movimiento: (-900.0, 400.0) | Distancia: 984.9px
+
+  4. PT-HP-101
+P = 200-250 bar
+     ID: 14 | Tipo: sensor
+     Movimiento: (200.0, 900.0) | Distancia: 922.0px
+
+  5. PT-LP-103
+P = 7-10 bar
+     ID: 18 | Tipo: sensor
+     Movimiento: (-700.0, 600.0) | Distancia: 922.0px
+
+  6. TT-HP-201
+T = 25-60 °C
+     ID: 15 | Tipo: sensor
+     Movimiento: (50.0, 900.0) | Distancia: 901.4px
+
+  7. Conmutador
+Combustible
+(Diésel/GNV/Dual)
+     ID: 52 | Tipo: unknown
+     Movimiento: (-800.0, 350.0) | Distancia: 873.2px
+
+  8. Indicador
+Presión Tablero
+     ID: 53 | Tipo: unknown
+     Movimiento: (-750.0, 350.0) | Distancia: 827.6px
+
+  9. TT-IP-202
+T = 20-40 °C
+     ID: 17 | Tipo: sensor
+     Movimiento: (-350.0, 700.0) | Distancia: 782.6px
+
+  10. Indicador
+Nivel Tablero
+     ID: 54 | Tipo: unknown
+     Movimiento: (-700.0, 350.0) | Distancia: 782.6px
+
+🔗 CAMBIOS EN WAYPOINTS
+--------------------------------------------------------------------------------
+  1. Gas CNG
+200-250 bar
+     ID: 23 | Tipo: gas
+     Desplazamiento máximo: 873.2px
+
+  2. Gas CNG
+200-250 bar
+     ID: 24 | Tipo: gas
+     Desplazamiento máximo: 780.0px
+
+  3. Gas CNG
+200-250 bar
+     ID: 25 | Tipo: gas
+     Desplazamiento máximo: 651.5px
+
+  4. Gas CNG
+200-250 bar
+     ID: 26 | Tipo: gas
+     Waypoints: 0 → 2
+
+  5. Gas CNG
+200-250 bar
+     ID: 27 | Tipo: gas
+     Desplazamiento máximo: 736.8px
+
+  6. Gas Regulado
+20-40 bar
+     ID: 28 | Tipo: gas
+     Desplazamiento máximo: 731.9px
+
+  7. Gas Regulado
+20-40 bar
+     ID: 29 | Tipo: gas
+     Desplazamiento máximo: 935.4px
+
+  8. Gas Regulado
+7-10 bar
+     ID: 30 | Tipo: gas
+     Waypoints: 0 → 2
+
+  9. Gas a Motor
+7-10 bar
+     ID: 31 | Tipo: gas
+     Waypoints: 0 → 2
+
+  10. Control
+     ID: 32 | Tipo: control
+     Desplazamiento máximo: 451.2px
+
+⚠️ ARISTAS QUE REQUIEREN REVISIÓN MANUAL
+--------------------------------------------------------------------------------
+  1. Gas CNG
+200-250 bar
+     ID: 23 | Tipo: gas | Prioridad: MAIN_PIPE
+     Waypoints: 2 | Cruces: 5
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  2. Gas CNG
+200-250 bar
+     ID: 24 | Tipo: gas | Prioridad: MAIN_PIPE
+     Waypoints: 2 | Cruces: 4
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  3. Gas CNG
+200-250 bar
+     ID: 25 | Tipo: gas | Prioridad: MAIN_PIPE
+     Waypoints: 2 | Cruces: 4
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  4. Gas CNG
+200-250 bar
+     ID: 26 | Tipo: gas | Prioridad: MAIN_PIPE
+     Waypoints: 2 | Cruces: 6
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  5. Gas CNG
+200-250 bar
+     ID: 27 | Tipo: gas | Prioridad: MAIN_PIPE
+     Waypoints: 2 | Cruces: 17
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  6. Control
+     ID: 32 | Tipo: control | Prioridad: CONTROL_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  7. Control
+     ID: 33 | Tipo: control | Prioridad: CONTROL_SIGNAL
+     Waypoints: 2 | Cruces: 18
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  8. Datos
+     ID: 34 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  9. Datos
+     ID: 35 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 14
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  10. Datos
+     ID: 45 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  11. Datos
+     ID: 46 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  12. Datos
+     ID: 47 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  13. Datos
+     ID: 48 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  14. Gas CNG
+200-250 bar
+     ID: 62 | Tipo: gas | Prioridad: MAIN_PIPE
+     Waypoints: 2 | Cruces: 5
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  15. Detección
+     ID: 63 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  16. Datos
+     ID: 66 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  17. Control
+     ID: 67 | Tipo: control | Prioridad: CONTROL_SIGNAL
+     Waypoints: 2 | Cruces: 14
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  18. Datos
+     ID: 68 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 14
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  19. Datos
+     ID: 69 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  20. Diagnóstico
+     ID: 70 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 15
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+  21. Datos
+     ID: 71 | Tipo: data | Prioridad: DATA_SIGNAL
+     Waypoints: 2 | Cruces: 10
+     Problemas:
+       • ⚠️ Cruza muchos otros edges (>3)
+
+================================================================================
+FIN DEL REPORTE
+================================================================================
