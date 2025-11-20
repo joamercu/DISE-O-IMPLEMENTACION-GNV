@@ -12,8 +12,16 @@ echo.
 echo Iniciando aplicacion Streamlit...
 echo.
 
-REM Cambiar al directorio src
-cd /d "%~dp0src"
+REM Cambiar al directorio src (ir al directorio padre del script y luego a src)
+cd /d "%~dp0..\src"
+if errorlevel 1 (
+    echo.
+    echo ERROR: No se puede acceder al directorio src.
+    echo Ruta intentada: %~dp0..\src
+    echo.
+    pause
+    exit /b 1
+)
 
 REM Verificar que streamlit esté instalado
 python -c "import streamlit" 2>nul

@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+logs_deploy/
+*.log
+
+# Datos sensibles
+data/users_db.json
+*.key
+*.pem
+ssh_key
+ssh_keys/
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.pub
+
+# Configuración de despliegue (puede contener información sensible)
+scripts/deploy_config.txt
+
+# Archivos temporales
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Outputs generados
+outputs/*.pdf
+outputs/*.html
+outputs/*.xlsx
+!outputs/README*.md
+
+# Cliente específico (datos sensibles)
+cliente*/*.json
+cliente*/data/
+cliente*/outputs/
+
+# Archivos de proceso
+*.pid
+

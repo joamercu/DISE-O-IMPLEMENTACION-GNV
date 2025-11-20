@@ -154,9 +154,38 @@ def generate_manifest_html(manifest_data):
             color: #6B7280;
             text-align: center;
         }}
+        .print-button {{
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #FF7A00;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(255, 122, 0, 0.3);
+        }}
+        .print-button:hover {{
+            background-color: #FF9500;
+            box-shadow: 0 4px 10px rgba(255, 122, 0, 0.5);
+        }}
+        @media print {{
+            .print-button {{
+                display: none;
+            }}
+        }}
     </style>
+    <script>
+        function imprimirPDF() {{
+            window.print();
+        }}
+    </script>
 </head>
 <body>
+    <button class="print-button" onclick="imprimirPDF()">🖨️ Imprimir a PDF</button>
     <div class="container">
         <div class="header">
             <h1>📋 Manifest del Proyecto</h1>

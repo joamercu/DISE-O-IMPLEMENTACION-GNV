@@ -22,6 +22,7 @@ from utils.auth_utils import load_remembered_user, save_remembered_user, clear_r
 from utils.manifest_utils import load_manifest, save_manifest, generate_manifest_html
 from utils.calculation_engine import calcular_sistema_gnv, calcular_sensibilidad
 from utils.file_handler import get_file_mime_type, create_download_link, file_exists
+from utils.documentos_utils import convertir_json_a_html
 from utils.drawio_integration import show_diagram_generator
 from config import (
     MANIFEST_FILE, REMEMBERED_USER_FILE, USERS_DB_FILE,
@@ -830,11 +831,28 @@ Prioridad: Balance costo-beneficio, autonomía mínima 600 km."""
             }
         }
         
-        json_str = json.dumps(cliente_json, indent=2, ensure_ascii=False)
-        b64_json = base64.b64encode(json_str.encode('utf-8')).decode()
-        href_json = f'<a href="data:application/json;base64,{b64_json}" download="datos_cliente_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json" style="background-color: #2AA1FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar JSON</a>'
-        st.markdown(href_json, unsafe_allow_html=True)
+        # Convertir JSON a HTML para descarga
+        # Formato de fecha en español
+        meses_es = {
+            1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril', 5: 'mayo', 6: 'junio',
+            7: 'julio', 8: 'agosto', 9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'
+        }
+        fecha_obj = datetime.now()
+        fecha_actual_es = f"{fecha_obj.day} de {meses_es[fecha_obj.month]} de {fecha_obj.year}"
         
+        html_cliente = convertir_json_a_html(
+            cliente_json,
+            titulo="Datos del Cliente",
+            header="Datos del Cliente - WELDTECH SOLUTIONS",
+            footer=f"Datos del Cliente | Versión 1.0 | {fecha_actual_es}",
+            nombre_archivo="datos_cliente"
+        )
+        b64_html = base64.b64encode(html_cliente.encode('utf-8')).decode()
+        href_html = f'<a href="data:text/html;charset=utf-8;base64,{b64_html}" download="datos_cliente_{datetime.now().strftime("%Y%m%d_%H%M%S")}.html" style="background-color: #2AA1FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar HTML para Imprimir</a>'
+        st.markdown(href_html, unsafe_allow_html=True)
+        
+        # Mantener el expander para ver JSON
+        json_str = json.dumps(cliente_json, indent=2, ensure_ascii=False)
         with st.expander("👁️ Ver JSON"):
             st.code(json_str, language="json")
 
@@ -1710,9 +1728,38 @@ with tabs[TAB_MANIFEST]:
                     background-color: #fff3cd;
                     color: #856404;
                 }}
+                .print-button {{
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background-color: #FF7A00;
+                    color: #FFFFFF;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 14pt;
+                    z-index: 1000;
+                    box-shadow: 0 2px 5px rgba(255, 122, 0, 0.3);
+                }}
+                .print-button:hover {{
+                    background-color: #FF9500;
+                    box-shadow: 0 4px 10px rgba(255, 122, 0, 0.5);
+                }}
+                @media print {{
+                    .print-button {{
+                        display: none;
+                    }}
+                }}
                 </style>
+                <script>
+                    function imprimirPDF() {{
+                        window.print();
+                    }}
+                </script>
                 </head>
                 <body>
+                <button class="print-button" onclick="imprimirPDF()">🖨️ Imprimir a PDF</button>
                 <div class="header">
                     <h1>Decisiones Pendientes - Formulario de Respuestas</h1>
                     <p><strong>Cliente:</strong> {st.session_state.get('proyecto_cliente', 'PETROLIQUIDOS')}<br>
@@ -1914,19 +1961,17 @@ with tabs[TAB_MANIFEST]:
                     }
                 }
             
-            json_str = json.dumps(manifest_export, indent=2, ensure_ascii=False)
-            b64_json = base64.b64encode(json_str.encode('utf-8')).decode()
-            href_json = f'<a href="data:application/json;base64,{b64_json}" download="manifest_completo_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;">📥 Descargar Manifest JSON</a>'
-            st.markdown(href_json, unsafe_allow_html=True)
-            
-            # Generar HTML del manifest
-            st.markdown("---")
-            st.markdown("#### 🌐 Generar Manifest en HTML")
-            
+            # Generar HTML del manifest (prioritario)
             html_manifest = generate_manifest_html(manifest_export)
             b64_html = base64.b64encode(html_manifest.encode('utf-8')).decode()
-            href_html = f'<a href="data:text/html;charset=utf-8;base64,{b64_html}" download="manifest_completo_{datetime.now().strftime("%Y%m%d_%H%M%S")}.html" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar Manifest HTML</a>'
+            href_html = f'<a href="data:text/html;charset=utf-8;base64,{b64_html}" download="manifest_completo_{datetime.now().strftime("%Y%m%d_%H%M%S")}.html" style="background-color: #FF7A00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;">📥 Descargar Manifest HTML para Imprimir</a>'
             st.markdown(href_html, unsafe_allow_html=True)
+            
+            # Mantener JSON como opción secundaria
+            json_str = json.dumps(manifest_export, indent=2, ensure_ascii=False)
+            b64_json = base64.b64encode(json_str.encode('utf-8')).decode()
+            href_json = f'<a href="data:application/json;base64,{b64_json}" download="manifest_completo_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json" style="background-color: #6B7280; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar Manifest JSON</a>'
+            st.markdown(href_json, unsafe_allow_html=True)
             
             with st.expander("👁️ Ver Manifest JSON Completo"):
                 st.code(json_str, language="json")
@@ -2096,9 +2141,38 @@ with tabs[TAB_INFO]:
             margin: 15px 0;
             border-radius: 4px;
         }}
+        .print-button {{
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #FF7A00;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(255, 122, 0, 0.3);
+        }}
+        .print-button:hover {{
+            background-color: #FF9500;
+            box-shadow: 0 4px 10px rgba(255, 122, 0, 0.5);
+        }}
+        @media print {{
+            .print-button {{
+                display: none;
+            }}
+        }}
         </style>
+        <script>
+            function imprimirPDF() {{
+                window.print();
+            }}
+        </script>
         </head>
         <body>
+        <button class="print-button" onclick="imprimirPDF()">🖨️ Imprimir a PDF</button>
         <div class="header">
             <h1>Informe de Cálculo de Sistema Vehicular GNV</h1>
             <p><strong>Cliente:</strong> {st.session_state['proyecto_cliente']}<br>
