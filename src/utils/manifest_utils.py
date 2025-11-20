@@ -280,20 +280,10 @@ def generate_manifest_html(manifest_data):
         </div>
 """
     
-    # Costos
-    if 'cost_estimates' in manifest_data:
-        html += "<h2>💰 Estimaciones de Costo</h2>"
-        costs = manifest_data['cost_estimates']
-        if 'breakdown' in costs:
-            breakdown = costs['breakdown']
-            html += '<div style="display: flex; flex-wrap: wrap;">'
-            if 'subtotal_components' in breakdown:
-                html += f'<div class="metric"><div class="metric-label">Subtotal Componentes</div><div class="metric-value">${breakdown["subtotal_components"].get("usd", 0):,.0f} USD</div></div>'
-            if 'total_estimated' in breakdown:
-                total = breakdown['total_estimated']
-                html += f'<div class="metric"><div class="metric-label">Total Estimado</div><div class="metric-value">${total.get("usd", 0):,.0f} USD</div></div>'
-                html += f'<div class="metric"><div class="metric-label">Total Estimado (COP)</div><div class="metric-value">${total.get("cop", 0):,.0f}</div></div>'
-            html += '</div>'
+    # Costos - OCULTO PARA CLIENTE (se mostrará después de resolver inquietudes)
+    # if 'cost_estimates' in manifest_data:
+    #     html += "<h2>💰 Estimaciones de Costo</h2>"
+    #     ... (código comentado temporalmente)
     
     # Datos del Cliente
     if 'cliente_data' in manifest_data:

@@ -188,7 +188,7 @@ def show_login_page():
         # Mostrar opción para limpiar usuario recordado si existe
         if load_remembered_user()[0]:
             st.markdown("---")
-            if st.button("🗑️ Olvidar usuario guardado", width='stretch'):
+            if st.button("🗑️ Olvidar usuario guardado", use_container_width=True):
                 clear_remembered_user()
                 st.success("✅ Usuario recordado eliminado")
                 st.rerun()
@@ -207,7 +207,7 @@ with st.sidebar:
     # Logo de Weldtech Solutions en el sidebar
     show_weldtech_logo(size="small", align="center")
     st.markdown("---")
-    if st.button("🚪 Cerrar Sesión", width='stretch'):
+    if st.button("🚪 Cerrar Sesión", use_container_width=True):
         st.session_state['authenticated'] = False
         st.session_state['username'] = None
         st.session_state['user_role'] = None
@@ -484,7 +484,7 @@ with tabs[TAB_CALCULOS]:
     
     # Botón para calcular
     st.markdown("---")
-    calcular = st.button("🚀 Calcular Sistema GNV", type="primary", width='stretch')
+    calcular = st.button("🚀 Calcular Sistema GNV", type="primary", use_container_width=True)
     
     if calcular:
         # ============================================
@@ -659,7 +659,7 @@ with tabs[TAB_CALCULOS]:
         }
         
         df_resumen = pd.DataFrame(resumen_data)
-        st.dataframe(df_resumen, width='stretch', hide_index=True)
+        st.dataframe(df_resumen, use_container_width=True, hide_index=True)
         
         # Alertas y recomendaciones
         st.markdown("---")
@@ -1305,7 +1305,7 @@ with tabs[TAB_SENSIBILIDAD]:
             })
         
         df_consumo = pd.DataFrame(variaciones_consumo)
-        st.dataframe(df_consumo, width='stretch', hide_index=True)
+        st.dataframe(df_consumo, use_container_width=True, hide_index=True)
         
         # Análisis de variación de autonomía
         st.subheader("Variación de Autonomía")
@@ -1325,7 +1325,7 @@ with tabs[TAB_SENSIBILIDAD]:
             })
         
         df_autonomia = pd.DataFrame(variaciones_autonomia)
-        st.dataframe(df_autonomia, width='stretch', hide_index=True)
+        st.dataframe(df_autonomia, use_container_width=True, hide_index=True)
         
         # Gráficos de sensibilidad
         st.subheader("Visualización de Sensibilidad")
@@ -1634,7 +1634,7 @@ with tabs[TAB_MANIFEST]:
             
             risks = manifest_data['risks_identified']
             risks_df = pd.DataFrame(risks)
-            st.dataframe(risks_df, width='stretch', hide_index=True)
+            st.dataframe(risks_df, use_container_width=True, hide_index=True)
         
         # Decisiones Pendientes - Formularios Interactivos
         if 'pending_decisions' in manifest_data:
@@ -1703,38 +1703,21 @@ with tabs[TAB_MANIFEST]:
                                     st.success("✅ Respuesta guardada correctamente")
                             
                             elif "Presupuesto" in question or "presupuesto" in question.lower():
-                                st.markdown("#### Presupuesto por Unidad")
-                                st.info("💡 Esta información nos ayudará a seleccionar los componentes más adecuados para su proyecto.")
-                                
-                                presupuesto_usd = st.number_input("💰 Presupuesto Máximo por Unidad (USD)",
-                                                                 min_value=0.0,
-                                                                 max_value=1000000.0,
-                                                                 value=float(st.session_state['decisiones_respuestas'].get(f"{question_id}_presupuesto_usd", 0)),
-                                                                 step=1000.0,
-                                                                 format="%.0f",
-                                                                 help="Presupuesto máximo disponible por cada vehículo convertido")
-                                
-                                presupuesto_cop = st.number_input("💰 Presupuesto Máximo por Unidad (COP)",
-                                                                 min_value=0.0,
-                                                                 max_value=5000000000.0,
-                                                                 value=float(st.session_state['decisiones_respuestas'].get(f"{question_id}_presupuesto_cop", 0)),
-                                                                 step=100000.0,
-                                                                 format="%.0f")
-                                
-                                preferencia = st.radio("🎯 Prioridad del Presupuesto",
-                                                      ["Costo mínimo", "Balance costo-beneficio", "Calidad/prestaciones máximas"],
-                                                      index=st.session_state['decisiones_respuestas'].get(f"{question_id}_preferencia", 1) if isinstance(st.session_state['decisiones_respuestas'].get(f"{question_id}_preferencia"), int) else 1,
-                                                      help="¿Qué es más importante para su proyecto?")
+                                # OCULTO PARA CLIENTE - Se mostrará después de resolver inquietudes
+                                st.info("ℹ️ Esta sección estará disponible próximamente después de resolver las inquietudes iniciales.")
+                                # presupuesto_usd = st.number_input("💰 Presupuesto Máximo por Unidad (USD)", ...)
+                                # presupuesto_cop = st.number_input("💰 Presupuesto Máximo por Unidad (COP)", ...)
+                                # ... (código comentado temporalmente)
                                 
                                 observaciones = st.text_area("📝 Observaciones",
                                                             value=st.session_state['decisiones_respuestas'].get(f"{question_id}_observaciones", ""),
-                                                            help="Restricciones presupuestarias adicionales o consideraciones especiales",
+                                                            help="Observaciones generales sobre esta decisión",
                                                             height=100)
                                 
                                 if st.form_submit_button("💾 Guardar Respuesta"):
-                                    st.session_state['decisiones_respuestas'][f"{question_id}_presupuesto_usd"] = presupuesto_usd
-                                    st.session_state['decisiones_respuestas'][f"{question_id}_presupuesto_cop"] = presupuesto_cop
-                                    st.session_state['decisiones_respuestas'][f"{question_id}_preferencia"] = preferencia
+                                    # st.session_state['decisiones_respuestas'][f"{question_id}_presupuesto_usd"] = presupuesto_usd
+                                    # st.session_state['decisiones_respuestas'][f"{question_id}_presupuesto_cop"] = presupuesto_cop
+                                    # st.session_state['decisiones_respuestas'][f"{question_id}_preferencia"] = preferencia
                                     st.session_state['decisiones_respuestas'][f"{question_id}_observaciones"] = observaciones
                                     st.session_state['decisiones_respuestas'][f"{question_id}_estado"] = "Respondido"
                                     st.success("✅ Respuesta guardada correctamente")
@@ -2086,10 +2069,11 @@ with tabs[TAB_MANIFEST]:
                                 html_decisiones += f"<li><strong>Año:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_año', 'N/A')}</li>"
                                 html_decisiones += f"<li><strong>Cantidad:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_cantidad', 'N/A')}</li>"
                             
-                            if st.session_state['decisiones_respuestas'].get(f"{question_id}_presupuesto_usd"):
-                                html_decisiones += f"<li><strong>Presupuesto USD:</strong> ${st.session_state['decisiones_respuestas'].get(f'{question_id}_presupuesto_usd', 0):,.0f}</li>"
-                                html_decisiones += f"<li><strong>Presupuesto COP:</strong> ${st.session_state['decisiones_respuestas'].get(f'{question_id}_presupuesto_cop', 0):,.0f}</li>"
-                                html_decisiones += f"<li><strong>Prioridad:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_preferencia', 'N/A')}</li>"
+                            # Presupuestos - OCULTO PARA CLIENTE (se mostrará después de resolver inquietudes)
+                            # if st.session_state['decisiones_respuestas'].get(f"{question_id}_presupuesto_usd"):
+                            #     html_decisiones += f"<li><strong>Presupuesto USD:</strong> ${st.session_state['decisiones_respuestas'].get(f'{question_id}_presupuesto_usd', 0):,.0f}</li>"
+                            #     html_decisiones += f"<li><strong>Presupuesto COP:</strong> ${st.session_state['decisiones_respuestas'].get(f'{question_id}_presupuesto_cop', 0):,.0f}</li>"
+                            #     html_decisiones += f"<li><strong>Prioridad:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_preferencia', 'N/A')}</li>"
                             
                             if st.session_state['decisiones_respuestas'].get(f"{question_id}_km_dia"):
                                 html_decisiones += f"<li><strong>Km/día:</strong> {st.session_state['decisiones_respuestas'].get(f'{question_id}_km_dia', 0):,.0f}</li>"
@@ -2194,98 +2178,11 @@ with tabs[TAB_MANIFEST]:
             with st.expander("👁️ Ver todas las respuestas guardadas"):
                 st.json(st.session_state['decisiones_respuestas'])
         
-        # Costos
-        if 'cost_estimates' in manifest_data:
-            st.markdown("---")
-            st.subheader("💰 Estimaciones de Costo")
-            
-            costs = manifest_data['cost_estimates']
-            
-            if 'breakdown' in costs:
-                breakdown = costs['breakdown']
-                col_cost1, col_cost2 = st.columns(2)
-                
-                with col_cost1:
-                    st.metric("Subtotal Componentes (USD)", f"${breakdown.get('subtotal_components', {}).get('usd', 0):,.0f}")
-                    st.metric("Contingencia (15%)", f"${breakdown.get('contingency', {}).get('usd', 0):,.0f}")
-                    st.metric("Margen (20%)", f"${breakdown.get('margin', {}).get('usd', 0):,.0f}")
-                
-                with col_cost2:
-                    total = breakdown.get('total_estimated', {})
-                    st.metric("Total Estimado (USD)", f"${total.get('usd', 0):,.0f}")
-                    st.metric("Total Estimado (COP)", f"${total.get('cop', 0):,.0f}")
-                    st.caption(f"Tasa de cambio: {costs.get('exchange_rate', 'N/A')} COP/USD")
-                
-                # Visualización por porcentajes de sistemas
-                if 'distribution_by_category' in breakdown:
-                    st.markdown("#### Distribución de Costos por Sistema")
-                    distribution = breakdown['distribution_by_category']
-                    
-                    if distribution:
-                        try:
-                            import plotly.express as px
-                            
-                            # Preparar datos para el gráfico
-                            categorias = [cat.get('categoria', 'N/A') for cat in distribution]
-                            porcentajes = [cat.get('porcentaje', 0) for cat in distribution]
-                            totales_usd = [cat.get('total_usd', 0) for cat in distribution]
-                            totales_cop = [cat.get('total_cop', 0) for cat in distribution]
-                            
-                            # Crear DataFrame
-                            df_dist = pd.DataFrame({
-                                'Categoría': categorias,
-                                'Porcentaje (%)': porcentajes,
-                                'Total USD': totales_usd,
-                                'Total COP': totales_cop
-                            })
-                            
-                            # Crear gráfico de barras horizontal
-                            fig = px.bar(
-                                df_dist,
-                                x='Porcentaje (%)',
-                                y='Categoría',
-                                orientation='h',
-                                text='Porcentaje (%)',
-                                title='Distribución de Costos por Sistema',
-                                labels={'Porcentaje (%)': 'Porcentaje (%)', 'Categoría': 'Sistema'},
-                                hover_data={'Total USD': ':$,.0f', 'Total COP': ':,.0f'},
-                                color='Porcentaje (%)',
-                                color_continuous_scale='Blues'
-                            )
-                            
-                            # Formatear el texto en las barras
-                            fig.update_traces(
-                                texttemplate='%{text:.2f}%',
-                                textposition='outside'
-                            )
-                            
-                            # Mejorar el layout
-                            fig.update_layout(
-                                height=400,
-                                showlegend=False,
-                                xaxis_title='Porcentaje del Total (%)',
-                                yaxis_title='',
-                                yaxis={'categoryorder': 'total ascending'}
-                            )
-                            
-                            st.plotly_chart(fig, use_container_width=True)
-                            
-                            # Mostrar tabla detallada
-                            with st.expander("📊 Ver Detalles por Categoría"):
-                                for cat in distribution:
-                                    st.markdown(f"**{cat.get('categoria', 'N/A')}**")
-                                    st.markdown(f"- Porcentaje: {cat.get('porcentaje', 0):.2f}%")
-                                    st.markdown(f"- Total USD: ${cat.get('total_usd', 0):,.0f}")
-                                    st.markdown(f"- Total COP: ${cat.get('total_cop', 0):,.0f}")
-                                    if cat.get('componentes'):
-                                        st.markdown(f"- Componentes: {len(cat['componentes'])}")
-                                    st.markdown("---")
-                        except ImportError:
-                            st.warning("⚠️ Plotly no está disponible. Mostrando datos en tabla.")
-                            # Fallback a tabla si plotly no está disponible
-                            df_dist = pd.DataFrame(distribution)
-                            st.dataframe(df_dist[['categoria', 'porcentaje', 'total_usd', 'total_cop']], 
-                                       use_container_width=True, hide_index=True)
+        # Costos - OCULTO PARA CLIENTE (se mostrará después de resolver inquietudes)
+        # if 'cost_estimates' in manifest_data:
+        #     st.markdown("---")
+        #     st.subheader("💰 Estimaciones de Costo")
+        #     ... (código comentado temporalmente)
         
         # Próximos Pasos
         if 'next_steps' in manifest_data:
@@ -2349,7 +2246,7 @@ with tabs[TAB_MANIFEST]:
                 st.code(json_str, language="json")
     else:
         st.warning(f"⚠️ No se encontró el archivo manifest. Asegúrese de que el archivo esté en: {MANIFEST_FILE}")
-        st.info("💡 El manifest contiene información completa del proyecto: entregables, parámetros técnicos, regulaciones, riesgos, decisiones pendientes y costos.")
+        st.info("💡 El manifest contiene información completa del proyecto: entregables, parámetros técnicos, regulaciones, riesgos y decisiones pendientes.")
 
 # ============================================
 # TAB: INFORMACIÓN TÉCNICA
