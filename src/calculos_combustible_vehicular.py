@@ -254,7 +254,7 @@ with tabs[TAB_CALCULOS]:
             "Autonomía Deseada (km)",
             min_value=100.0,
             max_value=2000.0,
-            value=config.DEFAULT_AUTONOMIA,
+            value=DEFAULT_AUTONOMIA,
             step=10.0,
             help="Distancia que se desea recorrer con un tanque lleno"
         )
@@ -1040,7 +1040,7 @@ with tabs[TAB_SENSIBILIDAD]:
             "Autonomía Base (km)",
             min_value=400.0,
             max_value=1200.0,
-            value=config.DEFAULT_AUTONOMIA,
+            value=DEFAULT_AUTONOMIA,
             step=50.0,
             key="sens_autonomia"
         )
