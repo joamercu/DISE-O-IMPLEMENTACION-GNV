@@ -12,6 +12,7 @@ import base64
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 # Agregar src al path para imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -22,13 +23,23 @@ from utils.auth_utils import load_remembered_user, save_remembered_user, clear_r
 from utils.manifest_utils import load_manifest, save_manifest, generate_manifest_html
 from utils.calculation_engine import calcular_sistema_gnv, calcular_sensibilidad
 from utils.file_handler import get_file_mime_type, create_download_link, file_exists, generar_pdf_desde_html
-from utils.documentos_utils import convertir_json_a_html
+from utils.documentos_utils import convertir_json_a_html, procesar_archivo_md
 from utils.drawio_integration import show_diagram_generator
 from config import (
     MANIFEST_FILE, REMEMBERED_USER_FILE, USERS_DB_FILE,
     DELIVERABLE_MD, DELIVERABLE_XLSX, DELIVERABLE_XML, DELIVERABLE_PDF,
     DEFAULT_CLIENT, DEFAULT_VERSION, DEFAULT_DATE, DEFAULT_AUTONOMIA
 )
+
+# Imports para sistema de notificaciones y seguimiento
+try:
+    from database import init_database, create_submission, add_calculos_to_submission, add_diagrama_to_submission
+    from notifications import send_notifications
+    from admin_panel import show_admin_panel
+    NOTIFICATIONS_ENABLED = True
+except ImportError as e:
+    print(f"⚠️ Advertencia: Sistema de notificaciones no disponible: {e}")
+    NOTIFICATIONS_ENABLED = False
 
 # Configuración de la página
 st.set_page_config(
@@ -39,6 +50,64 @@ st.set_page_config(
 )
 
 # ============================================
+# FUNCIÓN HELPER PARA LOGO WELDTECH SOLUTIONS
+# ============================================
+def show_weldtech_logo(size="medium", align="center"):
+    """
+    Muestra el logo de Weldtech Solutions usando HTML/CSS
+    
+    Args:
+        size: "small", "medium", "large" - Tamaño del logo
+        align: "left", "center", "right" - Alineación del logo
+    """
+    size_map = {
+        "small": {"logo_width": "40px", "logo_height": "40px", "font_main": "18px", "font_sub": "12px"},
+        "medium": {"logo_width": "60px", "logo_height": "60px", "font_main": "24px", "font_sub": "16px"},
+        "large": {"logo_width": "80px", "logo_height": "80px", "font_main": "32px", "font_sub": "20px"}
+    }
+    
+    sizes = size_map.get(size, size_map["medium"])
+    
+    logo_html = f"""
+    <div style="display: flex; align-items: center; justify-content: {align}; gap: 12px; margin: 10px 0;">
+        <svg width="{sizes['logo_width']}" height="{sizes['logo_height']}" viewBox="0 0 100 100" style="flex-shrink: 0;">
+            <defs>
+                <linearGradient id="weldtechGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#C73E1D;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <!-- Forma de W estilizada con picos angulares -->
+            <path d="M 10 20 L 25 20 L 30 50 L 40 20 L 50 20 L 60 50 L 70 20 L 85 20 L 90 80 L 75 80 L 70 50 L 60 80 L 50 80 L 40 50 L 30 80 L 15 80 Z" 
+                  fill="url(#weldtechGradient)" 
+                  stroke="#FF6B35" 
+                  stroke-width="1"/>
+        </svg>
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="
+                font-family: 'Arial', 'Helvetica', sans-serif;
+                font-weight: bold;
+                font-size: {sizes['font_main']};
+                color: #FFFFFF;
+                letter-spacing: 1.5px;
+                line-height: 1.1;
+                text-transform: uppercase;
+            ">WELDTECH</div>
+            <div style="
+                font-family: 'Arial', 'Helvetica', sans-serif;
+                font-size: {sizes['font_sub']};
+                color: #CCCCCC;
+                letter-spacing: 0.8px;
+                margin-left: 4px;
+                line-height: 1.1;
+                text-transform: uppercase;
+            ">SOLUTIONS</div>
+        </div>
+    </div>
+    """
+    st.markdown(logo_html, unsafe_allow_html=True)
+
+# ============================================
 # SISTEMA DE AUTENTICACIÓN
 # ============================================
 # Las funciones load_remembered_user, save_remembered_user y clear_remembered_user
@@ -46,6 +115,12 @@ st.set_page_config(
 
 def show_login_page():
     """Muestra la página de inicio de sesión"""
+    # Logo de Weldtech Solutions en la página de login
+    col_logo_login = st.columns([1, 2, 1])
+    with col_logo_login[1]:
+        show_weldtech_logo(size="large", align="center")
+        st.markdown("<br>", unsafe_allow_html=True)
+    
     st.title("🔐 Sistema de Autenticación")
     st.markdown("---")
     
@@ -124,6 +199,8 @@ if not st.session_state['authenticated']:
 # Usuario autenticado - mostrar contenido principal
 # Botón de cerrar sesión en el sidebar
 with st.sidebar:
+    # Logo de Weldtech Solutions en el sidebar
+    show_weldtech_logo(size="small", align="center")
     st.markdown("---")
     if st.button("🚪 Cerrar Sesión", width='stretch'):
         st.session_state['authenticated'] = False
@@ -136,8 +213,12 @@ with st.sidebar:
     **Rol:** {st.session_state.get('user_role', 'N/A')}
     """)
 
-# Título principal
-st.title("⛽ CALCULOS COMBUSTIBLE VEHICULAR GNC/GNL")
+# Título principal con logo
+col_logo, col_title = st.columns([1, 4])
+with col_logo:
+    show_weldtech_logo(size="medium", align="left")
+with col_title:
+    st.title("⛽ CALCULOS COMBUSTIBLE VEHICULAR GNC/GNL")
 st.markdown("---")
 
 # Inicializar valores del proyecto en session_state si no existen
@@ -217,6 +298,10 @@ tabs_list = [
     "ℹ️ Información Técnica"
 ]
 
+# Agregar tab de administración solo para administradores
+if st.session_state.get('user_role') == 'Administrador' and NOTIFICATIONS_ENABLED:
+    tabs_list.append("🔧 Panel de Administración")
+
 tabs = st.tabs(tabs_list)
 
 # Índices de tabs (siempre los mismos)
@@ -226,6 +311,17 @@ TAB_FORMULAS = 2
 TAB_SENSIBILIDAD = 3
 TAB_MANIFEST = 4
 TAB_INFO = 5
+TAB_ADMIN = 6 if st.session_state.get('user_role') == 'Administrador' and NOTIFICATIONS_ENABLED else None
+
+# Inicializar base de datos si está habilitado
+if NOTIFICATIONS_ENABLED:
+    if 'db_initialized' not in st.session_state:
+        try:
+            init_database()
+            st.session_state['db_initialized'] = True
+        except Exception as e:
+            st.warning(f"⚠️ No se pudo inicializar la base de datos: {str(e)}")
+            st.info("💡 El sistema de notificaciones no estará disponible. Verifique la configuración de PostgreSQL.")
 
 # ============================================
 # TAB 1: CÁLCULOS PRINCIPALES
@@ -435,6 +531,34 @@ with tabs[TAB_CALCULOS]:
             'temperatura': resultado['temperatura_operacion'],
             'volumen_diesel_equivalente': volumen_diesel_equivalente
         }
+        
+        # Guardar cálculos en BD si hay un submission activo
+        if NOTIFICATIONS_ENABLED and 'current_submission_id' in st.session_state:
+            try:
+                parametros_entrada = {
+                    'consumo_diesel': consumo_diesel,
+                    'autonomia_deseada': autonomia_deseada,
+                    'poder_calorifico_diesel': poder_calorifico_diesel,
+                    'lhv_ch4': lhv_ch4,
+                    'eficiencia_conversion': eficiencia_conversion,
+                    'presion_llenado': presion_llenado,
+                    'temperatura_operacion': temperatura_operacion,
+                    'factor_compresibilidad': factor_compresibilidad,
+                    'volumen_unitario_tanque': volumen_unitario_tanque,
+                    'peso_tanque_vacio': peso_tanque_vacio,
+                    'peso_soportes': peso_soportes,
+                    'peso_accesorios': peso_accesorios,
+                    'constante_gases': constante_gases,
+                    'masa_molar_ch4': masa_molar_ch4
+                }
+                
+                add_calculos_to_submission(
+                    submission_id=st.session_state['current_submission_id'],
+                    resultados=st.session_state['calculo_resultado'],
+                    parametros=parametros_entrada
+                )
+            except Exception as e:
+                print(f"⚠️ Error al guardar cálculos en BD: {str(e)}")
         
         # ============================================
         # PRESENTACIÓN DE RESULTADOS
@@ -741,20 +865,67 @@ Prioridad: Balance costo-beneficio, autonomía mínima 600 km."""
                 fecha_creacion = fecha_iso
                 usuario_creador = usuario_actual
             
-            st.session_state['cliente_data'] = {
+            # Preparar datos del cliente
+            cliente_data_dict = {
                 'nombre': nombre_cliente,
                 'rol': st.session_state.get('user_role', 'Cliente'),
                 'capacidad_de_la_flota': capacidad_flota,
                 'supuestos': {
                     'operacional': supuestos_operacional,
                     'componentes': supuestos_componentes
-                },
+                }
+            }
+            
+            metadata_dict = {
                 'fecha_creacion': fecha_creacion,
                 'fecha_ultima_actualizacion': fecha_iso,
                 'usuario_creador': usuario_creador,
                 'usuario_ultima_actualizacion': usuario_actual
             }
-            st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
+            
+            # Guardar en session_state
+            st.session_state['cliente_data'] = {
+                **cliente_data_dict,
+                'fecha_creacion': fecha_creacion,
+                'fecha_ultima_actualizacion': fecha_iso,
+                'usuario_creador': usuario_creador,
+                'usuario_ultima_actualizacion': usuario_actual
+            }
+            
+            # Crear submission en BD y enviar notificaciones (solo si está habilitado)
+            if NOTIFICATIONS_ENABLED:
+                try:
+                    submission_id = create_submission(
+                        cliente_nombre=nombre_cliente,
+                        usuario_cliente=usuario_actual,
+                        datos_cliente=cliente_data_dict,
+                        metadata=metadata_dict
+                    )
+                    
+                    if submission_id:
+                        # Guardar submission_id en session_state para asociar cálculos y diagramas
+                        st.session_state['current_submission_id'] = submission_id
+                        
+                        # Enviar notificaciones
+                        notif_results = send_notifications(submission_id, nombre_cliente, usuario_actual)
+                        
+                        if notif_results.get('email') or notif_results.get('app'):
+                            st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
+                            if notif_results.get('email'):
+                                st.info("📧 Notificación por email enviada al administrador.")
+                            if notif_results.get('app'):
+                                st.info("🔔 Notificación creada en el panel de administración.")
+                        else:
+                            st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
+                            st.warning("⚠️ No se pudieron enviar las notificaciones, pero los datos se guardaron correctamente.")
+                    else:
+                        st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
+                        st.warning("⚠️ No se pudo crear el registro en la base de datos, pero los datos se guardaron en sesión.")
+                except Exception as e:
+                    st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
+                    st.warning(f"⚠️ Error al registrar en base de datos: {str(e)}")
+            else:
+                st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
     
     # Mostrar información de auditoría (visible para todos)
     if st.session_state['cliente_data'].get('fecha_creacion'):
@@ -1256,27 +1427,93 @@ with tabs[TAB_MANIFEST]:
                         
                         # Verificar si el archivo existe y permitir descarga (solo administradores)
                         if st.session_state.get('user_role') == 'Administrador':
+                            # Solo permitir descarga de archivos en formato PDF y HTML
+                            file_ext = os.path.splitext(filename)[1].lower()
+                            
                             # Mapear nombres de archivos a rutas completas
-                            # NOTA: Solo PDFs para diagramas - no se descargan XML desde el manifest
+                            # NOTA: Solo se entregan archivos en formato HTML y PDF
                             file_mapping = {
-                                'PETROLIQUIDOS_GNV_Informe_v1.md': DELIVERABLE_MD,
-                                'PETROLIQUIDOS_GNV_BOM_v1.xlsx': DELIVERABLE_XLSX,
+                                'PETROLIQUIDOS_GNV_Informe_v1.pdf': DELIVERABLE_MD,  # Se convertirá a PDF desde MD
+                                'PETROLIQUIDOS_GNV_Informe_v1.html': DELIVERABLE_MD,  # Se convertirá a HTML desde MD
                                 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf': DELIVERABLE_PDF,
                                 'PETROLIQUIDOS_GNV_PID_v1.pdf': DELIVERABLE_PDF,  # Fallback al PDF en assets
-                                'PETROLIQUIDOS_GNV_manifest_v1.json': MANIFEST_FILE
+                                'PETROLIQUIDOS_GNV_manifest_v1.pdf': MANIFEST_FILE  # Se convertirá a PDF desde JSON
                             }
                             
-                            file_path = file_mapping.get(filename, filename)
-                            
-                            if file_exists(file_path):
-                                download_link = create_download_link(file_path, f"📥 Descargar {filename}", "default")
-                                if download_link:
-                                    st.markdown(download_link, unsafe_allow_html=True)
+                            # Verificar si es un archivo PDF del manifest
+                            if file_ext == '.pdf':
+                                # Buscar el archivo PDF correspondiente
+                                if filename in file_mapping:
+                                    source_file = file_mapping[filename]
+                                    
+                                    # Si el archivo fuente es .md, generar PDF y HTML
+                                    if source_file == DELIVERABLE_MD and file_exists(DELIVERABLE_MD):
+                                        try:
+                                            # Generar HTML desde Markdown
+                                            html_content, _ = procesar_archivo_md(
+                                                Path(DELIVERABLE_MD),
+                                                titulo="Informe Técnico Sistema GNV - PETROLIQUIDOS"
+                                            )
+                                            
+                                            # Generar PDF desde HTML
+                                            pdf_data, pdf_error = generar_pdf_desde_html(html_content)
+                                            
+                                            if pdf_data:
+                                                # Botón para descargar PDF
+                                                b64_pdf = base64.b64encode(pdf_data).decode()
+                                                nombre_pdf = filename if filename.endswith('.pdf') else filename.replace('.md', '.pdf')
+                                                href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="{nombre_pdf}" style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;">📄 Descargar PDF</a>'
+                                                st.markdown(href_pdf, unsafe_allow_html=True)
+                                            
+                                            # Botón para descargar HTML
+                                            b64_html = base64.b64encode(html_content.encode('utf-8')).decode()
+                                            nombre_html = filename.replace('.pdf', '.html')
+                                            href_html = f'<a href="data:text/html;charset=utf-8;base64,{b64_html}" download="{nombre_html}" style="background-color: #2AA1FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar HTML</a>'
+                                            st.markdown(href_html, unsafe_allow_html=True)
+                                            
+                                        except Exception as e:
+                                            st.error(f"Error al generar archivos desde Markdown: {str(e)}")
+                                    # Si es un PDF directo (diagrama)
+                                    elif source_file == DELIVERABLE_PDF and file_exists(DELIVERABLE_PDF):
+                                        download_link = create_download_link(DELIVERABLE_PDF, f"📄 Descargar {filename} (PDF)", "default")
+                                        if download_link:
+                                            st.markdown(download_link, unsafe_allow_html=True)
+                                        else:
+                                            st.error(f"Error al crear enlace de descarga para {filename}")
+                                    # Si es el manifest, generar PDF y HTML
+                                    elif source_file == MANIFEST_FILE and file_exists(MANIFEST_FILE):
+                                        try:
+                                            # Leer manifest JSON
+                                            with open(MANIFEST_FILE, 'r', encoding='utf-8') as f:
+                                                manifest_data = json.load(f)
+                                            
+                                            # Generar HTML del manifest
+                                            html_manifest = generate_manifest_html(manifest_data)
+                                            
+                                            # Generar PDF desde HTML
+                                            pdf_data, pdf_error = generar_pdf_desde_html(html_manifest)
+                                            
+                                            if pdf_data:
+                                                # Botón para descargar PDF
+                                                b64_pdf = base64.b64encode(pdf_data).decode()
+                                                href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="{filename}" style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;">📄 Descargar PDF</a>'
+                                                st.markdown(href_pdf, unsafe_allow_html=True)
+                                            
+                                            # Botón para descargar HTML
+                                            b64_html = base64.b64encode(html_manifest.encode('utf-8')).decode()
+                                            nombre_html = filename.replace('.pdf', '.html')
+                                            href_html = f'<a href="data:text/html;charset=utf-8;base64,{b64_html}" download="{nombre_html}" style="background-color: #2AA1FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">📥 Descargar HTML</a>'
+                                            st.markdown(href_html, unsafe_allow_html=True)
+                                            
+                                        except Exception as e:
+                                            st.error(f"Error al generar archivos desde Manifest: {str(e)}")
+                                    else:
+                                        st.warning(f"⚠️ El archivo fuente para '{filename}' no se encuentra en el sistema.")
                                 else:
-                                    st.error(f"Error al crear enlace de descarga para {filename}")
+                                    st.info(f"ℹ️ El archivo '{filename}' no está disponible para descarga en formato HTML/PDF.")
                             else:
-                                st.warning(f"⚠️ El archivo '{filename}' no se encuentra en el sistema.")
-                                st.caption(f"💡 Ruta esperada: {file_path}")
+                                # Si no es PDF, informar que solo se entregan HTML y PDF
+                                st.info(f"ℹ️ Solo se entregan archivos en formato HTML y PDF. '{filename}' no está disponible para descarga.")
         
         # Parámetros Técnicos
         if 'technical_parameters' in manifest_data:
@@ -2012,7 +2249,7 @@ with tabs[TAB_INFO]:
     st.markdown("""
     ## 1. Introducción y Relevancia
 
-    Esta sección, además de brindar la información técnica de referencia, permite **generar informes de los resultados de cálculo** obtenidos en la aplicación, tanto en formato visual (markdown) como descargable en HTML, útiles para reportes de ingeniería, presentaciones o para dejar respaldo documental del análisis realizado.
+    Esta sección, además de brindar la información técnica de referencia, permite **generar informes de los resultados de cálculo** obtenidos en la aplicación, en formato HTML y PDF, útiles para reportes de ingeniería, presentaciones o para dejar respaldo documental del análisis realizado.
 
     ---
     """)
@@ -2284,9 +2521,8 @@ with tabs[TAB_INFO]:
     else:
         st.info("ℹ️ Realice un cálculo en la pestaña 'Cálculos principales' para habilitar la descarga del informe en HTML.")
 
-    st.markdown(f"""
-    ---
-    ## Referencia Técnica de la Plataforma
+    Para consultas técnicas o actualizaciones, contactar al equipo de ingeniería.
+    """)
 
     ### 1.1 Contexto
 
@@ -2372,6 +2608,13 @@ with tabs[TAB_INFO]:
     
     Para consultas técnicas o actualizaciones, contactar al equipo de ingeniería.
     """)
+
+# ============================================
+# TAB: PANEL DE ADMINISTRACIÓN (Solo Administradores)
+# ============================================
+if TAB_ADMIN is not None and NOTIFICATIONS_ENABLED:
+    with tabs[TAB_ADMIN]:
+        show_admin_panel()
 
 # Footer
 st.markdown("---")
