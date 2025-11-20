@@ -3,7 +3,8 @@ Integración del agente draw.io con la aplicación Streamlit
 """
 import streamlit as st
 from utils.drawio_agent import DrawIOAgent
-from config import DELIVERABLE_XML, DELIVERABLE_MD
+from config import DELIVERABLE_XML, DELIVERABLE_MD, DELIVERABLE_PDF
+from pathlib import Path
 
 def show_diagram_generator(calculation_results: dict, client_name: str = "PETROLIQUIDOS"):
     """
@@ -219,15 +220,45 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             filename = f"diagrama_gnv_{client_name}_{st.session_state.get('proyecto_fecha', 'v1')}.drawio.xml"
             
             st.success("✅ **Diagrama disponible para descarga**")
-            st.info("💡 **Instrucciones:** Haga clic en el botón de abajo para descargar el archivo. Puede abrirlo en [draw.io](https://app.diagrams.net) o [diagrams.net](https://diagrams.net)")
+            st.info("💡 **Instrucciones:** Haga clic en los botones de abajo para descargar el archivo. Puede abrirlo en [draw.io](https://app.diagrams.net) o [diagrams.net](https://diagrams.net)")
             
-            st.download_button(
-                label="📥 Descargar Diagrama (.drawio.xml)",
-                data=xml_content,
-                file_name=filename,
-                mime="application/xml",
-                width='stretch'
-            )
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.download_button(
+                    label="📥 Descargar Diagrama (.drawio.xml)",
+                    data=xml_content,
+                    file_name=filename,
+                    mime="application/xml",
+                    use_container_width=True
+                )
+            
+            with col2:
+                # Agregar descarga del PDF si existe
+                # Buscar PDF en varias ubicaciones posibles
+                pdf_paths = [
+                    Path("diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
+                    Path("../diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
+                    Path("assets/diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
+                    Path("../assets/diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
+                ]
+                pdf_path = None
+                for path in pdf_paths:
+                    if path.exists():
+                        pdf_path = path
+                        break
+                if pdf_path.exists():
+                    with open(pdf_path, 'rb') as pdf_file:
+                        pdf_data = pdf_file.read()
+                    st.download_button(
+                        label="📄 Descargar Diagrama en PDF",
+                        data=pdf_data,
+                        file_name="diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf",
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
+                else:
+                    st.info("ℹ️ PDF disponible próximamente")
         else:
             st.warning("""
             ⚠️ **Diagrama no disponible para descarga**
