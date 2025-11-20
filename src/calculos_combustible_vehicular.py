@@ -1229,13 +1229,12 @@ with tabs[TAB_SENSIBILIDAD]:
             step=5
         )
     
-    # Variable para rastrear errores (solo mostrar una vez)
-    error_mostrado = False
-    
     if st.button("🔄 Calcular Análisis de Sensibilidad", type="primary"):
+        # Variable para rastrear errores (solo mostrar una vez) - usando lista para evitar nonlocal
+        error_mostrado = [False]
+        
         # Función wrapper para usar el motor de cálculos con validación
         def calcular_sistema(consumo, autonomia):
-            nonlocal error_mostrado
             try:
                 # Validar entradas
                 if not math.isfinite(consumo) or consumo <= 0:
@@ -1255,9 +1254,9 @@ with tabs[TAB_SENSIBILIDAD]:
                 
                 # Validar que el resultado tenga todas las claves necesarias
                 if not isinstance(resultado, dict):
-                    if not error_mostrado:
+                    if not error_mostrado[0]:
                         st.error(f"Error: resultado no es un diccionario. Tipo: {type(resultado)}")
-                        error_mostrado = True
+                        error_mostrado[0] = True
                     return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
                 
                 # Validar resultados
@@ -1268,9 +1267,9 @@ with tabs[TAB_SENSIBILIDAD]:
                 peso = resultado.get('peso_adicional_total', 0)
                 
                 if not all(math.isfinite(v) for v in [energia, masa_ch4, volumen, tanques, peso]):
-                    if not error_mostrado:
+                    if not error_mostrado[0]:
                         st.warning(f"Algunos valores no son finitos. Verifique los parámetros de entrada.")
-                        error_mostrado = True
+                        error_mostrado[0] = True
                     return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
                 
                 return {
@@ -1281,11 +1280,11 @@ with tabs[TAB_SENSIBILIDAD]:
                     'peso': peso
                 }
             except Exception as e:
-                if not error_mostrado:
+                if not error_mostrado[0]:
                     st.error(f"Error en calcular_sistema: {str(e)}")
                     import traceback
                     st.error(f"Traceback: {traceback.format_exc()}")
-                    error_mostrado = True
+                    error_mostrado[0] = True
                 return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
         
         # Análisis de variación de consumo
