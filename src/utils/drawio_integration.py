@@ -3,8 +3,10 @@ Integración del agente draw.io con la aplicación Streamlit
 """
 import streamlit as st
 from utils.drawio_agent import DrawIOAgent
-from config import DELIVERABLE_XML, DELIVERABLE_MD, DELIVERABLE_PDF
+from config import DELIVERABLE_XML, DELIVERABLE_MD, DELIVERABLE_PDF, REFERENCE_XML
+from utils.file_handler import generar_pdf_desde_xml_drawio, file_exists
 from pathlib import Path
+import os
 
 def show_diagram_generator(calculation_results: dict, client_name: str = "PETROLIQUIDOS"):
     """
@@ -113,13 +115,14 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             else:
                 st.warning("⚠️ No se encontraron instrucciones de ingeniería. El diagrama se generará con la configuración estándar.")
             
-            # Paso 3: Generar diagrama
+            # Paso 3: Generar diagrama usando XML de referencia si está disponible
             status_text.text("⚙️ Paso 3/5: Generando componentes y conexiones del diagrama...")
             progress_bar.progress(60)
             xml_content = agent.generate_diagram_from_engineering(
                 calculation_results,
                 client_name,
-                doc_path=doc_path
+                doc_path=doc_path,
+                reference_xml_path=REFERENCE_XML if os.path.exists(REFERENCE_XML) else None
             )
             
             # Paso 4: Guardar diagrama
@@ -138,6 +141,22 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             st.success(f"✅ **Diagrama generado exitosamente!**")
             st.info(f"📁 **Ubicación del archivo:** `{DELIVERABLE_XML}`")
             st.success("💡 **Próximos pasos:** Puede ver las variables del diagrama o descargarlo usando los botones de arriba.")
+            
+            # Generar PDF del diagrama
+            try:
+                status_text.text("📄 Generando PDF del diagrama...")
+                pdf_path = DELIVERABLE_PDF.replace('.pdf', '_generado.pdf')
+                pdf_data, pdf_error = generar_pdf_desde_xml_drawio(xml_content, pdf_path)
+                if pdf_data:
+                    st.session_state['diagram_pdf'] = pdf_data
+                    st.session_state['diagram_pdf_generated'] = True
+                    st.info(f"📄 **PDF generado exitosamente**")
+                else:
+                    st.warning(f"⚠️ No se pudo generar PDF: {pdf_error if pdf_error else 'Error desconocido'}")
+                    st.session_state['diagram_pdf_generated'] = False
+            except Exception as pdf_e:
+                st.warning(f"⚠️ Error al generar PDF: {str(pdf_e)}")
+                st.session_state['diagram_pdf_generated'] = False
             
             # Guardar en session_state para descarga
             st.session_state['diagram_xml'] = xml_content
@@ -234,21 +253,61 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
                 )
             
             with col2:
-                # Agregar descarga del PDF si existe
-                import os
-                from utils.file_handler import file_exists
-                if file_exists(DELIVERABLE_PDF):
-                    with open(DELIVERABLE_PDF, 'rb') as pdf_file:
-                        pdf_data = pdf_file.read()
+                # Generar y descargar PDF si está disponible
+                pdf_filename = f"diagrama_gnv_{client_name}_{st.session_state.get('proyecto_fecha', 'v1')}.pdf"
+                
+                # Intentar usar PDF generado desde XML
+                if 'diagram_pdf' in st.session_state and st.session_state.get('diagram_pdf_generated'):
+                    pdf_data = st.session_state['diagram_pdf']
                     st.download_button(
                         label="📄 Descargar Diagrama en PDF",
                         data=pdf_data,
-                        file_name="PETROLIQUIDOS_GNV_PID_v1.pdf",
+                        file_name=pdf_filename,
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
+                # Si no hay PDF generado, intentar generar uno ahora
+                elif 'diagram_xml' in st.session_state:
+                    with st.spinner("🔄 Generando PDF..."):
+                        pdf_data, pdf_error = generar_pdf_desde_xml_drawio(st.session_state['diagram_xml'])
+                        if pdf_data:
+                            st.session_state['diagram_pdf'] = pdf_data
+                            st.session_state['diagram_pdf_generated'] = True
+                            st.download_button(
+                                label="📄 Descargar Diagrama en PDF",
+                                data=pdf_data,
+                                file_name=pdf_filename,
+                                mime="application/pdf",
+                                use_container_width=True
+                            )
+                        else:
+                            st.warning(f"⚠️ No se pudo generar PDF: {pdf_error if pdf_error else 'Error desconocido'}")
+                            # Intentar usar PDF existente como fallback
+                            if file_exists(DELIVERABLE_PDF):
+                                with open(DELIVERABLE_PDF, 'rb') as pdf_file:
+                                    pdf_data = pdf_file.read()
+                                st.download_button(
+                                    label="📄 Descargar PDF Existente",
+                                    data=pdf_data,
+                                    file_name=pdf_filename,
+                                    mime="application/pdf",
+                                    use_container_width=True
+                                )
+                            else:
+                                st.info("ℹ️ PDF no disponible. Genere el diagrama primero.")
+                # Si hay PDF existente en disco, usarlo como fallback
+                elif file_exists(DELIVERABLE_PDF):
+                    with open(DELIVERABLE_PDF, 'rb') as pdf_file:
+                        pdf_data = pdf_file.read()
+                    st.download_button(
+                        label="📄 Descargar PDF Existente",
+                        data=pdf_data,
+                        file_name=pdf_filename,
                         mime="application/pdf",
                         use_container_width=True
                     )
                 else:
-                    st.info("ℹ️ PDF disponible próximamente")
+                    st.info("ℹ️ Genere el diagrama primero para descargar el PDF")
         else:
             st.warning("""
             ⚠️ **Diagrama no disponible para descarga**
@@ -274,26 +333,6 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
     - Puede abrirse y editarse en [draw.io](https://app.diagrams.net) o [diagrams.net](https://diagrams.net)
     - Las presiones y variables se actualizan automáticamente según los cálculos realizados
     - El diagrama cumple con las especificaciones de la fase de ingeniería
-    """)
-
-
-            1. ✅ Asegúrese de haber completado el cálculo del sistema
-            2. 🔄 Haga clic en "🔄 Generar Diagrama Actualizado"
-            3. ⏳ Espere a que se complete la generación
-            4. 📥 Luego podrá descargar el diagrama
-            
-            **Nota:** El diagrama se genera automáticamente con las variables de los cálculos realizados.
-            """)
-            # Mantener el expander abierto
-            st.session_state['diagram_expander_open'] = True
-    
-    # Información adicional
-    st.markdown("---")
-    st.info("""
-    💡 **Información del Diagrama:**
-    - El diagrama incluye todos los componentes del sistema GNV con las variables calculadas del proyecto
-    - Puede abrirse y editarse en [draw.io](https://app.diagrams.net) o [diagrams.net](https://diagrams.net)
-    - Las presiones y variables se actualizan automáticamente según los cálculos realizados
-    - El diagrama cumple con las especificaciones de la fase de ingeniería
+    - El PDF se genera automáticamente usando WeasyPrint cuando se descarga el diagrama
     """)
 

@@ -27,7 +27,7 @@ from utils.drawio_integration import show_diagram_generator
 from config import (
     MANIFEST_FILE, REMEMBERED_USER_FILE, USERS_DB_FILE,
     DELIVERABLE_MD, DELIVERABLE_XLSX, DELIVERABLE_XML, DELIVERABLE_PDF,
-    DEFAULT_CLIENT, DEFAULT_VERSION, DEFAULT_DATE
+    DEFAULT_CLIENT, DEFAULT_VERSION, DEFAULT_DATE, DEFAULT_AUTONOMIA
 )
 
 # Configuración de la página
@@ -254,7 +254,7 @@ with tabs[TAB_CALCULOS]:
             "Autonomía Deseada (km)",
             min_value=100.0,
             max_value=2000.0,
-            value=800.0,
+            value=config.DEFAULT_AUTONOMIA,
             step=10.0,
             help="Distancia que se desea recorrer con un tanque lleno"
         )
@@ -990,17 +990,17 @@ with tabs[TAB_FORMULAS]:
         
         4. **Volumen de gas a 200 bar:**
            $$
-           V = \\frac{211.0 \\times 8.314 \\times 298}{20,000,000 \\times 0.01604 \\times 0.85} = 1.92 \\, \\text{m}^3
+           V = \\frac{158.0 \\times 8.314 \\times 298}{20,000,000 \\times 0.01604 \\times 0.85} = 1.44 \\, \\text{m}^3
            $$
         
         5. **Número de tanques (V_unitario = 0.080 m³):**
            $$
-           n_{\\text{tanques}} = \\left\\lceil \\frac{1.92}{0.080} \\right\\rceil = 24 \\, \\text{tanques}
+           n_{\\text{tanques}} = \\left\\lceil \\frac{1.44}{0.080} \\right\\rceil = 18 \\, \\text{tanques}
            $$
         
         6. **Peso adicional:**
            $$
-           P_{\\text{adicional}} = 24 \\times (65 + 10 + 5) = 1,920 \\, \\text{kg}
+           P_{\\text{adicional}} = 18 \\times (65 + 10 + 5) = 1,440 \\, \\text{kg}
            $$
         """)
     else:
@@ -1040,7 +1040,7 @@ with tabs[TAB_SENSIBILIDAD]:
             "Autonomía Base (km)",
             min_value=400.0,
             max_value=1200.0,
-            value=800.0,
+            value=config.DEFAULT_AUTONOMIA,
             step=50.0,
             key="sens_autonomia"
         )
@@ -1258,11 +1258,12 @@ with tabs[TAB_MANIFEST]:
                         # Verificar si el archivo existe y permitir descarga (solo administradores)
                         if st.session_state.get('user_role') == 'Administrador':
                             # Mapear nombres de archivos a rutas completas
+                            # NOTA: Solo PDFs para diagramas - no se descargan XML desde el manifest
                             file_mapping = {
                                 'PETROLIQUIDOS_GNV_Informe_v1.md': DELIVERABLE_MD,
                                 'PETROLIQUIDOS_GNV_BOM_v1.xlsx': DELIVERABLE_XLSX,
-                                'PETROLIQUIDOS_GNV_PID_v1.drawio.xml': DELIVERABLE_XML,
-                                'PETROLIQUIDOS_GNV_PID_v1.pdf': DELIVERABLE_PDF,
+                                'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf': DELIVERABLE_PDF,
+                                'PETROLIQUIDOS_GNV_PID_v1.pdf': DELIVERABLE_PDF,  # Fallback al PDF en assets
                                 'PETROLIQUIDOS_GNV_manifest_v1.json': MANIFEST_FILE
                             }
                             

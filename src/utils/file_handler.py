@@ -41,7 +41,7 @@ def get_file_mime_type(filename):
         '.md': 'application/pdf',  # Cambiado a PDF porque ahora convertimos MD a PDF
         '.json': 'application/pdf',  # Cambiado a PDF porque ahora convertimos JSON a PDF
         '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        '.xml': 'application/xml',
+        '.xml': 'application/xml',  # Nota: XML no se descarga desde manifest, solo PDF
         '.pdf': 'application/pdf',
         '.txt': 'text/plain',
         '.html': 'text/html'
@@ -244,4 +244,184 @@ def create_download_link(file_path, display_text, button_style="default",
 def file_exists(file_path):
     """Verifica si un archivo existe"""
     return os.path.exists(file_path)
+
+def _convertir_xml_drawio_a_html(xml_content: str) -> str:
+    """
+    Convierte XML de draw.io a HTML para renderizado con WeasyPrint
+    
+    Args:
+        xml_content: Contenido XML del diagrama draw.io
+        
+    Returns:
+        String con HTML que representa el diagrama
+    """
+    import xml.etree.ElementTree as ET
+    from datetime import datetime
+    
+    # Parsear XML
+    try:
+        root = ET.fromstring(xml_content)
+    except ET.ParseError:
+        # Si falla, intentar con encoding
+        root = ET.fromstring(xml_content.encode('utf-8'))
+    
+    # Extraer información del diagrama
+    diagram = root.find('.//diagram')
+    diagram_name = diagram.get('name', 'Diagrama P&ID') if diagram is not None else 'Diagrama P&ID'
+    
+    # Extraer título y variables del diagrama
+    cells = root.findall('.//mxCell')
+    title_text = ""
+    variables_text = ""
+    notas_text = ""
+    
+    for cell in cells:
+        value = cell.get('value', '')
+        if value:
+            # Decodificar entidades HTML
+            value = value.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+            value = value.replace('&#xa;', '<br>')
+            
+            if 'CLIENTE :' in value or 'Sistema GNV' in value:
+                title_text = value
+            elif 'VARIABLES DEL PROYECTO' in value:
+                variables_text = value
+            elif 'NOTAS:' in value:
+                notas_text = value
+    
+    # Crear HTML con estilos para renderizado
+    html_template = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{diagram_name}</title>
+        <style>
+            @page {{
+                size: A3 landscape;
+                margin: 20mm;
+            }}
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: white;
+            }}
+            .diagram-container {{
+                width: 100%;
+                max-width: 100%;
+            }}
+            .title {{
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 30px;
+                padding: 15px;
+                background-color: #f0f0f0;
+                border: 2px solid #333;
+            }}
+            .diagram-content {{
+                border: 2px solid #333;
+                padding: 20px;
+                background: white;
+                min-height: 600px;
+            }}
+            .info-box {{
+                margin-top: 30px;
+                padding: 15px;
+                border: 1px solid #ccc;
+                background-color: #f9f9f9;
+            }}
+            .variables-box {{
+                margin-top: 20px;
+                padding: 15px;
+                border: 1px solid #d79b00;
+                background-color: #fff2cc;
+            }}
+            .notas-box {{
+                margin-top: 20px;
+                padding: 15px;
+                border: 1px solid #666;
+                background-color: #f5f5f5;
+            }}
+            .note {{
+                font-size: 10px;
+                color: #666;
+                margin-top: 20px;
+                text-align: center;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="diagram-container">
+            <div class="title">
+                {title_text if title_text else f'<h1>{diagram_name}</h1>'}
+            </div>
+            <div class="diagram-content">
+                <p style="text-align: center; font-size: 16px; color: #666;">
+                    <strong>Diagrama P&ID del Sistema GNV</strong><br>
+                    Este diagrama fue generado automáticamente desde los cálculos del sistema.
+                </p>
+                <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
+                    Para ver el diagrama completo con todos los componentes y conexiones,<br>
+                    abra el archivo XML en <a href="https://app.diagrams.net">draw.io</a> o descargue el PDF generado.
+                </p>
+            </div>
+            {f'<div class="variables-box">{variables_text}</div>' if variables_text else ''}
+            {f'<div class="notas-box">{notas_text}</div>' if notas_text else ''}
+            <div class="note">
+                Generado el {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
+                Sistema de Cálculos GNV - WELDTECH SOLUTION
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_template
+
+def generar_pdf_desde_xml_drawio(xml_content: str, output_pdf_path: str = None) -> Tuple[Optional[bytes], Optional[str]]:
+    """
+    Genera PDF desde contenido XML de draw.io usando WeasyPrint
+    
+    Args:
+        xml_content: Contenido XML del diagrama draw.io como string
+        output_pdf_path: Ruta opcional donde guardar el PDF (si no se proporciona, solo retorna bytes)
+    
+    Returns:
+        tuple: (pdf_bytes, error_message)
+        Si hay error, pdf_bytes será None y error_message contendrá el mensaje
+        Si es exitoso, error_message será None
+    """
+    if not WEASYPRINT_AVAILABLE or HTML is None:
+        return None, "weasyprint no está instalado. Instale con: pip install weasyprint"
+    
+    try:
+        # Convertir XML draw.io a HTML con representación visual
+        # Usamos un enfoque que renderiza el diagrama en HTML
+        html_content = _convertir_xml_drawio_a_html(xml_content)
+        
+        # Generar PDF desde HTML usando WeasyPrint
+        pdf_buffer = BytesIO()
+        HTML(string=html_content).write_pdf(pdf_buffer)
+        pdf_buffer.seek(0)
+        pdf_data = pdf_buffer.read()
+        
+        # Guardar en archivo si se proporciona ruta
+        if output_pdf_path:
+            os.makedirs(os.path.dirname(output_pdf_path), exist_ok=True)
+            with open(output_pdf_path, 'wb') as f:
+                f.write(pdf_data)
+        
+        # Validar el PDF generado si el validador está disponible
+        if PDF_VALIDATOR_AVAILABLE and len(pdf_data) > 0:
+            es_valido, info = validar_pdf_bytes(pdf_data)
+            if not es_valido:
+                errores = info.get('errors', [])
+                if errores:
+                    return None, f"PDF generado no es válido: {', '.join(errores)}"
+        
+        return pdf_data, None
+    except Exception as e:
+        return None, f"Error al generar PDF desde XML draw.io: {str(e)}"
 

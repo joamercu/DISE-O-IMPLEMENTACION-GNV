@@ -46,6 +46,40 @@ OUTPUTS_DIR = os.path.join(BASE_DIR, 'outputs')
 DELIVERABLE_MD = os.path.join(DOCS_DIR, 'PETROLIQUIDOS_GNV_Informe_v1.md')
 DELIVERABLE_XLSX = os.path.join(OUTPUTS_DIR, 'PETROLIQUIDOS_GNV_BOM_v1.xlsx')
 DELIVERABLE_XML = os.path.join(ASSETS_DIR, 'PETROLIQUIDOS_GNV_PID_v1.drawio.xml')
-DELIVERABLE_PDF = os.path.join(ASSETS_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf')
-DELIVERABLE_PDF = os.path.join(ASSETS_DIR, 'PETROLIQUIDOS_GNV_PID_v1.pdf')
+
+# XML de referencia para usar como plantilla base
+REFERENCE_XML_ROOT = os.path.join(BASE_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_V_JOSEMERCHAN.xml')
+REFERENCE_XML_ASSETS = os.path.join(ASSETS_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_V_JOSEMERCHAN.xml')
+
+# Determinar qué XML de referencia usar (prioridad: raíz > assets)
+if os.path.exists(REFERENCE_XML_ROOT):
+    REFERENCE_XML = REFERENCE_XML_ROOT
+elif os.path.exists(REFERENCE_XML_ASSETS):
+    REFERENCE_XML = REFERENCE_XML_ASSETS
+else:
+    # Fallback al XML en assets si existe
+    REFERENCE_XML = DELIVERABLE_XML
+
+# PDF de referencia para comparación
+REFERENCE_PDF_ROOT = os.path.join(BASE_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_V_JOSEMERCHAN.pdf')
+REFERENCE_PDF_ASSETS = os.path.join(ASSETS_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_V_JOSEMERCHAN.pdf')
+
+# Determinar qué PDF usar (prioridad: outputs > assets > raíz > referencia)
+ELK_FINAL_PDF_OUTPUTS = os.path.join(OUTPUTS_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf')
+ELK_FINAL_PDF_ASSETS = os.path.join(ASSETS_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf')
+ELK_FINAL_PDF_ROOT = os.path.join(BASE_DIR, 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf')
+
+if os.path.exists(ELK_FINAL_PDF_OUTPUTS):
+    DELIVERABLE_PDF = ELK_FINAL_PDF_OUTPUTS
+elif os.path.exists(ELK_FINAL_PDF_ASSETS):
+    DELIVERABLE_PDF = ELK_FINAL_PDF_ASSETS
+elif os.path.exists(ELK_FINAL_PDF_ROOT):
+    DELIVERABLE_PDF = ELK_FINAL_PDF_ROOT
+elif os.path.exists(REFERENCE_PDF_ROOT):
+    DELIVERABLE_PDF = REFERENCE_PDF_ROOT
+elif os.path.exists(REFERENCE_PDF_ASSETS):
+    DELIVERABLE_PDF = REFERENCE_PDF_ASSETS
+else:
+    # Fallback al PDF en assets si existe
+    DELIVERABLE_PDF = os.path.join(ASSETS_DIR, 'PETROLIQUIDOS_GNV_PID_v1.pdf')
 

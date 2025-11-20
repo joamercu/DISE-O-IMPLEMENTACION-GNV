@@ -61,6 +61,7 @@ Los siguientes archivos Excel han sido movidos a `versionados/excel/` con timest
 
 ### En raíz del proyecto:
 - ✅ **diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_V_JOSEMERCHAN.pdf** - PDF del ingeniero (referencia)
+- ✅ **diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf** - PDF del diagrama más reciente (también en outputs/)
 
 ---
 
@@ -70,7 +71,7 @@ Los siguientes archivos Excel han sido movidos a `versionados/excel/` con timest
   - Ubicación: Raíz del proyecto
   - Descripción: Versión final del diagrama P&ID del sistema GNV
 
-**Nota:** El PDF correspondiente a este XML debe generarse manualmente usando Draw.io Desktop o CLI, ya que la generación automática requiere herramientas adicionales instaladas.
+**Nota:** El PDF correspondiente a este XML fue generado y está disponible tanto en la raíz del proyecto como en `outputs/` para uso en la aplicación principal.
 
 ---
 

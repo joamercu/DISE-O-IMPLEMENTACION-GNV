@@ -8,6 +8,7 @@ import os
 from typing import Dict, List, Optional, Tuple
 import json
 import math
+import re
 
 class DrawIOAgent:
     """
@@ -76,12 +77,12 @@ class DrawIOAgent:
             calculation_results: Resultados del cálculo del sistema GNV
         """
         # Mapear resultados del cálculo a variables del diagrama
-        numero_tanques = calculation_results.get('tanques', calculation_results.get('numero_tanques', 23))
+        numero_tanques = calculation_results.get('tanques', calculation_results.get('numero_tanques', 18))
         presion_llenado = calculation_results.get('presion_llenado', 200)
         volumen_gas = calculation_results.get('volumen', calculation_results.get('volumen_gas', 0))
         masa_ch4 = calculation_results.get('masa_ch4', calculation_results.get('masa_ch4_requerida', 0))
         consumo = calculation_results.get('consumo_base', 35)
-        autonomia = calculation_results.get('autonomia_objetivo', 800)
+        autonomia = calculation_results.get('autonomia_objetivo', 600)
         temperatura = calculation_results.get('temperatura', calculation_results.get('temperatura_operacion', 25))
         
         # Calcular volumen por tanque
@@ -223,25 +224,33 @@ class DrawIOAgent:
     def generate_diagram_from_engineering(self, 
                                          calculation_results: Dict,
                                          client_name: str = "PETROLIQUIDOS",
-                                         doc_path: str = None) -> str:
+                                         doc_path: str = None,
+                                         reference_xml_path: str = None) -> str:
         """
         Genera un diagrama draw.io completo basado en las instrucciones de ingeniería
+        Usa el XML de referencia como plantilla base si está disponible
         
         Args:
             calculation_results: Resultados del cálculo del sistema
             client_name: Nombre del cliente
             doc_path: Ruta al documento de ingeniería
+            reference_xml_path: Ruta al XML de referencia para usar como plantilla
             
         Returns:
             String con el XML del diagrama generado
         """
+        # Cargar variables de cálculo
+        self.load_calculation_variables(calculation_results)
+        
+        # Si hay XML de referencia, usarlo como plantilla base
+        if reference_xml_path and os.path.exists(reference_xml_path):
+            return self._update_reference_xml(reference_xml_path, client_name)
+        
+        # Si no hay referencia, generar desde cero (método anterior)
         # Resetear componentes y conexiones
         self.components = {}
         self.connections = []
         self.cell_id_counter = 0
-        
-        # Cargar variables de cálculo
-        self.load_calculation_variables(calculation_results)
         
         # Cargar instrucciones de ingeniería si se proporciona
         if doc_path:
@@ -257,6 +266,135 @@ class DrawIOAgent:
         xml_content = self._generate_xml(client_name)
         
         return xml_content
+    
+    def _update_reference_xml(self, reference_xml_path: str, client_name: str) -> str:
+        """
+        Actualiza el XML de referencia con las variables calculadas
+        
+        Args:
+            reference_xml_path: Ruta al XML de referencia
+            client_name: Nombre del cliente
+            
+        Returns:
+            String con el XML actualizado
+        """
+        try:
+            # Leer el XML de referencia
+            tree = ET.parse(reference_xml_path)
+            root = tree.getroot()
+            
+            # Obtener el diagrama
+            diagram = root.find('.//diagram')
+            if diagram is not None:
+                # Actualizar nombre del diagrama con el cliente
+                diagram.set('name', f'P&ID Sistema GNV - {client_name}')
+            
+            # Obtener todas las celdas
+            cells = root.findall('.//mxCell')
+            
+            # Variables a actualizar
+            num_tanques = self.variables.get('numero_tanques', 18)
+            volumen_l = self.variables.get('volumen_tanque_litros', 80)
+            presion_llenado = self.variables.get('presion_llenado', 200)
+            presion_max = self.variables.get('presion_llenado_max', 250)
+            presion_etapa1_in = self.variables.get('presion_etapa1_in', 200)
+            presion_etapa1_out = self.variables.get('presion_etapa1_out', 30)
+            presion_etapa2_out = self.variables.get('presion_etapa2_out', 8.5)
+            volumen_gas_total = self.variables.get('volumen_gas_total', 0)
+            masa_ch4 = self.variables.get('masa_ch4', 0)
+            consumo_diesel = self.variables.get('consumo_diesel', 35)
+            autonomia = self.variables.get('autonomia', 600)
+            
+            # Actualizar valores en las celdas
+            for cell in cells:
+                value = cell.get('value', '')
+                if value:
+                    # Actualizar tanques
+                    if 'Tanque CNG' in value and '80L' in value:
+                        new_value = value.replace('80L', f'{volumen_l:.0f}L')
+                        new_value = new_value.replace('200 bar', f'{presion_llenado:.0f} bar')
+                        cell.set('value', new_value)
+                    
+                    # Actualizar número de tanques
+                    if 'tanques más' in value or 'Total:' in value:
+                        tanques_restantes = max(0, num_tanques - 3)
+                        # Usar entidades HTML codificadas como en el XML original
+                        new_value = f'&lt;font style=&quot;font-size: 24px;&quot;&gt;({tanques_restantes} tanques más)&lt;br&gt;Total: {num_tanques} tanques&lt;/font&gt;'
+                        cell.set('value', new_value)
+                    
+                    # Actualizar PRV
+                    if 'PRV' in value and '250 bar' in value:
+                        new_value = value.replace('250 bar', f'{presion_max:.0f} bar')
+                        cell.set('value', new_value)
+                    
+                    # Actualizar regulador 1ra etapa
+                    if 'Regulador' in value and '1ra Etapa' in value:
+                        new_value = f'Regulador&#xa;1ra Etapa&#xa;{presion_etapa1_in:.0f}-{presion_max:.0f} bar →&#xa;{presion_etapa1_out-10:.0f}-{presion_etapa1_out+10:.0f} bar&#xa;+ Calentador'
+                        cell.set('value', new_value)
+                    
+                    # Actualizar regulador 2da etapa
+                    if 'Regulador' in value and '2da Etapa' in value:
+                        new_value = f'Regulador&#xa;2da Etapa&#xa;{presion_etapa1_out-10:.0f}-{presion_etapa1_out+10:.0f} bar →&#xa;{presion_etapa2_out-1.5:.1f}-{presion_etapa2_out+1.5:.1f} bar'
+                        cell.set('value', new_value)
+                    
+                    # Actualizar sensores de presión
+                    if 'PT-HP-101' in value:
+                        new_value = f'PT-HP-101&#xa;P = {presion_etapa1_in:.0f}-{presion_max:.0f} bar'
+                        cell.set('value', new_value)
+                    elif 'PT-IP-102' in value:
+                        new_value = f'PT-IP-102&#xa;P = {presion_etapa1_out-10:.0f}-{presion_etapa1_out+10:.0f} bar'
+                        cell.set('value', new_value)
+                    elif 'PT-LP-103' in value:
+                        new_value = f'PT-LP-103&#xa;P = {presion_etapa2_out-1.5:.1f}-{presion_etapa2_out+1.5:.1f} bar'
+                        cell.set('value', new_value)
+                    
+                    # Actualizar etiquetas de conexiones con presiones
+                    if 'Gas CNG' in value and '200-250 bar' in value:
+                        new_value = value.replace('200-250 bar', f'{presion_etapa1_in:.0f}-{presion_max:.0f} bar')
+                        cell.set('value', new_value)
+                    elif 'Gas Regulado' in value and '20-40 bar' in value:
+                        new_value = value.replace('20-40 bar', f'{presion_etapa1_out-10:.0f}-{presion_etapa1_out+10:.0f} bar')
+                        cell.set('value', new_value)
+                    elif 'Gas Regulado' in value and '7-10 bar' in value:
+                        new_value = value.replace('7-10 bar', f'{presion_etapa2_out-1.5:.1f}-{presion_etapa2_out+1.5:.1f} bar')
+                        cell.set('value', new_value)
+                    elif 'Gas a Motor' in value and '7-10 bar' in value:
+                        new_value = value.replace('7-10 bar', f'{presion_etapa2_out-1.5:.1f}-{presion_etapa2_out+1.5:.1f} bar')
+                        cell.set('value', new_value)
+                    
+                    # Actualizar variables del proyecto
+                    if 'VARIABLES DEL PROYECTO' in value:
+                        # Usar entidades HTML codificadas como en el XML original
+                        new_value = (
+                            f'&lt;font style=&quot;font-size: 24px;&quot;&gt;VARIABLES DEL PROYECTO:&lt;br&gt;'
+                            f'• Número de tanques: {num_tanques}&lt;br&gt;'
+                            f'• Presión de llenado: {presion_llenado:.0f} bar&lt;br&gt;'
+                            f'• Volumen total de gas: {volumen_gas_total:.2f} m³&lt;br&gt;'
+                            f'• Masa CH₄ requerida: {masa_ch4:.1f} kg&lt;br&gt;'
+                            f'• Consumo diésel: {consumo_diesel:.1f} L/100km&lt;br&gt;'
+                            f'• Autonomía objetivo: {autonomia:.0f} km&lt;/font&gt;'
+                        )
+                        cell.set('value', new_value)
+                    
+                    # Actualizar título con cliente
+                    if 'CLIENTE : PETROLIQUIDOS' in value:
+                        new_value = value.replace('CLIENTE : PETROLIQUIDOS', f'CLIENTE : {client_name}')
+                        cell.set('value', new_value)
+            
+            # Convertir a string XML formateado
+            rough_string = ET.tostring(root, encoding='unicode')
+            reparsed = minidom.parseString(rough_string)
+            return reparsed.toprettyxml(indent="  ")
+            
+        except Exception as e:
+            # Si falla, generar desde cero
+            print(f"Advertencia: No se pudo usar XML de referencia ({e}). Generando desde cero.")
+            self.components = {}
+            self.connections = []
+            self.cell_id_counter = 0
+            self._create_system_components()
+            self._create_system_connections()
+            return self._generate_xml(client_name)
     
     def _create_system_components(self):
         """Crea todos los componentes del sistema según las instrucciones"""
@@ -670,7 +808,7 @@ class DrawIOAgent:
             f"• Volumen total de gas: {self.variables.get('volumen_gas_total', 0):.2f} m³\n"
             f"• Masa CH₄ requerida: {self.variables.get('masa_ch4', 0):.2f} kg\n"
             f"• Consumo diésel: {self.variables.get('consumo_diesel', 35):.1f} L/100km\n"
-            f"• Autonomía objetivo: {self.variables.get('autonomia', 800):.0f} km"
+            f"• Autonomía objetivo: {self.variables.get('autonomia', 600):.0f} km"
         )
         
         self._create_cell(root, 'vars', vars_text,

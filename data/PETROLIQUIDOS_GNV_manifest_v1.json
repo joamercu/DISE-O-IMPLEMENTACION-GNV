@@ -59,25 +59,25 @@
       ]
     },
     "pid": {
-      "filename": "PETROLIQUIDOS_GNV_PID_v1.drawio.xml",
-      "format": "Draw.io XML",
+      "filename": "diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf",
+      "format": "PDF",
       "status": "Completo",
-      "description": "Diagrama P&ID del sistema GNV completo",
+      "description": "Diagrama P&ID del sistema GNV completo en formato PDF",
       "components_included": [
-        "Tanques CNG (23 unidades tipo 3)",
+        "Tanques CNG (18 unidades tipo 3, 80L, 200 bar)",
         "Manifold de distribución",
         "Válvula shut-off automática",
         "Regulador 1ra etapa (200-250 bar → 20-40 bar) con calentador",
         "Filtro de gas alta presión",
         "Regulador 2da etapa (20-40 bar → 7-10 bar)",
         "ECU (Engine Control Unit)",
-        "Inyectores de gas secuenciales",
+        "Inyectores de gas secuenciales (6 unidades)",
         "Sensores (presión, temperatura, lambda)",
-        "Válvulas de alivio de presión",
-        "Válvula de llenado",
+        "Válvulas de alivio de presión (PRV 250 bar)",
+        "Válvula de llenado (receptáculo)",
         "Motor diésel convertido"
       ],
-      "editable_in": "draw.io (app.diagrams.net)"
+      "note": "Diagrama en formato PDF válido para visualización y descarga desde dispositivos móviles"
     },
     "manifest": {
       "filename": "PETROLIQUIDOS_GNV_manifest_v1.json",
@@ -345,25 +345,213 @@
     "note": "Tasa de cambio estimada - actualizar al momento de cotización",
     "breakdown": {
       "subtotal_components": {
-        "usd": 28000,
-        "cop": 112000000,
-        "note": "Estimado basado en BOM - requiere validación con proveedores"
+        "usd": 35380.0,
+        "cop": 141520000.0,
+        "note": "Actualizado desde Excel BOM v2 - requiere validación con proveedores"
       },
       "contingency": {
         "percentage": 15,
-        "usd": 4200,
-        "cop": 16800000
+        "usd": 5307.0,
+        "cop": 21228000.0
       },
       "margin": {
         "percentage": 20,
-        "usd": 6440,
-        "cop": 25760000
+        "usd": 8137.4,
+        "cop": 32549600.0
       },
       "total_estimated": {
-        "usd": 38640,
-        "cop": 154560000,
+        "usd": 48824.4,
+        "cop": 195297600.0,
         "uncertainty": "Alta - precios estimados, requieren cotización formal"
-      }
+      },
+      "distribution_by_category": [
+        {
+          "categoria": "Almacenamiento",
+          "total_usd": 22410.0,
+          "total_cop": 89640000.0,
+          "porcentaje": 63.34,
+          "componentes": [
+            {
+              "descripcion": "Tanque CNG Tipo 3, 80L, 200 bar, UNECE R110",
+              "cantidad": 18.0,
+              "precio_unit": 1125.0,
+              "total": 20250.0
+            },
+            {
+              "descripcion": "Soporte tanque tipo 3 (set completo)",
+              "cantidad": 18.0,
+              "precio_unit": 120.0,
+              "total": 2160.0
+            }
+          ]
+        },
+        {
+          "categoria": "Regulación y Control",
+          "total_usd": 3690.0,
+          "total_cop": 14760000.0,
+          "porcentaje": 10.43,
+          "componentes": [
+            {
+              "descripcion": "Regulador 1ra etapa, 200-250 bar → 20-40 bar, con calentador",
+              "cantidad": 1.0,
+              "precio_unit": 1350.0,
+              "total": 1350.0
+            },
+            {
+              "descripcion": "Regulador 2da etapa, 20-40 bar → 7-10 bar",
+              "cantidad": 1.0,
+              "precio_unit": 850.0,
+              "total": 850.0
+            },
+            {
+              "descripcion": "Filtro de gas, alta presión",
+              "cantidad": 1.0,
+              "precio_unit": 180.0,
+              "total": 180.0
+            },
+            {
+              "descripcion": "Válvula shut-off automática, 200 bar",
+              "cantidad": 1.0,
+              "precio_unit": 350.0,
+              "total": 350.0
+            },
+            {
+              "descripcion": "Válvulas de alivio de presión, 220 bar",
+              "cantidad": 3.0,
+              "precio_unit": 220.0,
+              "total": 660.0
+            },
+            {
+              "descripcion": "Válvula de llenado (receptáculo)",
+              "cantidad": 1.0,
+              "precio_unit": 300.0,
+              "total": 300.0
+            }
+          ]
+        },
+        {
+          "categoria": "Control Electrónico",
+          "total_usd": 3590.0,
+          "total_cop": 14360000.0,
+          "porcentaje": 10.15,
+          "componentes": [
+            {
+              "descripcion": "ECU (Engine Control Unit) para GNV",
+              "cantidad": 1.0,
+              "precio_unit": 1750.0,
+              "total": 1750.0
+            },
+            {
+              "descripcion": "Inyectores de gas secuenciales (set 6 unidades)",
+              "cantidad": 1.0,
+              "precio_unit": 900.0,
+              "total": 900.0
+            },
+            {
+              "descripcion": "Sensores: Presión (3 unidades)",
+              "cantidad": 3.0,
+              "precio_unit": 90.0,
+              "total": 270.0
+            },
+            {
+              "descripcion": "Sensores: Temperatura (2 unidades)",
+              "cantidad": 2.0,
+              "precio_unit": 70.0,
+              "total": 140.0
+            },
+            {
+              "descripcion": "Sensor lambda (O2)",
+              "cantidad": 1.0,
+              "precio_unit": 180.0,
+              "total": 180.0
+            },
+            {
+              "descripcion": "Cableado y conectores (kit completo)",
+              "cantidad": 1.0,
+              "precio_unit": 350.0,
+              "total": 350.0
+            }
+          ]
+        },
+        {
+          "categoria": "Servicios e Instalación",
+          "total_usd": 3200.0,
+          "total_cop": 12800000.0,
+          "porcentaje": 9.04,
+          "componentes": [
+            {
+              "descripcion": "Mano de obra instalación",
+              "cantidad": 1.0,
+              "precio_unit": 2200.0,
+              "total": 2200.0
+            },
+            {
+              "descripcion": "Pruebas y puesta en marcha",
+              "cantidad": 1.0,
+              "precio_unit": 600.0,
+              "total": 600.0
+            },
+            {
+              "descripcion": "Homologación e inspección técnica",
+              "cantidad": 1.0,
+              "precio_unit": 400.0,
+              "total": 400.0
+            }
+          ]
+        },
+        {
+          "categoria": "Infraestructura",
+          "total_usd": 2130.0,
+          "total_cop": 8520000.0,
+          "porcentaje": 6.02,
+          "componentes": [
+            {
+              "descripcion": "Manifold de distribución (conexión múltiple tanques)",
+              "cantidad": 1.0,
+              "precio_unit": 600.0,
+              "total": 600.0
+            },
+            {
+              "descripcion": "Tubería y conexiones alta presión (200 bar)",
+              "cantidad": 1.0,
+              "precio_unit": 500.0,
+              "total": 500.0
+            },
+            {
+              "descripcion": "Tubería y conexiones media presión (20-40 bar)",
+              "cantidad": 1.0,
+              "precio_unit": 250.0,
+              "total": 250.0
+            },
+            {
+              "descripcion": "Tubería y conexiones baja presión (7-10 bar)",
+              "cantidad": 1.0,
+              "precio_unit": 180.0,
+              "total": 180.0
+            },
+            {
+              "descripcion": "Sistema de montaje y fijación (soportes adicionales)",
+              "cantidad": 1.0,
+              "precio_unit": 600.0,
+              "total": 600.0
+            }
+          ]
+        },
+        {
+          "categoria": "Instrumentación",
+          "total_usd": 360.0,
+          "total_cop": 1440000.0,
+          "porcentaje": 1.02,
+          "componentes": [
+            {
+              "descripcion": "Manómetros y indicadores",
+              "cantidad": 3.0,
+              "precio_unit": 120.0,
+              "total": 360.0
+            }
+          ]
+        }
+      ]
     }
   },
   "change_log": [
@@ -383,6 +571,47 @@
         "Revisión de normativas nacionales e internacionales"
       ],
       "status": "Draft - Pendiente validación cliente"
+    },
+    {
+      "version": "1.0.1",
+      "date": "2025-11-20",
+      "author": "Sistema de Actualización Automática",
+      "changes": [
+        "Actualización de estimaciones de costo desde Excel BOM v2",
+        "Subtotal componentes actualizado: $35,380.00 USD",
+        "Total estimado actualizado: $48,824.40 USD"
+      ],
+      "status": "Actualizado"
+    },
+    {
+      "version": "1.0.1.2",
+      "date": "2025-11-20",
+      "author": "Sistema de Actualización Automática",
+      "changes": [
+        "Agregada distribución porcentual de costos por categoría",
+        "Incluye porcentajes reales de cada categoría respecto al subtotal"
+      ],
+      "status": "Actualizado"
+    },
+    {
+      "version": "1.0.1.2.2",
+      "date": "2025-11-20",
+      "author": "Sistema de Actualización Automática",
+      "changes": [
+        "Agregada distribución porcentual de costos por categoría",
+        "Incluye porcentajes reales de cada categoría respecto al subtotal"
+      ],
+      "status": "Actualizado"
+    },
+    {
+      "version": "1.0.1.2.2.2",
+      "date": "2025-11-20",
+      "author": "Sistema de Actualización Automática",
+      "changes": [
+        "Agregada distribución porcentual de costos por categoría",
+        "Incluye porcentajes reales de cada categoría respecto al subtotal"
+      ],
+      "status": "Actualizado"
     }
   ],
   "next_steps": [
@@ -462,4 +691,3 @@
     }
   }
 }
-

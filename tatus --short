@@ -1,0 +1,15 @@
+* [33m072618d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdeveloper[m[33m, [m[1;31morigin/developer[m[33m)[m Agregar resumen de deploy final
+* [33m5fcd1f1[m Actualización completa: Diagrama final del ingeniero, PDF descargable y documentación actualizada - Versión del ingeniero JOSEMERCHAN (WELDTECH SOLUTION) - 18 tanques, autonomía 600 km - PDF del diagrama integrado en aplicación - Documentación actualizada - Configuración actualizada
+* [33m895c437[m Agregar descarga de PDF del diagrama en la aplicación Streamlit
+* [33m7b4129c[m Actualización completa: Diagrama P&ID finalizado, documentación actualizada (18 tanques, 600 km), PDF descargable agregado, pipeline ELK mejorado
+* [33mc45ab29[m feat: Agregar validación de PDFs y corrección de conflictos de extensiones - Agregado módulo pdf_validator.py para validar estructura e integridad de PDFs - Corregido problema de extensiones duplicadas (.md.pdf, .json.pdf) - Agregada función obtener_nombre_sin_extensiones() para evitar conflictos - Integrada validación automática en generación de PDFs - Agregados tests completos para validación de PDFs - Agregado script verificar_pdfs.py para verificación manual - Actualizado requirements.txt con pypdf y pdfminer.six
+* [33m0a80893[m Fix: Corregir importación de generar_pdf_desde_html - Mover BytesIO fuera del try/except - Asegurar que HTML se defina correctamente cuando weasyprint no está disponible
+* [33m0c23d09[m feat: Reemplazar descargas JSON/MD por generación de PDF usando weasyprint
+* [33mbd33f7a[m feat: Agregar scripts de despliegue, configuración SSL/Nginx y documentación completa - Scripts de diagnóstico y configuración del servidor - Documentación de despliegue, SSL y configuración Nginx - Mejoras en cálculos de combustible y utilidades - Configuración de certificados SSL y Nginx completo
+* [33m1bdb4a7[m Corregir error: eliminar argumento width inválido de st.form_submit_button()
+* [33m29952e8[m Agregar botón para generar PDF de Decisiones Pendientes - Usa weasyprint para conversión HTML a PDF
+* [33m88ad1cb[m Corregir error de sintaxis en línea 1821 - Separar variables para evitar problema con comillas en f-string
+* [33m920f504[m Agregar botón de descarga HTML para Decisiones Pendientes - Similar al botón Descargar Informe HTML
+* [33m503114b[m Restringir acceso al diagrama P&ID solo para usuarios Administrador - Ocultar para clientes
+* [33md068669[m Corregir error d.setId en diagrama draw.io - Agregar atributo compressed y corregir posicionamiento de elementos
+* [33m0f25487[m Mejorar persistencia del diagrama P&ID usando container y flags de estado para evitar que se contraiga

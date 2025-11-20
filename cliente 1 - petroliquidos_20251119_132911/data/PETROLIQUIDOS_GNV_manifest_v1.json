@@ -345,23 +345,23 @@
     "note": "Tasa de cambio estimada - actualizar al momento de cotización",
     "breakdown": {
       "subtotal_components": {
-        "usd": 28000,
-        "cop": 112000000,
-        "note": "Estimado basado en BOM - requiere validación con proveedores"
+        "usd": 35380.0,
+        "cop": 141520000.0,
+        "note": "Actualizado desde Excel BOM v2 - requiere validación con proveedores"
       },
       "contingency": {
         "percentage": 15,
-        "usd": 4200,
-        "cop": 16800000
+        "usd": 5307.0,
+        "cop": 21228000.0
       },
       "margin": {
         "percentage": 20,
-        "usd": 6440,
-        "cop": 25760000
+        "usd": 8137.4,
+        "cop": 32549600.0
       },
       "total_estimated": {
-        "usd": 38640,
-        "cop": 154560000,
+        "usd": 48824.4,
+        "cop": 195297600.0,
         "uncertainty": "Alta - precios estimados, requieren cotización formal"
       }
     }
@@ -383,6 +383,17 @@
         "Revisión de normativas nacionales e internacionales"
       ],
       "status": "Draft - Pendiente validación cliente"
+    },
+    {
+      "version": "1.0.1",
+      "date": "2025-11-20",
+      "author": "Sistema de Actualización Automática",
+      "changes": [
+        "Actualización de estimaciones de costo desde Excel BOM v2",
+        "Subtotal componentes actualizado: $35,380.00 USD",
+        "Total estimado actualizado: $48,824.40 USD"
+      ],
+      "status": "Actualizado"
     }
   ],
   "next_steps": [
@@ -462,4 +473,3 @@
     }
   }
 }
-
