@@ -184,6 +184,29 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             st.session_state['diagram_generated'] = True
             # Mantener el expander abierto después de generar
             st.session_state['diagram_expander_open'] = True
+            
+            # Guardar diagrama en BD si hay un submission activo
+            try:
+                from database import add_diagrama_to_submission
+                if 'current_submission_id' in st.session_state:
+                    # Convertir PDF a base64 si existe
+                    pdf_base64 = None
+                    if st.session_state.get('diagram_pdf'):
+                        import base64
+                        pdf_base64 = base64.b64encode(st.session_state['diagram_pdf']).decode('utf-8')
+                    
+                    add_diagrama_to_submission(
+                        submission_id=st.session_state['current_submission_id'],
+                        diagrama_xml=xml_content,
+                        diagrama_pdf=pdf_base64,
+                        ruta_archivo=DELIVERABLE_XML
+                    )
+            except ImportError:
+                # Sistema de notificaciones no disponible
+                pass
+            except Exception as e:
+                print(f"⚠️ Error al guardar diagrama en BD: {str(e)}")
+            
             # Mantener la acción para que el expander se mantenga abierto
             # No limpiar la acción para mantener el expander abierto
                 

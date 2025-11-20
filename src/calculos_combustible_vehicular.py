@@ -28,7 +28,12 @@ from utils.drawio_integration import show_diagram_generator
 from config import (
     MANIFEST_FILE, REMEMBERED_USER_FILE, USERS_DB_FILE,
     DELIVERABLE_MD, DELIVERABLE_XLSX, DELIVERABLE_XML, DELIVERABLE_PDF,
-    DEFAULT_CLIENT, DEFAULT_VERSION, DEFAULT_DATE, DEFAULT_AUTONOMIA
+    DEFAULT_CLIENT, DEFAULT_VERSION, DEFAULT_DATE, DEFAULT_AUTONOMIA,
+    DEFAULT_PODER_CALORIFICO, DEFAULT_LHV_CH4, DEFAULT_EFICIENCIA,
+    DEFAULT_PRESION, DEFAULT_TEMPERATURA, DEFAULT_FACTOR_Z,
+    DEFAULT_VOLUMEN_TANQUE, DEFAULT_PESO_TANQUE,
+    DEFAULT_PESO_SOPORTES, DEFAULT_PESO_ACCESORIOS,
+    CONSTANTE_GASES, MASA_MOLAR_CH4
 )
 
 # Imports para sistema de notificaciones y seguimiento
@@ -1225,8 +1230,12 @@ with tabs[TAB_SENSIBILIDAD]:
         )
     
     if st.button("🔄 Calcular Análisis de Sensibilidad", type="primary"):
+        # Variable para rastrear errores (solo mostrar una vez)
+        error_mostrado = False
+        
         # Función wrapper para usar el motor de cálculos con validación
         def calcular_sistema(consumo, autonomia):
+            nonlocal error_mostrado
             try:
                 # Validar entradas
                 if not math.isfinite(consumo) or consumo <= 0:
@@ -1244,21 +1253,39 @@ with tabs[TAB_SENSIBILIDAD]:
                     CONSTANTE_GASES, MASA_MOLAR_CH4
                 )
                 
+                # Validar que el resultado tenga todas las claves necesarias
+                if not isinstance(resultado, dict):
+                    if not error_mostrado:
+                        st.error(f"Error: resultado no es un diccionario. Tipo: {type(resultado)}")
+                        error_mostrado = True
+                    return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
+                
                 # Validar resultados
-                if not all(math.isfinite(v) for v in [
-                    resultado['energia_requerida'], resultado['masa_ch4_requerida'],
-                    resultado['volumen_gas'], resultado['numero_tanques'], resultado['peso_adicional_total']
-                ]):
+                energia = resultado.get('energia_requerida', 0)
+                masa_ch4 = resultado.get('masa_ch4_requerida', 0)
+                volumen = resultado.get('volumen_gas', 0)
+                tanques = resultado.get('numero_tanques', 0)
+                peso = resultado.get('peso_adicional_total', 0)
+                
+                if not all(math.isfinite(v) for v in [energia, masa_ch4, volumen, tanques, peso]):
+                    if not error_mostrado:
+                        st.warning(f"Algunos valores no son finitos. Verifique los parámetros de entrada.")
+                        error_mostrado = True
                     return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
                 
                 return {
-                    'energia': resultado['energia_requerida'],
-                    'masa_ch4': resultado['masa_ch4_requerida'],
-                    'volumen': resultado['volumen_gas'],
-                    'tanques': resultado['numero_tanques'],
-                    'peso': resultado['peso_adicional_total']
+                    'energia': energia,
+                    'masa_ch4': masa_ch4,
+                    'volumen': volumen,
+                    'tanques': int(tanques),
+                    'peso': peso
                 }
-            except Exception:
+            except Exception as e:
+                if not error_mostrado:
+                    st.error(f"Error en calcular_sistema: {str(e)}")
+                    import traceback
+                    st.error(f"Traceback: {traceback.format_exc()}")
+                    error_mostrado = True
                 return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
         
         # Análisis de variación de consumo
@@ -1431,16 +1458,17 @@ with tabs[TAB_MANIFEST]:
                             file_ext = os.path.splitext(filename)[1].lower()
                             
                             # Mapear nombres de archivos a rutas completas
-                            # NOTA: Solo se entregan archivos en formato HTML y PDF
+                            # NOTA: Se entregan archivos en formato HTML, PDF y Excel
                             file_mapping = {
                                 'PETROLIQUIDOS_GNV_Informe_v1.pdf': DELIVERABLE_MD,  # Se convertirá a PDF desde MD
                                 'PETROLIQUIDOS_GNV_Informe_v1.html': DELIVERABLE_MD,  # Se convertirá a HTML desde MD
                                 'diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_FINAL.pdf': DELIVERABLE_PDF,
                                 'PETROLIQUIDOS_GNV_PID_v1.pdf': DELIVERABLE_PDF,  # Fallback al PDF en assets
-                                'PETROLIQUIDOS_GNV_manifest_v1.pdf': MANIFEST_FILE  # Se convertirá a PDF desde JSON
+                                'PETROLIQUIDOS_GNV_manifest_v1.pdf': MANIFEST_FILE,  # Se convertirá a PDF desde JSON
+                                'PETROLIQUIDOS_GNV_BOM_v1.xlsx': DELIVERABLE_XLSX  # Archivo Excel BOM
                             }
                             
-                            # Verificar si es un archivo PDF del manifest
+                            # Verificar tipo de archivo y permitir descarga
                             if file_ext == '.pdf':
                                 # Buscar el archivo PDF correspondiente
                                 if filename in file_mapping:
@@ -1510,10 +1538,29 @@ with tabs[TAB_MANIFEST]:
                                     else:
                                         st.warning(f"⚠️ El archivo fuente para '{filename}' no se encuentra en el sistema.")
                                 else:
-                                    st.info(f"ℹ️ El archivo '{filename}' no está disponible para descarga en formato HTML/PDF.")
+                                    st.info(f"ℹ️ El archivo '{filename}' no está disponible para descarga.")
+                            elif file_ext == '.xlsx':
+                                # Manejar archivos Excel
+                                if filename in file_mapping:
+                                    source_file = file_mapping[filename]
+                                    
+                                    if source_file == DELIVERABLE_XLSX and file_exists(DELIVERABLE_XLSX):
+                                        download_link = create_download_link(
+                                            DELIVERABLE_XLSX, 
+                                            f"📊 Descargar {filename} (Excel)", 
+                                            "default"
+                                        )
+                                        if download_link:
+                                            st.markdown(download_link, unsafe_allow_html=True)
+                                        else:
+                                            st.error(f"Error al crear enlace de descarga para {filename}")
+                                    else:
+                                        st.warning(f"⚠️ El archivo fuente para '{filename}' no se encuentra en el sistema.")
+                                else:
+                                    st.info(f"ℹ️ El archivo '{filename}' no está disponible para descarga.")
                             else:
-                                # Si no es PDF, informar que solo se entregan HTML y PDF
-                                st.info(f"ℹ️ Solo se entregan archivos en formato HTML y PDF. '{filename}' no está disponible para descarga.")
+                                # Si no es PDF ni Excel, informar formatos disponibles
+                                st.info(f"ℹ️ Solo se entregan archivos en formato HTML, PDF y Excel. '{filename}' no está disponible para descarga.")
         
         # Parámetros Técnicos
         if 'technical_parameters' in manifest_data:
@@ -1553,12 +1600,6 @@ with tabs[TAB_MANIFEST]:
                         {s2.get('input', {}).get('min', 'N/A')}-{s2.get('input', {}).get('max', 'N/A')} bar  
                         → {s2.get('output', {}).get('min', 'N/A')}-{s2.get('output', {}).get('max', 'N/A')} bar
                         """)
-            
-            if 'configurations_analyzed' in tech_params:
-                st.markdown("#### Configuraciones Analizadas")
-                configs = tech_params['configurations_analyzed']
-                configs_df = pd.DataFrame(configs)
-                st.dataframe(configs_df, width='stretch', hide_index=True)
         
         # Regulaciones
         if 'regulations_compliance' in manifest_data:
@@ -2175,6 +2216,77 @@ with tabs[TAB_MANIFEST]:
                     st.metric("Total Estimado (USD)", f"${total.get('usd', 0):,.0f}")
                     st.metric("Total Estimado (COP)", f"${total.get('cop', 0):,.0f}")
                     st.caption(f"Tasa de cambio: {costs.get('exchange_rate', 'N/A')} COP/USD")
+                
+                # Visualización por porcentajes de sistemas
+                if 'distribution_by_category' in breakdown:
+                    st.markdown("#### Distribución de Costos por Sistema")
+                    distribution = breakdown['distribution_by_category']
+                    
+                    if distribution:
+                        try:
+                            import plotly.express as px
+                            
+                            # Preparar datos para el gráfico
+                            categorias = [cat.get('categoria', 'N/A') for cat in distribution]
+                            porcentajes = [cat.get('porcentaje', 0) for cat in distribution]
+                            totales_usd = [cat.get('total_usd', 0) for cat in distribution]
+                            totales_cop = [cat.get('total_cop', 0) for cat in distribution]
+                            
+                            # Crear DataFrame
+                            df_dist = pd.DataFrame({
+                                'Categoría': categorias,
+                                'Porcentaje (%)': porcentajes,
+                                'Total USD': totales_usd,
+                                'Total COP': totales_cop
+                            })
+                            
+                            # Crear gráfico de barras horizontal
+                            fig = px.bar(
+                                df_dist,
+                                x='Porcentaje (%)',
+                                y='Categoría',
+                                orientation='h',
+                                text='Porcentaje (%)',
+                                title='Distribución de Costos por Sistema',
+                                labels={'Porcentaje (%)': 'Porcentaje (%)', 'Categoría': 'Sistema'},
+                                hover_data={'Total USD': ':$,.0f', 'Total COP': ':,.0f'},
+                                color='Porcentaje (%)',
+                                color_continuous_scale='Blues'
+                            )
+                            
+                            # Formatear el texto en las barras
+                            fig.update_traces(
+                                texttemplate='%{text:.2f}%',
+                                textposition='outside'
+                            )
+                            
+                            # Mejorar el layout
+                            fig.update_layout(
+                                height=400,
+                                showlegend=False,
+                                xaxis_title='Porcentaje del Total (%)',
+                                yaxis_title='',
+                                yaxis={'categoryorder': 'total ascending'}
+                            )
+                            
+                            st.plotly_chart(fig, use_container_width=True)
+                            
+                            # Mostrar tabla detallada
+                            with st.expander("📊 Ver Detalles por Categoría"):
+                                for cat in distribution:
+                                    st.markdown(f"**{cat.get('categoria', 'N/A')}**")
+                                    st.markdown(f"- Porcentaje: {cat.get('porcentaje', 0):.2f}%")
+                                    st.markdown(f"- Total USD: ${cat.get('total_usd', 0):,.0f}")
+                                    st.markdown(f"- Total COP: ${cat.get('total_cop', 0):,.0f}")
+                                    if cat.get('componentes'):
+                                        st.markdown(f"- Componentes: {len(cat['componentes'])}")
+                                    st.markdown("---")
+                        except ImportError:
+                            st.warning("⚠️ Plotly no está disponible. Mostrando datos en tabla.")
+                            # Fallback a tabla si plotly no está disponible
+                            df_dist = pd.DataFrame(distribution)
+                            st.dataframe(df_dist[['categoria', 'porcentaje', 'total_usd', 'total_cop']], 
+                                       use_container_width=True, hide_index=True)
         
         # Próximos Pasos
         if 'next_steps' in manifest_data:

@@ -1,6 +1,12 @@
 """
 Configuración global de la aplicación
 """
+import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
+
 # Configuración de la aplicación
 APP_TITLE = "Cálculos Combustible Vehicular GNC/GNL"
 APP_ICON = "⛽"
@@ -30,7 +36,6 @@ CONSTANTE_GASES = 8.314
 MASA_MOLAR_CH4 = 0.01604
 
 # Archivos - Rutas relativas desde src/
-import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 
@@ -82,4 +87,25 @@ elif os.path.exists(REFERENCE_PDF_ASSETS):
 else:
     # Fallback al PDF en assets si existe
     DELIVERABLE_PDF = os.path.join(ASSETS_DIR, 'PETROLIQUIDOS_GNV_PID_v1.pdf')
+
+# ============================================
+# CONFIGURACIÓN BASE DE DATOS POSTGRESQL
+# ============================================
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
+DB_NAME = os.getenv('DB_NAME', 'gnv_app')
+DB_USER = os.getenv('DB_USER', 'gnv_user')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+
+# String de conexión PostgreSQL
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+# ============================================
+# CONFIGURACIÓN EMAIL SMTP
+# ============================================
+SMTP_HOST = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
+SMTP_USER = os.getenv('SMTP_USER', '')
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@weldtech.com')
 

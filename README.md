@@ -15,7 +15,12 @@ Esta herramienta permite calcular los parámetros técnicos necesarios para la c
 - ✅ Manifest del proyecto
 - ✅ Sistema de autenticación con roles
 - ✅ **Generador automático de diagramas P&ID (draw.io)**
-- ✅ **API REST para datos de salida con timestamp** - Nuevo
+- ✅ **API REST para datos de salida con timestamp**
+- ✅ **Sistema de notificaciones y seguimiento** - Nuevo
+  - Registro automático de envíos de clientes
+  - Notificaciones por email y en la aplicación
+  - Panel de administración con seguimiento de estados
+  - Base de datos PostgreSQL para persistencia
 
 ## 🚀 Inicio Rápido
 
@@ -56,6 +61,33 @@ O manualmente:
 pip install -r requirements.txt
 ```
 
+### Configuración del Sistema de Notificaciones (Opcional)
+
+El sistema incluye un módulo de notificaciones y seguimiento que requiere PostgreSQL:
+
+1. **Instalar PostgreSQL** (si no está instalado)
+   - Descargar desde: https://www.postgresql.org/download/
+
+2. **Configurar variables de entorno:**
+   ```bash
+   # Copiar plantilla
+   copy .env.example .env
+   
+   # Editar .env con sus credenciales
+   # - Configuración de PostgreSQL
+   # - Configuración de SMTP para emails
+   ```
+
+3. **Inicializar base de datos:**
+   ```bash
+   python scripts/init_database.py
+   ```
+
+4. **O usar el script de configuración:**
+   ```bash
+   scripts\setup_env.bat
+   ```
+
 La aplicación se abrirá automáticamente en `http://localhost:8501`
 
 ## 🔐 Credenciales por Defecto
@@ -76,6 +108,9 @@ proyecto/
 │   ├── calculos_combustible_vehicular.py  # Aplicación principal
 │   ├── auth_system.py           # Sistema de autenticación
 │   ├── config.py                 # Configuración centralizada
+│   ├── database.py               # Módulo de base de datos PostgreSQL
+│   ├── notifications.py          # Sistema de notificaciones
+│   ├── admin_panel.py            # Panel de administración
 │   └── utils/                    # Módulos utilitarios
 │       ├── auth_utils.py         # Utilidades de autenticación
 │       ├── manifest_utils.py     # Manejo de manifest
@@ -91,9 +126,48 @@ proyecto/
 ├── scripts/                      # Scripts de ejecución
 │   ├── iniciar_app.bat          # Script de inicio
 │   ├── iniciar_api.bat          # Script de inicio API REST
-│   └── instalar_dependencias.bat # Instalación de dependencias
+│   ├── instalar_dependencias.bat # Instalación de dependencias
+│   ├── init_database.py         # Inicialización de base de datos
+│   └── setup_env.bat            # Configuración de variables de entorno
+├── .env.example                  # Plantilla de configuración
+└── .env                          # Variables de entorno (crear desde .env.example)
 └── requirements.txt             # Dependencias Python
 ```
+
+## 🔔 Sistema de Notificaciones y Seguimiento
+
+El sistema incluye un módulo completo de notificaciones y seguimiento que permite:
+
+### Funcionalidades
+
+- **Registro Automático**: Cuando un cliente envía sus datos, se crea automáticamente un registro en la base de datos
+- **Notificaciones Duales**: 
+  - Email al administrador con detalles del envío
+  - Notificación en la aplicación (panel de administración)
+- **Seguimiento de Estados**: 
+  - Pendiente
+  - En Revisión
+  - Aprobado
+  - Rechazado
+- **Panel de Administración**: 
+  - Dashboard con estadísticas
+  - Lista de envíos con filtros
+  - Vista detallada de cada envío (datos, cálculos, diagramas)
+  - Gestión de estados y notas
+
+### Flujo de Trabajo
+
+1. **Cliente envía datos** → Se crea submission con estado "pendiente"
+2. **Sistema envía notificaciones** → Email + notificación en app
+3. **Administrador revisa** → Ve notificaciones en panel
+4. **Administrador gestiona** → Cambia estado, agrega notas
+5. **Seguimiento completo** → Historial de cambios y notificaciones
+
+### Requisitos
+
+- PostgreSQL instalado y ejecutándose
+- Configuración de SMTP para emails (opcional, pero recomendado)
+- Variables de entorno configuradas en `.env`
 
 ## 📚 Documentación
 
