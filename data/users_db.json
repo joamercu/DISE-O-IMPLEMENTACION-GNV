@@ -8,5 +8,15 @@
     "password_hash": "09a31a7001e261ab1e056182a71d3cf57f582ca9a29cff5eb83be0f0549730a9",
     "role": "Cliente",
     "created_at": "2025-11-19T11:51:39.320829"
+  },
+  "gabriel.ortiz": {
+    "password_hash": "d0251765c328da48addf70be9bf8a4bc89d4184d583ac4223ecadba28662c889",
+    "role": "Administrador",
+    "created_at": "2025-11-20T17:41:27.960498"
+  },
+  "juan.solano": {
+    "password_hash": "533da9edb70b9a3175eda731ccd78277b88eba187350003bdf4ccdb06d9f34f6",
+    "role": "Cliente",
+    "created_at": "2025-11-20T17:41:28.070025"
   }
 }
