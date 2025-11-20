@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Utilidades para conversión de documentos Markdown y JSON a HTML para impresión PDF
-Basado en: d:\11-11-25-PRESUPUESO - MONTAGAS SA ESP\06_PLAN_BASE_DATOS\utils\documentos.py
+Basado en: documentos.py de proyecto anterior
 """
 
 import re
