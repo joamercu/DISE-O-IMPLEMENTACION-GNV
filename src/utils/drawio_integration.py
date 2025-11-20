@@ -80,7 +80,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
         with col1:
             generate_btn = st.button(
                 "🔄 Generar Diagrama Actualizado", 
-                width='stretch', 
+                use_container_width=True, 
                 type="primary", 
                 disabled=bool(missing_keys),
                 key="btn_generate_diagram"
@@ -93,7 +93,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
         with col2:
             view_vars_btn = st.button(
                 "📋 Ver Variables", 
-                width='stretch', 
+                use_container_width=True, 
                 disabled=bool(missing_keys),
                 key="btn_view_vars"
             )
@@ -105,7 +105,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
         with col3:
             download_btn = st.button(
                 "📥 Descargar Diagrama", 
-                width='stretch',
+                use_container_width=True,
                 key="btn_download_diagram"
             )
             # Establecer estado inmediatamente cuando se hace clic

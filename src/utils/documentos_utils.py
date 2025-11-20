@@ -18,12 +18,85 @@ except ImportError:
     MARKDOWN_AVAILABLE = False
 
 
+def procesar_formulas_matematicas(contenido_md: str) -> Tuple[str, Dict[str, str]]:
+    """
+    Procesa fórmulas matemáticas en el markdown y las protege del procesador.
+    
+    Detecta fórmulas en formato:
+    - Display: \[ formula \]
+    - Inline: \( formula \)
+    
+    Args:
+        contenido_md: Contenido del archivo Markdown con fórmulas LaTeX
+        
+    Returns:
+        Tupla (contenido_procesado, diccionario_formulas)
+        donde diccionario_formulas mapea placeholders a fórmulas originales
+    """
+    formulas = {}
+    contador = 0
+    
+    # Patrón para fórmulas display: \[ ... \]
+    patron_display_latex = re.compile(
+        r'\\\[(.*?)\\\]',
+        re.MULTILINE | re.DOTALL
+    )
+    
+    def reemplazar_display_latex(match):
+        nonlocal contador
+        formula = match.group(1).strip()
+        key = f"<!--MATH_DISPLAY_{contador}-->"
+        formulas[key] = f"\\[{formula}\\]"
+        contador += 1
+        return key
+    
+    # Patrón para fórmulas inline: \( ... \)
+    patron_inline_latex = re.compile(
+        r'\\\((.*?)\\\)',
+        re.MULTILINE | re.DOTALL
+    )
+    
+    def reemplazar_inline_latex(match):
+        nonlocal contador
+        formula = match.group(1).strip()
+        key = f"<!--MATH_INLINE_{contador}-->"
+        formulas[key] = f"\\({formula}\\)"
+        contador += 1
+        return key
+    
+    # Procesar fórmulas (primero display, luego inline)
+    contenido_procesado = patron_display_latex.sub(reemplazar_display_latex, contenido_md)
+    contenido_procesado = patron_inline_latex.sub(reemplazar_inline_latex, contenido_procesado)
+    
+    return contenido_procesado, formulas
+
+
+def restaurar_formulas_matematicas(html_content: str, formulas: Dict[str, str]) -> str:
+    """
+    Restaura las fórmulas matemáticas en el HTML procesado.
+    
+    Args:
+        html_content: Contenido HTML generado desde markdown
+        formulas: Diccionario que mapea placeholders a fórmulas originales
+        
+    Returns:
+        HTML con fórmulas restauradas
+    """
+    for key, formula in formulas.items():
+        # Escapar caracteres HTML especiales en la fórmula
+        formula_html = formula.replace('&', '&amp;')
+        html_content = html_content.replace(key, formula_html)
+    
+    return html_content
+
+
 def convertir_md_a_html(
     contenido_md: str,
     titulo: Optional[str] = None,
     header: Optional[str] = None,
     footer: Optional[str] = None,
-    nombre_archivo: Optional[str] = None
+    nombre_archivo: Optional[str] = None,
+    incluir_mathjax: bool = True
 ) -> str:
     """
     Convierte contenido Markdown a HTML optimizado para impresión PDF
@@ -34,12 +107,20 @@ def convertir_md_a_html(
         header: Texto personalizado para el encabezado
         footer: Texto personalizado para el pie de página
         nombre_archivo: Nombre del archivo (para generar títulos automáticos)
+        incluir_mathjax: Si True, incluye MathJax para renderizar fórmulas LaTeX
     
     Returns:
         HTML completo listo para imprimir
     """
     if not MARKDOWN_AVAILABLE:
         raise ImportError("La librería 'markdown' no está instalada. Instala con: pip install markdown")
+    
+    # Procesar fórmulas matemáticas antes de convertir markdown
+    formulas = {}
+    tiene_formulas = False
+    if incluir_mathjax:
+        contenido_md, formulas = procesar_formulas_matematicas(contenido_md)
+        tiene_formulas = len(formulas) > 0
     
     # Remover comentarios HTML del markdown
     md_content_clean = re.sub(r'<!--.*?ENCABEZADO.*?-->', '', contenido_md, flags=re.DOTALL)
@@ -50,6 +131,10 @@ def convertir_md_a_html(
         md_content_clean, 
         extensions=['tables', 'fenced_code', 'codehilite', 'toc']
     )
+    
+    # Restaurar fórmulas matemáticas en el HTML
+    if incluir_mathjax and tiene_formulas:
+        html_content = restaurar_formulas_matematicas(html_content, formulas)
     
     # Generar títulos dinámicos
     if nombre_archivo:
@@ -73,13 +158,64 @@ def convertir_md_a_html(
     
     texto_footer = footer if footer else f"{nombre_limpio} | Versión 1.0 | {fecha_actual}"
     
+    # Script MathJax (incluido cuando incluir_mathjax=True)
+    mathjax_script = ""
+    wrapper_inicio = ""
+    wrapper_fin = ""
+    if incluir_mathjax:
+        # Incluir MathJax siempre cuando está habilitado (según plan)
+        mathjax_script = """    <!-- MathJax para renderizar fórmulas matemáticas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {{
+            tex: {{
+                inlineMath: [['\\\\(', '\\\\)']],
+                displayMath: [['\\\\[', '\\\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                autoload: {{ color: [], colorv2: ['color'] }},
+                packages: {{'[+]': ['ams', 'newcommand', 'configMacros']}}
+            }},
+            options: {{
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process',
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }},
+            startup: {{
+                ready: () => {{
+                    MathJax.startup.defaultReady();
+                    const processMath = () => {{
+                        MathJax.typesetPromise().then(() => {{
+                            console.log('Fórmulas procesadas exitosamente');
+                        }}).catch((err) => {{
+                            console.error('Error al procesar fórmulas:', err);
+                        }});
+                    }};
+                    if (document.readyState === 'complete' || document.readyState === 'interactive') {{
+                        setTimeout(processMath, 100);
+                    }} else {{
+                        window.addEventListener('load', () => {{
+                            setTimeout(processMath, 100);
+                        }});
+                    }}
+                }}
+            }}
+        }};
+    </script>
+"""
+        # Wrapper solo si hay fórmulas para procesar
+        if tiene_formulas:
+            wrapper_inicio = '<div class="tex2jax_process">'
+            wrapper_fin = '</div>'
+    
     # HTML completo con estilos optimizados para impresión
     html_full = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>{titulo_html}</title>
-    <style>
+{mathjax_script}    <style>
         @media print {{
             @page {{
                 size: A4;
@@ -291,7 +427,9 @@ def convertir_md_a_html(
         {texto_header}
     </div>
     
-    {html_content}
+    {wrapper_inicio}
+        {html_content}
+    {wrapper_fin}
     
     <div class="footer">
         {texto_footer}<br>
