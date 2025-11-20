@@ -303,6 +303,10 @@ tabs_list = [
     "ℹ️ Información Técnica"
 ]
 
+# Agregar tab de mis envíos para clientes (si está habilitado el sistema de BD)
+if NOTIFICATIONS_ENABLED:
+    tabs_list.append("📤 Mis Envíos")
+
 # Agregar tab de administración solo para administradores
 if st.session_state.get('user_role') == 'Administrador' and NOTIFICATIONS_ENABLED:
     tabs_list.append("🔧 Panel de Administración")
@@ -316,7 +320,8 @@ TAB_FORMULAS = 2
 TAB_SENSIBILIDAD = 3
 TAB_MANIFEST = 4
 TAB_INFO = 5
-TAB_ADMIN = 6 if st.session_state.get('user_role') == 'Administrador' and NOTIFICATIONS_ENABLED else None
+TAB_MIS_ENVIOS = 6 if NOTIFICATIONS_ENABLED else None
+TAB_ADMIN = 7 if st.session_state.get('user_role') == 'Administrador' and NOTIFICATIONS_ENABLED else None
 
 # Inicializar base de datos si está habilitado
 if NOTIFICATIONS_ENABLED:
@@ -897,10 +902,13 @@ Prioridad: Balance costo-beneficio, autonomía mínima 600 km."""
                 'usuario_ultima_actualizacion': usuario_actual
             }
             
+            # Mostrar mensaje de éxito principal (los datos siempre se guardan en sesión)
+            st.success(f"✅ Datos del cliente guardados correctamente en sesión el {fecha_formateada}")
+            
             # Crear submission en BD y enviar notificaciones (solo si está habilitado)
             if NOTIFICATIONS_ENABLED:
                 try:
-                    submission_id = create_submission(
+                    submission_id, error_msg = create_submission(
                         cliente_nombre=nombre_cliente,
                         usuario_cliente=usuario_actual,
                         datos_cliente=cliente_data_dict,
@@ -910,27 +918,36 @@ Prioridad: Balance costo-beneficio, autonomía mínima 600 km."""
                     if submission_id:
                         # Guardar submission_id en session_state para asociar cálculos y diagramas
                         st.session_state['current_submission_id'] = submission_id
+                        st.success(f"✅ Datos guardados en la base de datos correctamente. ID de envío: #{submission_id}")
+                        st.info("💡 Puede ver sus envíos en la pestaña '📤 Mis Envíos' para verificar que se guardaron correctamente.")
                         
                         # Enviar notificaciones
-                        notif_results = send_notifications(submission_id, nombre_cliente, usuario_actual)
-                        
-                        if notif_results.get('email') or notif_results.get('app'):
-                            st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
-                            if notif_results.get('email'):
-                                st.info("📧 Notificación por email enviada al administrador.")
-                            if notif_results.get('app'):
-                                st.info("🔔 Notificación creada en el panel de administración.")
-                        else:
-                            st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
-                            st.warning("⚠️ No se pudieron enviar las notificaciones, pero los datos se guardaron correctamente.")
+                        try:
+                            notif_results = send_notifications(submission_id, nombre_cliente, usuario_actual)
+                            
+                            if notif_results.get('email') or notif_results.get('app'):
+                                if notif_results.get('email'):
+                                    st.info("📧 Notificación por email enviada al administrador.")
+                                if notif_results.get('app'):
+                                    st.info("🔔 Notificación creada en el panel de administración.")
+                            else:
+                                st.warning("⚠️ No se pudieron enviar las notificaciones, pero los datos se guardaron correctamente.")
+                        except Exception as notif_error:
+                            st.warning(f"⚠️ No se pudieron enviar las notificaciones: {str(notif_error)}")
                     else:
-                        st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
-                        st.warning("⚠️ No se pudo crear el registro en la base de datos, pero los datos se guardaron en sesión.")
+                        # Error al guardar en BD, pero los datos están en sesión
+                        if error_msg:
+                            # Mostrar error específico si está disponible
+                            if "connection" in error_msg.lower() or "connect" in error_msg.lower():
+                                st.warning("⚠️ No se pudo conectar a la base de datos. Los datos se guardaron en sesión y estarán disponibles mientras la sesión esté activa.")
+                            elif "table" in error_msg.lower() or "does not exist" in error_msg.lower():
+                                st.warning("⚠️ Las tablas de la base de datos no están inicializadas. Los datos se guardaron en sesión.")
+                            else:
+                                st.warning(f"⚠️ No se pudo guardar en la base de datos: {error_msg}. Los datos se guardaron en sesión y estarán disponibles mientras la sesión esté activa.")
+                        else:
+                            st.warning("⚠️ No se pudo crear el registro en la base de datos. Los datos se guardaron en sesión y estarán disponibles mientras la sesión esté activa.")
                 except Exception as e:
-                    st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
-                    st.warning(f"⚠️ Error al registrar en base de datos: {str(e)}")
-            else:
-                st.success(f"✅ Datos del cliente guardados correctamente el {fecha_formateada}")
+                    st.warning(f"⚠️ Error inesperado al registrar en base de datos: {str(e)}. Los datos se guardaron en sesión y estarán disponibles mientras la sesión esté activa.")
     
     # Mostrar información de auditoría (visible para todos)
     if st.session_state['cliente_data'].get('fecha_creacion'):
@@ -2616,6 +2633,133 @@ with tabs[TAB_INFO]:
     
     Para consultas técnicas o actualizaciones, contactar al equipo de ingeniería.
     """)
+
+# ============================================
+# TAB: MIS ENVÍOS (Para Clientes)
+# ============================================
+if TAB_MIS_ENVIOS is not None and NOTIFICATIONS_ENABLED:
+    with tabs[TAB_MIS_ENVIOS]:
+        st.header("📤 Mis Envíos")
+        st.markdown("---")
+        
+        usuario_actual = st.session_state.get('username', '')
+        
+        if not usuario_actual:
+            st.warning("⚠️ No se pudo identificar el usuario. Por favor, inicie sesión nuevamente.")
+        else:
+            try:
+                from database import get_submissions, get_submission_by_id
+                
+                # Obtener envíos del usuario actual
+                mis_envios = get_submissions(
+                    usuario_cliente=usuario_actual,
+                    limit=50
+                )
+                
+                if not mis_envios:
+                    st.info("📭 No tiene envíos registrados en la base de datos.")
+                    st.markdown("""
+                    **¿Qué significa esto?**
+                    - Si acaba de guardar sus datos, espere unos segundos y recargue esta página.
+                    - Si guardó sus datos pero ve este mensaje, es posible que haya un problema con la conexión a la base de datos.
+                    - Sus datos están guardados en sesión y estarán disponibles mientras la sesión esté activa.
+                    """)
+                else:
+                    st.success(f"✅ Se encontraron {len(mis_envios)} envío(s) registrado(s) en la base de datos.")
+                    
+                    # Mostrar resumen
+                    col1, col2, col3 = st.columns(3)
+                    pendientes = sum(1 for e in mis_envios if e['estado'] == 'pendiente')
+                    en_revision = sum(1 for e in mis_envios if e['estado'] == 'en_revision')
+                    aprobados = sum(1 for e in mis_envios if e['estado'] == 'aprobado')
+                    
+                    with col1:
+                        st.metric("Pendientes", pendientes)
+                    with col2:
+                        st.metric("En Revisión", en_revision)
+                    with col3:
+                        st.metric("Aprobados", aprobados)
+                    
+                    st.markdown("---")
+                    st.subheader("📋 Lista de Envíos")
+                    
+                    # Mostrar tabla de envíos
+                    for envio in mis_envios:
+                        with st.expander(f"📄 Envío #{envio['id']} - {envio['cliente_nombre']} | Estado: {envio['estado'].replace('_', ' ').title()}", expanded=False):
+                            col1, col2 = st.columns(2)
+                            
+                            with col1:
+                                st.write(f"**ID de Envío:** #{envio['id']}")
+                                st.write(f"**Cliente:** {envio['cliente_nombre']}")
+                                st.write(f"**Usuario:** {envio['usuario_cliente']}")
+                                
+                                # Estado con color
+                                estado = envio['estado']
+                                if estado == 'pendiente':
+                                    st.info(f"**Estado:** ⏳ Pendiente")
+                                elif estado == 'en_revision':
+                                    st.warning(f"**Estado:** 🔍 En Revisión")
+                                elif estado == 'aprobado':
+                                    st.success(f"**Estado:** ✅ Aprobado")
+                                elif estado == 'rechazado':
+                                    st.error(f"**Estado:** ❌ Rechazado")
+                                else:
+                                    st.write(f"**Estado:** {estado.replace('_', ' ').title()}")
+                            
+                            with col2:
+                                if envio['fecha_envio']:
+                                    fecha_envio = datetime.fromisoformat(envio['fecha_envio'].replace('Z', '+00:00') if 'Z' in envio['fecha_envio'] else envio['fecha_envio'])
+                                    st.write(f"**Fecha de Envío:** {fecha_envio.strftime('%d/%m/%Y %H:%M:%S')}")
+                                
+                                if envio['fecha_ultima_actualizacion']:
+                                    fecha_act = datetime.fromisoformat(envio['fecha_ultima_actualizacion'].replace('Z', '+00:00') if 'Z' in envio['fecha_ultima_actualizacion'] else envio['fecha_ultima_actualizacion'])
+                                    st.write(f"**Última Actualización:** {fecha_act.strftime('%d/%m/%Y %H:%M:%S')}")
+                                
+                                if envio['administrador_asignado']:
+                                    st.write(f"**Administrador Asignado:** {envio['administrador_asignado']}")
+                                
+                                if envio['notas_administrador']:
+                                    st.write(f"**Notas del Administrador:** {envio['notas_administrador']}")
+                            
+                            # Botón para ver detalles completos
+                            if st.button(f"👁️ Ver Detalles Completos", key=f"ver_detalles_{envio['id']}"):
+                                st.session_state[f'ver_envio_{envio["id"]}'] = True
+                            
+                            # Mostrar detalles si se solicitó
+                            if st.session_state.get(f'ver_envio_{envio["id"]}', False):
+                                st.markdown("---")
+                                st.subheader(f"📄 Detalles Completos del Envío #{envio['id']}")
+                                
+                                submission_completo = get_submission_by_id(envio['id'])
+                                if submission_completo:
+                                    # Mostrar datos del cliente
+                                    if submission_completo.get('datos'):
+                                        st.markdown("#### 📝 Datos del Cliente Enviados")
+                                        datos_cliente = submission_completo['datos'].get('datos_cliente', {})
+                                        
+                                        if datos_cliente:
+                                            st.json(datos_cliente)
+                                    
+                                    # Mostrar cálculos si existen
+                                    if submission_completo.get('calculos'):
+                                        st.markdown("#### 🔢 Cálculos Asociados")
+                                        st.write(f"Total de cálculos: {len(submission_completo['calculos'])}")
+                                    
+                                    # Mostrar diagramas si existen
+                                    if submission_completo.get('diagramas'):
+                                        st.markdown("#### 📐 Diagramas Asociados")
+                                        st.write(f"Total de diagramas: {len(submission_completo['diagramas'])}")
+                                
+                                if st.button(f"❌ Cerrar Detalles", key=f"cerrar_detalles_{envio['id']}"):
+                                    st.session_state[f'ver_envio_{envio["id"]}'] = False
+                                    st.rerun()
+                    
+                    st.markdown("---")
+                    st.info("💡 **Nota:** Los envíos se registran automáticamente cuando guarda sus datos del cliente. Si no ve sus envíos aquí, verifique que la conexión a la base de datos esté funcionando correctamente.")
+                    
+            except Exception as e:
+                st.error(f"❌ Error al cargar los envíos: {str(e)}")
+                st.info("💡 Sus datos están guardados en sesión. Si el problema persiste, contacte al administrador.")
 
 # ============================================
 # TAB: PANEL DE ADMINISTRACIÓN (Solo Administradores)

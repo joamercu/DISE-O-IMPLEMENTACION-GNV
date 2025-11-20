@@ -176,7 +176,7 @@ if engine:
             'usuario_creador': 'test_user'
         }
         
-        submission_id = create_submission(
+        submission_id, error_msg = create_submission(
             cliente_nombre="Cliente Test",
             usuario_cliente="test_user",
             datos_cliente=test_cliente_data,

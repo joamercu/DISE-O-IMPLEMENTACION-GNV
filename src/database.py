@@ -6,7 +6,7 @@ Gestión de envíos, datos del cliente, cálculos, diagramas y notificaciones
 import os
 import json
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Tuple
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, ForeignKey, Enum as SQLEnum, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
@@ -141,8 +141,15 @@ def init_database():
 
 
 # Funciones CRUD para Submissions
-def create_submission(cliente_nombre: str, usuario_cliente: str, datos_cliente: Dict, metadata: Optional[Dict] = None) -> Optional[int]:
-    """Crear un nuevo envío de cliente"""
+def create_submission(cliente_nombre: str, usuario_cliente: str, datos_cliente: Dict, metadata: Optional[Dict] = None) -> Tuple[Optional[int], Optional[str]]:
+    """Crear un nuevo envío de cliente
+    
+    Returns:
+        tuple: (submission_id, error_message)
+        - Si éxito: (submission_id, None)
+        - Si error: (None, mensaje_de_error)
+    """
+    session = None
     try:
         session = get_session()
         
@@ -169,13 +176,17 @@ def create_submission(cliente_nombre: str, usuario_cliente: str, datos_cliente: 
         submission_id = submission.id
         session.close()
         
-        return submission_id
+        return (submission_id, None)
     except Exception as e:
-        print(f"Error al crear submission: {str(e)}")
-        if 'session' in locals():
-            session.rollback()
-            session.close()
-        return None
+        error_msg = str(e)
+        print(f"Error al crear submission: {error_msg}")
+        if session is not None:
+            try:
+                session.rollback()
+                session.close()
+            except:
+                pass
+        return (None, error_msg)
 
 
 def get_submissions(
