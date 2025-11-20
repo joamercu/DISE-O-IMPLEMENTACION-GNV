@@ -125,6 +125,23 @@ fi
 echo -e "${GREEN}✓ Verificando otras dependencias...${NC}"
 $PYTHON_CMD -c "import streamlit; import pandas; import openpyxl; print('✓ Dependencias principales OK')" 2>/dev/null || echo -e "${YELLOW}⚠️  Algunas dependencias pueden no estar instaladas${NC}"
 
+# Verificar Plotly específicamente
+echo -e "${BLUE}Verificando Plotly...${NC}"
+if $PYTHON_CMD -c "import plotly; import plotly.express as px; print('OK')" 2>/dev/null; then
+    PLOTLY_VERSION=$($PYTHON_CMD -c "import plotly; print(plotly.__version__)" 2>/dev/null || echo "desconocida")
+    echo -e "${GREEN}✓ Plotly instalado correctamente (versión: ${PLOTLY_VERSION})${NC}"
+else
+    echo -e "${RED}❌ Plotly no está disponible. Reinstalando...${NC}"
+    $PIP_CMD install --upgrade plotly>=5.17.0 $BREAK_SYSTEM_PACKAGES
+    if $PYTHON_CMD -c "import plotly; import plotly.express as px; print('OK')" 2>/dev/null; then
+        PLOTLY_VERSION=$($PYTHON_CMD -c "import plotly; print(plotly.__version__)" 2>/dev/null || echo "desconocida")
+        echo -e "${GREEN}✓ Plotly instalado correctamente (versión: ${PLOTLY_VERSION})${NC}"
+    else
+        echo -e "${RED}❌ Error: No se pudo instalar Plotly${NC}"
+        echo -e "${YELLOW}   Intente instalarlo manualmente: pip3 install plotly>=5.17.0${NC}"
+    fi
+fi
+
 echo ""
 echo -e "${GREEN}============================================${NC}"
 echo -e "${GREEN}  Instalación completada${NC}"
