@@ -1229,10 +1229,10 @@ with tabs[TAB_SENSIBILIDAD]:
             step=5
         )
     
+    # Variable para rastrear errores (solo mostrar una vez)
+    error_mostrado = False
+    
     if st.button("🔄 Calcular Análisis de Sensibilidad", type="primary"):
-        # Variable para rastrear errores (solo mostrar una vez)
-        error_mostrado = False
-        
         # Función wrapper para usar el motor de cálculos con validación
         def calcular_sistema(consumo, autonomia):
             nonlocal error_mostrado
