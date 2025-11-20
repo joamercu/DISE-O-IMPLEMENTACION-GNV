@@ -6,6 +6,7 @@ import base64
 import json
 from pathlib import Path
 from typing import Optional, Tuple
+from io import BytesIO
 
 # Importar funciones de conversión
 try:
@@ -21,11 +22,11 @@ except ImportError:
 # Verificar disponibilidad de weasyprint
 try:
     from weasyprint import HTML
-    from io import BytesIO
     WEASYPRINT_AVAILABLE = True
 except (ImportError, OSError, Exception):
     # Captura ImportError, errores de carga de DLLs y otros errores
     WEASYPRINT_AVAILABLE = False
+    HTML = None  # Definir HTML como None si no está disponible
 
 def get_file_mime_type(filename):
     """Obtiene el MIME type según la extensión del archivo"""
@@ -53,7 +54,7 @@ def generar_pdf_desde_html(html_content: str) -> Tuple[Optional[bytes], Optional
         Si hay error, pdf_bytes será None y error_message contendrá el mensaje
         Si es exitoso, error_message será None
     """
-    if not WEASYPRINT_AVAILABLE:
+    if not WEASYPRINT_AVAILABLE or HTML is None:
         return None, "weasyprint no está instalado. Instale con: pip install weasyprint"
     
     try:
