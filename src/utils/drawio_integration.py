@@ -235,25 +235,15 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             
             with col2:
                 # Agregar descarga del PDF si existe
-                # Buscar PDF en varias ubicaciones posibles
-                pdf_paths = [
-                    Path("diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
-                    Path("../diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
-                    Path("assets/diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
-                    Path("../assets/diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf"),
-                ]
-                pdf_path = None
-                for path in pdf_paths:
-                    if path.exists():
-                        pdf_path = path
-                        break
-                if pdf_path.exists():
-                    with open(pdf_path, 'rb') as pdf_file:
+                import os
+                from utils.file_handler import file_exists
+                if file_exists(DELIVERABLE_PDF):
+                    with open(DELIVERABLE_PDF, 'rb') as pdf_file:
                         pdf_data = pdf_file.read()
                     st.download_button(
                         label="📄 Descargar Diagrama en PDF",
                         data=pdf_data,
-                        file_name="diagrama_gnv_PETROLIQUIDOS_2024-12-19_FINAL.pdf",
+                        file_name="PETROLIQUIDOS_GNV_PID_v1.pdf",
                         mime="application/pdf",
                         use_container_width=True
                     )
@@ -266,6 +256,27 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             **Razón:** El diagrama aún no ha sido generado.
             
             **Pasos para descargar:**
+            1. ✅ Asegúrese de haber completado el cálculo del sistema
+            2. 🔄 Haga clic en "🔄 Generar Diagrama Actualizado"
+            3. ⏳ Espere a que se complete la generación
+            4. 📥 Luego podrá descargar el diagrama
+            
+            **Nota:** El diagrama se genera automáticamente con las variables de los cálculos realizados.
+            """)
+            # Mantener el expander abierto
+            st.session_state['diagram_expander_open'] = True
+    
+    # Información adicional
+    st.markdown("---")
+    st.info("""
+    💡 **Información del Diagrama:**
+    - El diagrama incluye todos los componentes del sistema GNV con las variables calculadas del proyecto
+    - Puede abrirse y editarse en [draw.io](https://app.diagrams.net) o [diagrams.net](https://diagrams.net)
+    - Las presiones y variables se actualizan automáticamente según los cálculos realizados
+    - El diagrama cumple con las especificaciones de la fase de ingeniería
+    """)
+
+
             1. ✅ Asegúrese de haber completado el cálculo del sistema
             2. 🔄 Haga clic en "🔄 Generar Diagrama Actualizado"
             3. ⏳ Espere a que se complete la generación

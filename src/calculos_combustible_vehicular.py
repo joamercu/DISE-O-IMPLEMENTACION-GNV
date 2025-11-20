@@ -26,7 +26,7 @@ from utils.documentos_utils import convertir_json_a_html
 from utils.drawio_integration import show_diagram_generator
 from config import (
     MANIFEST_FILE, REMEMBERED_USER_FILE, USERS_DB_FILE,
-    DELIVERABLE_MD, DELIVERABLE_XLSX, DELIVERABLE_XML,
+    DELIVERABLE_MD, DELIVERABLE_XLSX, DELIVERABLE_XML, DELIVERABLE_PDF,
     DEFAULT_CLIENT, DEFAULT_VERSION, DEFAULT_DATE
 )
 
@@ -1262,6 +1262,7 @@ with tabs[TAB_MANIFEST]:
                                 'PETROLIQUIDOS_GNV_Informe_v1.md': DELIVERABLE_MD,
                                 'PETROLIQUIDOS_GNV_BOM_v1.xlsx': DELIVERABLE_XLSX,
                                 'PETROLIQUIDOS_GNV_PID_v1.drawio.xml': DELIVERABLE_XML,
+                                'PETROLIQUIDOS_GNV_PID_v1.pdf': DELIVERABLE_PDF,
                                 'PETROLIQUIDOS_GNV_manifest_v1.json': MANIFEST_FILE
                             }
                             

@@ -20,8 +20,11 @@ CAMBIOS = {
     r'Autonomía:\s*800\s*km': 'Autonomía: 600 km',
     r'Autonomía:\s*600-800\s*km': 'Autonomía: 600 km',
     
-    # Información de empresa (no aplicar automáticamente, solo en diagrama)
-    # r'CLIENTE\s*:\s*PETROLIQUIDOS': 'CLIENTE: PETROLIQUIDOS\nDESARROLLO: WELDTECH SOLUTION\nVERSION: PROPUESTA TECNICA\nREVISION: 0 (PROPUESTA PREELIMINAR)',
+    # Información de empresa
+    r'CLIENTE\s*:\s*PETROLIQUIDOS': 'CLIENTE: PETROLIQUIDOS
+DESARROLLO: WELDTECH SOLUTION
+VERSION: PROPUESTA TECNICA
+REVISION: 0 (PROPUESTA PREELIMINAR)\nDESARROLLO: WELDTECH SOLUTION\nVERSION: PROPUESTA TECNICA\nREVISION: 0 (PROPUESTA PREELIMINAR)',
 }
 
 def actualizar_archivo(archivo_path: Path):
@@ -89,9 +92,9 @@ def main():
     print(f"✅ Archivos actualizados: {archivos_actualizados}")
     print()
     print("Cambios aplicados:")
-    print("  • 24 tanques → 18 tanques")
+    print("  • 18 tanques → 18 tanques")
     print("  • Autonomía 800 km → 600 km")
-    print("  • Información de empresa agregada (en diagrama)")
+    print("  • Información de empresa agregada")
     print("="*80)
 
 if __name__ == '__main__':
