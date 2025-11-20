@@ -9,8 +9,8 @@
   },
   "deliverables": {
     "informe_tecnico": {
-      "filename": "PETROLIQUIDOS_GNV_Informe_v1.md",
-      "format": "Markdown",
+      "filename": "PETROLIQUIDOS_GNV_Informe_v1.pdf",
+      "format": "PDF",
       "status": "Completo",
       "sections": [
         "Introducción y relevancia",
@@ -80,8 +80,8 @@
       "note": "Diagrama en formato PDF válido para visualización y descarga desde dispositivos móviles"
     },
     "manifest": {
-      "filename": "PETROLIQUIDOS_GNV_manifest_v1.json",
-      "format": "JSON",
+      "filename": "PETROLIQUIDOS_GNV_manifest_v1.pdf",
+      "format": "PDF",
       "status": "Completo",
       "description": "Metadatos y control de cambios del proyecto"
     }
