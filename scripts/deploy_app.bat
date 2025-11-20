@@ -200,10 +200,11 @@ echo.
 
 REM Instalar/actualizar dependencias en el servidor
 echo Instalando dependencias en el servidor...
+REM Debian 13+ requiere --break-system-packages para instalaciones globales
 if exist "%SSH_KEY%" (
-    ssh -i "%SSH_KEY%" "%SERVIDOR_USUARIO%@%SERVIDOR_IP%" "cd %SERVIDOR_RUTA% && pip3 install -r requirements.txt" >> "%LOG_FILE%" 2>>"%ERROR_LOG%"
+    ssh -i "%SSH_KEY%" "%SERVIDOR_USUARIO%@%SERVIDOR_IP%" "cd %SERVIDOR_RUTA% && pip3 install -r requirements.txt --break-system-packages" >> "%LOG_FILE%" 2>>"%ERROR_LOG%"
 ) else (
-    ssh "%SERVIDOR_USUARIO%@%SERVIDOR_IP%" "cd %SERVIDOR_RUTA% && pip3 install -r requirements.txt" >> "%LOG_FILE%" 2>>"%ERROR_LOG%"
+    ssh "%SERVIDOR_USUARIO%@%SERVIDOR_IP%" "cd %SERVIDOR_RUTA% && pip3 install -r requirements.txt --break-system-packages" >> "%LOG_FILE%" 2>>"%ERROR_LOG%"
 )
 if errorlevel 1 (
     echo ADVERTENCIA: Hubo problemas instalando dependencias.

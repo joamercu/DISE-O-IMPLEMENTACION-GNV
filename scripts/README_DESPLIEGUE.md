@@ -318,6 +318,86 @@ Edita `deploy_config.txt` y cambia la ruta de `SSH_KEY` o déjala vacía para us
 
 5. **Python**: El servidor debe tener Python 3 y pip3 instalados
 
+6. **WeasyPrint**: Para generar PDFs, se requieren dependencias del sistema adicionales. Ver sección siguiente.
+
+## 📄 Instalación de WeasyPrint en el Servidor Debian
+
+WeasyPrint requiere dependencias del sistema que deben instalarse antes de instalar el paquete Python.
+
+### Opción 1: Script Automático (Recomendado)
+
+Ejecuta en el servidor:
+
+```bash
+# Desde Windows, conectarte por SSH y ejecutar:
+ssh usuario@72.61.10.156
+cd /var/www/gnv-app
+sudo bash scripts/instalar_weasyprint_debian.sh
+```
+
+O sube y ejecuta el script desde Windows:
+
+```batch
+# Subir script al servidor
+scp -i ruta_a_clave_ssh scripts/instalar_weasyprint_debian.sh usuario@72.61.10.156:/tmp/
+
+# Conectarse y ejecutar
+ssh usuario@72.61.10.156
+sudo bash /tmp/instalar_weasyprint_debian.sh
+```
+
+### Opción 2: Instalación Manual
+
+Conéctate al servidor y ejecuta:
+
+```bash
+# Actualizar paquetes
+sudo apt-get update
+
+# Instalar dependencias del sistema
+sudo apt-get install -y \
+    build-essential \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    python3-cffi \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libffi-dev \
+    shared-mime-info
+
+# Instalar WeasyPrint
+pip3 install weasyprint
+```
+
+### Opción 3: Incluir en el Despliegue
+
+Puedes modificar `deploy_app.bat` para incluir la instalación automática de dependencias del sistema. O ejecutar el script completo de instalación:
+
+```bash
+# En el servidor, ejecutar:
+sudo bash scripts/instalar_dependencias_servidor.sh /var/www/gnv-app
+```
+
+Este script instala tanto las dependencias del sistema como las de Python.
+
+### Verificación
+
+Después de instalar, verifica que funcione:
+
+```bash
+python3 -c "from weasyprint import HTML; print('✓ WeasyPrint funciona')"
+```
+
+### Documentación Completa
+
+Para más detalles, consulta:
+- `INSTALACION_WEASYPRINT_DEBIAN.md` - Guía completa de instalación en Debian
+- `INSTALACION_WEASYPRINT_WINDOWS.md` - Guía para Windows (desarrollo local)
+
 ## 🔗 URLs de Acceso
 
 Después del despliegue, la aplicación estará disponible en:

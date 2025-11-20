@@ -20,13 +20,63 @@ except ImportError:
     CONVERSION_AVAILABLE = False
 
 # Verificar disponibilidad de weasyprint
+WEASYPRINT_ERROR_MSG = None
 try:
     from weasyprint import HTML
     WEASYPRINT_AVAILABLE = True
-except (ImportError, OSError, Exception):
-    # Captura ImportError, errores de carga de DLLs y otros errores
+except ImportError:
+    # Captura ImportError cuando weasyprint no está instalado
     WEASYPRINT_AVAILABLE = False
-    HTML = None  # Definir HTML como None si no está disponible
+    HTML = None
+    WEASYPRINT_ERROR_MSG = "weasyprint no está instalado. Instale con: pip install weasyprint"
+except OSError as e:
+    # Captura errores de carga de DLLs (común en Windows cuando faltan dependencias GTK+)
+    # O errores en Linux cuando faltan dependencias del sistema
+    WEASYPRINT_AVAILABLE = False
+    HTML = None
+    import platform
+    import os
+    
+    if platform.system() == 'Windows':
+        WEASYPRINT_ERROR_MSG = (
+            "weasyprint requiere GTK+ instalado en Windows. "
+            "Instale GTK+ desde: https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases "
+            "O use MSYS2: https://www.msys2.org/ "
+            "Error: " + str(e)
+        )
+    elif platform.system() == 'Linux':
+        # Detectar si es Debian/Ubuntu
+        is_debian = False
+        try:
+            if os.path.exists('/etc/debian_version') or os.path.exists('/etc/os-release'):
+                with open('/etc/os-release', 'r') as f:
+                    os_info = f.read().lower()
+                    if 'debian' in os_info or 'ubuntu' in os_info:
+                        is_debian = True
+        except:
+            pass
+        
+        if is_debian:
+            WEASYPRINT_ERROR_MSG = (
+                "weasyprint requiere dependencias del sistema en Debian/Ubuntu. "
+                "Instale con: sudo apt-get update && sudo apt-get install -y "
+                "build-essential python3-dev python3-pip python3-setuptools python3-wheel "
+                "python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 "
+                "libgdk-pixbuf2.0-0 libffi-dev shared-mime-info && pip install weasyprint"
+            )
+        else:
+            WEASYPRINT_ERROR_MSG = (
+                f"Error al cargar weasyprint: {str(e)}. "
+                "En Linux, instale las dependencias del sistema (cairo, pango, gdk-pixbuf, etc.) "
+                "según su distribución. Consulte: https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation"
+            )
+    else:
+        WEASYPRINT_ERROR_MSG = f"Error al cargar weasyprint: {str(e)}. Verifique las dependencias del sistema."
+except Exception as e:
+    # Captura otros errores
+    WEASYPRINT_AVAILABLE = False
+    HTML = None
+    WEASYPRINT_ERROR_MSG = f"Error al importar weasyprint: {str(e)}"
 
 # Importar validador de PDFs
 try:
@@ -91,7 +141,8 @@ def generar_pdf_desde_html(html_content: str, validar: bool = True) -> Tuple[Opt
         Si es exitoso, error_message será None
     """
     if not WEASYPRINT_AVAILABLE or HTML is None:
-        return None, "weasyprint no está instalado. Instale con: pip install weasyprint"
+        error_msg = WEASYPRINT_ERROR_MSG or "weasyprint no está disponible. Instale con: pip install weasyprint"
+        return None, error_msg
     
     try:
         pdf_buffer = BytesIO()
@@ -394,7 +445,8 @@ def generar_pdf_desde_xml_drawio(xml_content: str, output_pdf_path: str = None) 
         Si es exitoso, error_message será None
     """
     if not WEASYPRINT_AVAILABLE or HTML is None:
-        return None, "weasyprint no está instalado. Instale con: pip install weasyprint"
+        error_msg = WEASYPRINT_ERROR_MSG or "weasyprint no está disponible. Instale con: pip install weasyprint"
+        return None, error_msg
     
     try:
         # Convertir XML draw.io a HTML con representación visual

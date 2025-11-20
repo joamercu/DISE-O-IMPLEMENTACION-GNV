@@ -54,46 +54,67 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
     if calculation_results and bool(calculation_results):
         st.session_state['diagram_expander_open'] = True
     
-    col1, col2, col3 = st.columns(3)
+    # Verificar rol del usuario
+    is_admin = st.session_state.get('user_role') == 'Administrador'
     
-    with col1:
-        generate_btn = st.button(
-            "🔄 Generar Diagrama Actualizado", 
-            width='stretch', 
-            type="primary", 
-            disabled=bool(missing_keys),
-            key="btn_generate_diagram"
-        )
-        # Establecer estado inmediatamente cuando se hace clic
-        if generate_btn:
-            st.session_state['diagram_action'] = 'generate'
-            st.session_state['diagram_expander_open'] = True
+    # Para clientes: solo mostrar botón de descargar PDF existente
+    if not is_admin:
+        # Cliente solo puede descargar PDF existente
+        if file_exists(DELIVERABLE_PDF):
+            pdf_filename = f"diagrama_gnv_{client_name}_{st.session_state.get('proyecto_fecha', 'v1')}.pdf"
+            with open(DELIVERABLE_PDF, 'rb') as pdf_file:
+                pdf_data = pdf_file.read()
+            st.download_button(
+                label="📄 Descargar PDF Existente",
+                data=pdf_data,
+                file_name=pdf_filename,
+                mime="application/pdf",
+                use_container_width=True
+            )
+        else:
+            st.info("ℹ️ El PDF del diagrama no está disponible en este momento.")
+    else:
+        # Administrador: mostrar todos los botones
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            generate_btn = st.button(
+                "🔄 Generar Diagrama Actualizado", 
+                width='stretch', 
+                type="primary", 
+                disabled=bool(missing_keys),
+                key="btn_generate_diagram"
+            )
+            # Establecer estado inmediatamente cuando se hace clic
+            if generate_btn:
+                st.session_state['diagram_action'] = 'generate'
+                st.session_state['diagram_expander_open'] = True
+        
+        with col2:
+            view_vars_btn = st.button(
+                "📋 Ver Variables", 
+                width='stretch', 
+                disabled=bool(missing_keys),
+                key="btn_view_vars"
+            )
+            # Establecer estado inmediatamente cuando se hace clic
+            if view_vars_btn:
+                st.session_state['diagram_action'] = 'view_vars'
+                st.session_state['diagram_expander_open'] = True
+        
+        with col3:
+            download_btn = st.button(
+                "📥 Descargar Diagrama", 
+                width='stretch',
+                key="btn_download_diagram"
+            )
+            # Establecer estado inmediatamente cuando se hace clic
+            if download_btn:
+                st.session_state['diagram_action'] = 'download'
+                st.session_state['diagram_expander_open'] = True
     
-    with col2:
-        view_vars_btn = st.button(
-            "📋 Ver Variables", 
-            width='stretch', 
-            disabled=bool(missing_keys),
-            key="btn_view_vars"
-        )
-        # Establecer estado inmediatamente cuando se hace clic
-        if view_vars_btn:
-            st.session_state['diagram_action'] = 'view_vars'
-            st.session_state['diagram_expander_open'] = True
-    
-    with col3:
-        download_btn = st.button(
-            "📥 Descargar Diagrama", 
-            width='stretch',
-            key="btn_download_diagram"
-        )
-        # Establecer estado inmediatamente cuando se hace clic
-        if download_btn:
-            st.session_state['diagram_action'] = 'download'
-            st.session_state['diagram_expander_open'] = True
-    
-    # Ejecutar acciones basadas en session_state
-    if st.session_state.get('diagram_action') == 'generate':
+    # Ejecutar acciones basadas en session_state (solo para administradores)
+    if is_admin and st.session_state.get('diagram_action') == 'generate':
         try:
             # Mostrar información sobre el proceso
             st.info("🔄 **Iniciando generación del diagrama P&ID...**")
@@ -180,7 +201,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             # Mantener el expander abierto incluso si hay error
             st.session_state['diagram_expander_open'] = True
     
-    if st.session_state.get('diagram_action') == 'view_vars':
+    if is_admin and st.session_state.get('diagram_action') == 'view_vars':
         try:
             st.info("📋 **Cargando variables del diagrama...**")
             agent = DrawIOAgent()
@@ -233,7 +254,7 @@ def show_diagram_generator(calculation_results: dict, client_name: str = "PETROL
             # Mantener el expander abierto incluso si hay error
             st.session_state['diagram_expander_open'] = True
     
-    if st.session_state.get('diagram_action') == 'download':
+    if is_admin and st.session_state.get('diagram_action') == 'download':
         if 'diagram_xml' in st.session_state and st.session_state.get('diagram_generated'):
             xml_content = st.session_state['diagram_xml']
             filename = f"diagrama_gnv_{client_name}_{st.session_state.get('proyecto_fecha', 'v1')}.drawio.xml"

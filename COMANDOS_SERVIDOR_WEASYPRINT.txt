@@ -1,0 +1,33 @@
+# Comandos para ejecutar en el servidor Debian
+# Copia y pega estos comandos uno por uno en tu sesión SSH
+
+# 1. Navegar al directorio de la aplicación
+cd /var/www/gnv-app
+
+# 2. Actualizar lista de paquetes
+sudo apt-get update
+
+# 3. Instalar dependencias del sistema para WeasyPrint
+# NOTA: Para Debian 13 usar libgdk-pixbuf-xlib-2.0-0 en lugar de libgdk-pixbuf2.0-0
+
+# Para Debian 13 (como tu servidor):
+sudo apt-get install -y \
+    build-essential \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    python3-cffi \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf-xlib-2.0-0 \
+    libffi-dev \
+    shared-mime-info
+
+# 4. Instalar WeasyPrint
+pip3 install weasyprint
+
+# 5. Verificar que funciona
+python3 -c "from weasyprint import HTML; print('✓ WeasyPrint funciona correctamente')"
+
