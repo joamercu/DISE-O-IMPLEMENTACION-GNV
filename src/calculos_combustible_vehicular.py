@@ -2521,8 +2521,8 @@ with tabs[TAB_INFO]:
     else:
         st.info("ℹ️ Realice un cálculo en la pestaña 'Cálculos principales' para habilitar la descarga del informe en HTML.")
 
+    st.markdown("""
     Para consultas técnicas o actualizaciones, contactar al equipo de ingeniería.
-    """)
 
     ### 1.1 Contexto
 
