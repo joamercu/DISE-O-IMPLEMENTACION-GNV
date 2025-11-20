@@ -28,6 +28,13 @@ except (ImportError, OSError, Exception):
     WEASYPRINT_AVAILABLE = False
     HTML = None  # Definir HTML como None si no está disponible
 
+# Importar validador de PDFs
+try:
+    from .pdf_validator import validar_pdf_bytes
+    PDF_VALIDATOR_AVAILABLE = True
+except ImportError:
+    PDF_VALIDATOR_AVAILABLE = False
+
 def get_file_mime_type(filename):
     """Obtiene el MIME type según la extensión del archivo"""
     mime_types = {
@@ -42,12 +49,41 @@ def get_file_mime_type(filename):
     file_ext = os.path.splitext(filename)[1].lower()
     return mime_types.get(file_ext, 'application/octet-stream')
 
-def generar_pdf_desde_html(html_content: str) -> Tuple[Optional[bytes], Optional[str]]:
+def obtener_nombre_sin_extensiones(filename: str, extensiones_a_eliminar: list = None) -> str:
     """
-    Genera PDF desde contenido HTML usando weasyprint
+    Obtiene el nombre del archivo sin las extensiones especificadas.
+    Evita conflictos como archivo.md.pdf
+    
+    Args:
+        filename: Nombre del archivo
+        extensiones_a_eliminar: Lista de extensiones a eliminar (ej: ['.md', '.pdf'])
+    
+    Returns:
+        Nombre del archivo sin las extensiones especificadas
+    """
+    if extensiones_a_eliminar is None:
+        extensiones_a_eliminar = ['.md', '.json', '.html', '.pdf']
+    
+    nombre = filename
+    # Eliminar todas las extensiones conocidas de forma iterativa
+    cambio = True
+    while cambio:
+        cambio = False
+        for ext in extensiones_a_eliminar:
+            if nombre.lower().endswith(ext.lower()):
+                nombre = nombre[:-len(ext)]
+                cambio = True
+                break
+    
+    return nombre
+
+def generar_pdf_desde_html(html_content: str, validar: bool = True) -> Tuple[Optional[bytes], Optional[str]]:
+    """
+    Genera PDF desde contenido HTML usando weasyprint y valida el resultado
     
     Args:
         html_content: Contenido HTML como string
+        validar: Si es True, valida el PDF generado (por defecto True)
     
     Returns:
         tuple: (pdf_bytes, error_message)
@@ -62,6 +98,20 @@ def generar_pdf_desde_html(html_content: str) -> Tuple[Optional[bytes], Optional
         HTML(string=html_content).write_pdf(pdf_buffer)
         pdf_buffer.seek(0)
         pdf_data = pdf_buffer.read()
+        
+        # Validar el PDF generado si está habilitado y el validador está disponible
+        if validar and PDF_VALIDATOR_AVAILABLE and len(pdf_data) > 0:
+            es_valido, info = validar_pdf_bytes(pdf_data)
+            if not es_valido:
+                errores = info.get('errors', [])
+                if errores:
+                    return None, f"PDF generado no es válido: {', '.join(errores)}"
+                # Si hay warnings pero no errores, continuar pero registrar warnings
+                warnings = info.get('warnings', [])
+                if warnings:
+                    # Los warnings no impiden la generación, pero se pueden registrar
+                    pass
+        
         return pdf_data, None
     except Exception as e:
         return None, f"Error al generar PDF: {str(e)}"
@@ -91,7 +141,13 @@ def create_download_link(file_path, display_text, button_style="default",
     try:
         file_ext = os.path.splitext(file_path)[1].lower()
         filename = os.path.basename(file_path)
-        nombre_sin_ext = os.path.splitext(filename)[0]
+        
+        # Obtener nombre sin extensiones para evitar conflictos como .md.pdf
+        # Si es .md o .json, eliminar esas extensiones antes de agregar .pdf
+        if file_ext in ['.md', '.json']:
+            nombre_sin_ext = obtener_nombre_sin_extensiones(filename, ['.md', '.json', '.pdf', '.html'])
+        else:
+            nombre_sin_ext = os.path.splitext(filename)[0]
         
         # Si es un archivo .md, convertirlo a HTML y luego a PDF
         if file_ext == '.md' and CONVERSION_AVAILABLE:
@@ -108,7 +164,11 @@ def create_download_link(file_path, display_text, button_style="default",
                 if pdf_data:
                     file_data = pdf_data
                     mime_type = 'application/pdf'
-                    download_filename = f"{nombre_sin_ext}.pdf"
+                    # Asegurar que el nombre termine en .pdf (no .md.pdf)
+                    if not nombre_sin_ext.lower().endswith('.pdf'):
+                        download_filename = f"{nombre_sin_ext}.pdf"
+                    else:
+                        download_filename = nombre_sin_ext
                 else:
                     # Si falla la generación de PDF, usar HTML como fallback
                     file_data = html_content.encode('utf-8')
@@ -139,7 +199,11 @@ def create_download_link(file_path, display_text, button_style="default",
                 if pdf_data:
                     file_data = pdf_data
                     mime_type = 'application/pdf'
-                    download_filename = f"{nombre_sin_ext}.pdf"
+                    # Asegurar que el nombre termine en .pdf (no .json.pdf)
+                    if not nombre_sin_ext.lower().endswith('.pdf'):
+                        download_filename = f"{nombre_sin_ext}.pdf"
+                    else:
+                        download_filename = nombre_sin_ext
                 else:
                     # Si falla la generación de PDF, usar HTML como fallback
                     file_data = html_content.encode('utf-8')
