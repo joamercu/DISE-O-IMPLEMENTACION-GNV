@@ -331,7 +331,7 @@ with tabs[TAB_CALCULOS]:
         volumen_unitario_tanque = st.number_input(
             "Volumen Unitario Tanque (m³)",
             min_value=0.01,
-            max_value=0.20,
+            max_value=1.20,
             value=0.080,
             step=0.005,
             help="Volumen de cada tanque individual"
