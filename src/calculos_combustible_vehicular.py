@@ -269,7 +269,7 @@ with tabs[TAB_CALCULOS]:
         st.markdown("#### Parámetros Técnicos")
         poder_calorifico_diesel = st.number_input(
             "Poder Calorífico Diésel (MJ/L)",
-            min_value=30.0,
+            min_value=10.0,
             max_value=40.0,
             value=35.8,
             step=0.1,
@@ -278,8 +278,8 @@ with tabs[TAB_CALCULOS]:
         
         lhv_ch4 = st.number_input(
             "LHV CH₄ - Poder Calorífico Inferior (MJ/kg)",
-            min_value=45.0,
-            max_value=55.0,
+            min_value=1.0,
+            max_value=100.0,
             value=50.0,
             step=0.1,
             help="Lower Heating Value del metano (ISO 6976:2016)"
