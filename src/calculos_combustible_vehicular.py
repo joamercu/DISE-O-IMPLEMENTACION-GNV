@@ -351,7 +351,7 @@ with tabs[TAB_CALCULOS]:
             "Consumo de Diésel (L/100 km)",
             min_value=1.0,
             max_value=200.0,
-            value=35.0,
+            value=50.0,
             step=0.5,
             help="Consumo de combustible diésel del vehículo"
         )
@@ -369,8 +369,8 @@ with tabs[TAB_CALCULOS]:
         st.markdown("#### Parámetros Técnicos")
         poder_calorifico_diesel = st.number_input(
             "Poder Calorífico Diésel (MJ/L)",
-            min_value=30.0,
-            max_value=40.0,
+            min_value=1.0,
+            max_value100.0,
             value=35.8,
             step=0.1,
             help="Poder calorífico del diésel (ASTM D975)"
@@ -431,7 +431,7 @@ with tabs[TAB_CALCULOS]:
         volumen_unitario_tanque = st.number_input(
             "Volumen Unitario Tanque (m³)",
             min_value=0.01,
-            max_value=0.20,
+            max_value=100.20,
             value=0.080,
             step=0.005,
             help="Volumen de cada tanque individual"
@@ -439,8 +439,8 @@ with tabs[TAB_CALCULOS]:
         
         peso_tanque_vacio = st.number_input(
             "Peso Tanque Vacío (kg)",
-            min_value=20.0,
-            max_value=150.0,
+            min_value=1.0,
+            max_value=1000.0,
             value=65.0,
             step=1.0,
             help="Peso de un tanque tipo 3 vacío"
