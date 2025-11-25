@@ -61,6 +61,85 @@ def calcular_sistema_gnv(
         'autonomia_objetivo': autonomia_deseada
     }
 
+def calcular_sistema_gnv_desde_gnl(
+    consumo_gnl,
+    autonomia_deseada,
+    poder_calorifico_gnl,
+    lhv_ch4,
+    eficiencia_conversion,
+    presion_llenado,
+    temperatura_operacion,
+    factor_compresibilidad,
+    volumen_unitario_tanque,
+    peso_tanque_vacio,
+    peso_soportes,
+    peso_accesorios,
+    constante_gases=8.314,
+    masa_molar_ch4=0.01604
+):
+    """
+    Calcula todos los parámetros del sistema GNV partiendo de consumo de GNL
+    
+    Esta función calcula la conversión de un sistema GNL a GNV, considerando
+    que ambos usan metano (CH₄) pero en diferentes formas de almacenamiento.
+    
+    Args:
+        consumo_gnl: Consumo de GNL en L/100 km
+        autonomia_deseada: Autonomía deseada en km
+        poder_calorifico_gnl: Poder calorífico del GNL en MJ/L (típico: 20-25 MJ/L)
+        lhv_ch4: Lower Heating Value del metano en MJ/kg (típico: 50 MJ/kg)
+        eficiencia_conversion: Eficiencia de conversión GNL a GNV (0-1)
+        presion_llenado: Presión de llenado de tanques GNV en bar (típico: 200 bar)
+        temperatura_operacion: Temperatura de operación en °C
+        factor_compresibilidad: Factor de compresibilidad del gas
+        volumen_unitario_tanque: Volumen unitario de cada tanque GNV en m³
+        peso_tanque_vacio: Peso de cada tanque vacío en kg
+        peso_soportes: Peso de soportes por tanque en kg
+        peso_accesorios: Peso de accesorios por tanque en kg
+        constante_gases: Constante universal de los gases (default: 8.314)
+        masa_molar_ch4: Masa molar del metano en kg/mol (default: 0.01604)
+    
+    Returns:
+        dict: Diccionario con todos los resultados del cálculo
+    """
+    # Paso 1: Volumen de GNL requerido para la autonomía
+    volumen_gnl_requerido = (consumo_gnl * autonomia_deseada) / 100.0
+    
+    # Paso 2: Energía requerida (en MJ)
+    energia_requerida = volumen_gnl_requerido * poder_calorifico_gnl
+    
+    # Paso 3: Masa de CH₄ requerida (considerando eficiencia)
+    # Ambos GNL y GNV usan metano, pero la eficiencia puede variar
+    masa_ch4_requerida = (energia_requerida / lhv_ch4) / eficiencia_conversion
+    
+    # Paso 4: Volumen de gas a presión de llenado (GNV)
+    presion_pa = presion_llenado * 100000  # bar a Pascal
+    temperatura_k = temperatura_operacion + 273.15  # °C a Kelvin
+    
+    volumen_gas = (masa_ch4_requerida * constante_gases * temperatura_k) / \
+                 (presion_pa * masa_molar_ch4 * factor_compresibilidad)
+    
+    # Paso 5: Número de tanques requeridos
+    numero_tanques = math.ceil(volumen_gas / volumen_unitario_tanque)
+    
+    # Paso 6: Peso adicional
+    peso_por_tanque = peso_tanque_vacio + peso_soportes + peso_accesorios
+    peso_adicional_total = numero_tanques * peso_por_tanque
+    
+    return {
+        'volumen_gnl_equivalente': volumen_gnl_requerido,
+        'energia_requerida': energia_requerida,
+        'masa_ch4_requerida': masa_ch4_requerida,
+        'volumen_gas': volumen_gas,
+        'numero_tanques': numero_tanques,
+        'peso_adicional_total': peso_adicional_total,
+        'presion_llenado': presion_llenado,
+        'temperatura_operacion': temperatura_operacion,
+        'consumo_base': consumo_gnl,
+        'autonomia_objetivo': autonomia_deseada,
+        'tipo_combustible_origen': 'GNL'
+    }
+
 def calcular_sensibilidad(consumo_base, autonomia_base, variacion, otros_parametros):
     """
     Calcula análisis de sensibilidad variando consumo y autonomía

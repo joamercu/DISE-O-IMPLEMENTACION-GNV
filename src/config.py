@@ -31,6 +31,12 @@ DEFAULT_PESO_TANQUE = 65.0
 DEFAULT_PESO_SOPORTES = 10.0
 DEFAULT_PESO_ACCESORIOS = 5.0
 
+# Parámetros por defecto para GNL (Gas Natural Licuado)
+DEFAULT_CONSUMO_GNL = 50.0  # L/100 km (estimado, mayor que diesel por menor densidad energética)
+DEFAULT_PODER_CALORIFICO_GNL = 22.5  # MJ/L (valor representativo, rango: 20-25 MJ/L)
+DEFAULT_DENSIDAD_GNL = 0.45  # kg/L (valor representativo, rango: 0.42-0.50 kg/L)
+DEFAULT_EFICIENCIA_GNL_GNV = 0.92  # Eficiencia de conversión GNL a GNV (estimado)
+
 # Constantes físicas
 CONSTANTE_GASES = 8.314
 MASA_MOLAR_CH4 = 0.01604

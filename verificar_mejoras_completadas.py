@@ -114,3 +114,6 @@ def verificar_mejoras(xml_file: str):
 if __name__ == '__main__':
     verificar_mejoras('diagrama_gnv_PETROLIQUIDOS_2024-12-19_ELK_V_JOSEMERCHAN.xml')
 
+
+
+

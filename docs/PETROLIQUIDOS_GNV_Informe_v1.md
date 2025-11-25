@@ -216,19 +216,37 @@ Motor
 
 ### 4.1 Fórmulas Implementadas
 
-#### 4.1.1 Energía Requerida
+#### 4.1.1 Conversión Diésel a GNV - Energía Requerida
 \[ E \, (\text{MJ}) = V_{\text{diesel}} \, (\text{L}) \times E_{\text{diesel}} \, (\text{MJ/L}) \]
 
 Donde:
-- \( E_{\text{diesel}} = 35.8 \, \text{MJ/L} \) (poder calorífico diésel)
+- \( E_{\text{diesel}} = 35.8 \, \text{MJ/L} \) (poder calorífico diésel según ASTM D975)
 
-#### 4.1.2 Masa de CH₄ Requerida
-\[ m_{\text{CH}_4} \, (\text{kg}) = \frac{E \, (\text{MJ})}{\text{LHV}_{\text{CH}_4} \, (\text{MJ/kg})} \]
+#### 4.1.2 Conversión Diésel a GNV - Masa de CH₄ Requerida
+\[ m_{\text{CH}_4} \, (\text{kg}) = \frac{E \, (\text{MJ})}{\text{LHV}_{\text{CH}_4} \, (\text{MJ/kg}) \times \eta} \]
+
+Donde:
+- \( \text{LHV}_{\text{CH}_4} = 50.0 \, \text{MJ/kg} \) (poder calorífico inferior metano según ISO 6976:2016)
+- \( \eta = 0.95 \) (eficiencia de conversión GNV vs diésel, típicamente 0.90-0.95)
+
+#### 4.1.3 Conversión GNL a GNV - Energía Requerida
+\[ E \, (\text{MJ}) = V_{\text{GNL}} \, (\text{L}) \times E_{\text{GNL}} \, (\text{MJ/L}) \]
+
+Donde:
+- \( E_{\text{GNL}} = 22.5 \, \text{MJ/L} \) (poder calorífico GNL, rango típico: 20-25 MJ/L)
+
+**Nota**: El GNL tiene menor densidad energética por volumen que el diésel, pero tanto GNL como GNV usan metano (CH₄) como combustible base. La diferencia principal está en el método de almacenamiento (líquido criogénico vs gas comprimido).
+
+#### 4.1.4 Conversión GNL a GNV - Masa de CH₄ Requerida
+\[ m_{\text{CH}_4} \, (\text{kg}) = \frac{E \, (\text{MJ})}{\text{LHV}_{\text{CH}_4} \, (\text{MJ/kg}) \times \eta_{\text{GNL→GNV}}} \]
 
 Donde:
 - \( \text{LHV}_{\text{CH}_4} = 50.0 \, \text{MJ/kg} \) (poder calorífico inferior metano)
+- \( \eta_{\text{GNL→GNV}} = 0.92 \) (eficiencia de conversión GNL a GNV, típicamente 0.90-0.95)
 
-#### 4.1.3 Volumen de Gas a Presión de Llenado
+**Nota**: La eficiencia de conversión GNL→GNV es ligeramente menor que Diésel→GNV debido a pérdidas en el cambio de sistema de almacenamiento (criogénico a comprimido).
+
+#### 4.1.5 Volumen de Gas a Presión de Llenado
 Utilizando ecuación de estado de gases reales:
 
 \[ pV = Z \frac{mRT}{M} \]
@@ -238,26 +256,28 @@ Despejando volumen:
 \[ V \, (\text{m}^3) = \frac{m_{\text{CH}_4} \times R \times T}{p \times M \times Z} \]
 
 Donde:
-- \( p = 200 \times 10^5 \, \text{Pa} = 20,000,000 \, \text{Pa} \) (200 bar)
-- \( R = 8.314 \, \text{J/(mol·K)} \)
-- \( T = 298 \, \text{K} \) (25°C)
-- \( M = 16.04 \times 10^{-3} \, \text{kg/mol} = 0.01604 \, \text{kg/mol} \)
-- \( Z = 0.85 \) (factor de compresibilidad)
+- \( p = 200 \times 10^5 \, \text{Pa} = 20,000,000 \, \text{Pa} \) (200 bar, o 250 bar para alta presión)
+- \( R = 8.314 \, \text{J/(mol·K)} \) (constante universal de gases)
+- \( T = 298 \, \text{K} \) (25°C, temperatura de operación)
+- \( M = 16.04 \times 10^{-3} \, \text{kg/mol} = 0.01604 \, \text{kg/mol} \) (masa molar del metano)
+- \( Z = 0.85 \) (factor de compresibilidad, típicamente 0.80-0.90 para CH₄ a 200 bar, 25°C)
 
-**Simplificación**: Se asume CH₄ puro. En realidad, el gas natural vehicular contiene ~90-95% CH₄, 3-5% etano y trazas de otros hidrocarburos. El factor Z puede variar ligeramente.
+**Simplificación**: Se asume CH₄ puro. En realidad, el gas natural vehicular contiene ~90-95% CH₄, 3-5% etano y trazas de otros hidrocarburos. El factor Z puede variar ligeramente según la composición.
 
-#### 4.1.4 Número de Tanques Requeridos
-\[ n_{\text{tanques}} = \frac{V_{\text{requerido}} \, (\text{m}^3)}{V_{\text{unitario}} \, (\text{m}^3)} \]
+#### 4.1.6 Número de Tanques Requeridos (con flexibilidad de tamaño)
+\[ n_{\text{tanques}} = \left\lceil \frac{V_{\text{requerido}} \, (\text{m}^3)}{V_{\text{unitario}} \, (\text{m}^3)} \right\rceil \]
+
+**Importante**: Los cilindros pueden tener diferentes capacidades según las necesidades del proyecto. **No se limita a opciones predefinidas**. El volumen unitario puede variar desde 0.028 m³ (28L) hasta 0.200 m³ (200L) o más, dependiendo de las restricciones de espacio, peso y disponibilidad.
 
 Redondeando hacia arriba (siempre se requiere número entero de tanques).
 
-#### 4.1.5 Peso Adicional Estimado
+#### 4.1.7 Peso Adicional Estimado
 \[ P_{\text{adicional}} \, (\text{kg}) = n_{\text{tanques}} \times (m_{\text{tanque}} + m_{\text{soportes}} + m_{\text{accesorios}}) \]
 
 Donde:
-- \( m_{\text{tanque}} = 65 \, \text{kg} \) (tanque tipo 3, vacío)
-- \( m_{\text{soportes}} = 10 \, \text{kg} \) (estimado por tanque)
-- \( m_{\text{accesorios}} = 5 \, \text{kg} \) (válvulas, conexiones, por tanque)
+- \( m_{\text{tanque}} = 30-80 \, \text{kg} \) (peso del tanque vacío, varía según capacidad y tipo: Tipo 3 o Tipo 4)
+- \( m_{\text{soportes}} = 10-15 \, \text{kg} \) (peso de soportes y estructura por tanque)
+- \( m_{\text{accesorios}} = 5-10 \, \text{kg} \) (peso de válvulas, conexiones, etc. por tanque)
 
 ### 4.2 Cálculos para Configuraciones Representativas
 
@@ -349,13 +369,225 @@ Donde:
 - Número de tanques: 22 unidades
 - Peso adicional: 1,760 kg
 
-### 4.3 Tabla Resumen de Cálculos
+### 4.3 Tabla Resumen de Cálculos - Conversión Diésel a GNV
 
 | Configuración | Consumo (L/100km) | Autonomía (km) | Energía (MJ) | Masa CH₄ (kg) | Volumen (m³) | N° Tanques | Peso Adicional (kg) |
 |---------------|-------------------|----------------|--------------|---------------|--------------|------------|---------------------|
 | Tractor 4x2 | 35 | 800 | 10,024 | 200.5 | 1.82 | 23 | 1,840 |
 | Tractor 6x4 | 40 | 700 | 10,024 | 200.5 | 1.82 | 23 | 1,840 |
 | Volqueta 6x4 | 45 | 600 | 9,666 | 193.3 | 1.76 | 22 | 1,760 |
+
+---
+
+### 4.4 Análisis de Pérdida de Autonomía en Conversión GNL→GNV
+
+#### 4.4.1 Comparación Técnica de Densidades Energéticas
+
+La conversión de GNL a GNV resulta en una reducción significativa de autonomía debido a la diferencia en densidad energética por volumen:
+
+| Combustible | Densidad Energética | Estado | Temperatura/Presión |
+|-------------|---------------------|--------|---------------------|
+| GNL | ~22.5 MJ/L | Líquido criogénico | -162°C, presión atmosférica |
+| GNV (200 bar) | ~7.5 MJ/m³ ≈ 7.5 MJ/L | Gas comprimido | Ambiente, 200 bar |
+| GNV (250 bar) | ~9.4 MJ/m³ ≈ 9.4 MJ/L | Gas comprimido | Ambiente, 250 bar |
+
+**Factor de conversión volumétrico**: Se requiere aproximadamente **3 veces más volumen** de GNV (a 200 bar) para almacenar la misma energía que GNL.
+
+#### 4.4.2 Cálculo de Reducción Porcentual de Autonomía
+
+La reducción de autonomía se puede estimar comparando las capacidades energéticas:
+
+\[ \text{Reducción} = 1 - \frac{E_{\text{GNV}} / V_{\text{GNV}}}{E_{\text{GNL}} / V_{\text{GNL}}} \]
+
+**Ejemplo práctico**: Vehículo con sistema GNL actual
+
+- **Capacidad GNL**: 2,000 L
+- **Consumo GNL**: 50 L/100 km
+- **Autonomía GNL**: (2,000 / 50) × 100 = **4,000 km teóricos** (~1,800-2,000 km reales considerando reserva)
+
+Para equivalente energético con GNV:
+- **Energía almacenada GNL**: 2,000 L × 22.5 MJ/L = 45,000 MJ
+- **Volumen GNV requerido** (a 200 bar): ~6,000 m³ (equivalente energético)
+- **Autonomía GNV estimada**: ~230-355 km (según configuración de cilindros)
+
+**Reducción típica: 55-85%** comparado con GNL
+
+#### 4.4.3 Impacto Operativo de la Reducción de Autonomía
+
+La reducción significativa de autonomía tiene implicaciones operativas importantes:
+
+1. **Frecuencia de recarga**: De 1 recarga cada 1,800 km (GNL) a 1 recarga cada 230-355 km (GNV)
+2. **Planificación de rutas**: Requiere mapeo detallado de estaciones GNV disponibles
+3. **Tiempo de operación**: Más paradas para recarga afectan eficiencia operativa
+4. **Costo operativo**: Mayor número de recargas puede incrementar costos
+
+#### 4.4.4 Estrategias de Mitigación
+
+Para reducir el impacto de la pérdida de autonomía, se pueden considerar las siguientes estrategias:
+
+1. **Cilindros de mayor capacidad**: Usar cilindros de 100L, 150L o 200L en lugar de 80L para maximizar capacidad en mismo espacio
+2. **Mayor presión de trabajo**: Operar a 250 bar en lugar de 200 bar (requiere tanques tipo 4 certificados, mayor costo)
+3. **Optimización de espacio**: Maximizar número de cilindros según espacio disponible en chasis
+4. **Sistema híbrido**: Considerar mantener GNL como sistema principal con GNV complementario para flexibilidad
+5. **Reducción de autonomía objetivo**: Si operativamente es aceptable, reducir autonomía objetivo puede optimizar costo y peso
+
+---
+
+### 4.5 Flexibilidad en Configuración de Cilindros
+
+#### 4.5.1 Rango de Capacidades Disponibles
+
+Los cilindros GNV están disponibles en un amplio rango de capacidades, **no limitándose a opciones predefinidas**. La selección debe basarse en las necesidades específicas del proyecto:
+
+| Capacidad | Volumen (m³) | Aplicación Típica | Peso Aprox. (kg) | Longitud Aprox. (mm) | Diámetro Aprox. (mm) |
+|-----------|--------------|-------------------|------------------|----------------------|---------------------|
+| 28 L | 0.028 | Motocicletas, vehículos pequeños | 31 | 850 | 230 |
+| 40 L | 0.040 | Automóviles, camionetas pequeñas | 45 | 870 | 250 |
+| 55 L | 0.055 | Camionetas, vehículos medianos | 62 | 890 | 280 |
+| 65 L | 0.065 | Vehículos medianos-grandes | 70 | 950 | 300 |
+| 80 L | 0.080 | Vehículos pesados, buses pequeños | 65-80 | 1000 | 320 |
+| 95 L | 0.095 | Buses, camiones | 100 | 1040 | 350 |
+| 100 L | 0.100 | Camiones, tractores | 110 | 1050 | 360 |
+| 150 L | 0.150 | Vehículos pesados grandes | 130-150 | 1200 | 400 |
+| 200 L+ | 0.200+ | Aplicaciones especiales | 180-220 | 1400+ | 450+ |
+
+**Nota**: Las capacidades pueden variar según fabricante y normativas locales. Se recomienda consultar con proveedores para opciones específicas y disponibilidad. Los cilindros pueden ser personalizados según necesidades del proyecto.
+
+#### 4.5.2 Criterios de Selección Óptima
+
+Al seleccionar la configuración de cilindros, considerar los siguientes criterios:
+
+1. **Requerimientos energéticos**: 
+   - Autonomía deseada
+   - Consumo del vehículo
+   - Perfil de operación (carretera vs urbano)
+
+2. **Restricciones de espacio**: 
+   - Dimensiones disponibles en el chasis
+   - Altura máxima permitida
+   - Ancho y largo disponibles
+
+3. **Restricciones de peso**: 
+   - Capacidad de carga del vehículo
+   - Peso máximo permitido por eje
+   - Impacto en capacidad de carga útil
+
+4. **Disponibilidad de estaciones**: 
+   - Presión de llenado disponible (200 bar estándar vs 250 bar)
+   - Cobertura de estaciones en rutas operativas
+
+5. **Costo vs beneficio**: 
+   - Balance entre número de cilindros, capacidad y costo total
+   - Costo de instalación y mantenimiento
+
+6. **Flexibilidad futura**: 
+   - Posibilidad de agregar o modificar cilindros posteriormente
+   - Compatibilidad con futuras expansiones
+
+#### 4.5.3 Comparación de Configuraciones Alternativas
+
+Para un mismo requerimiento energético, se pueden considerar múltiples configuraciones. A continuación se presenta un ejemplo comparativo:
+
+**Requerimiento**: 1.33 m³ de GNV (a 200 bar) para autonomía de 800 km equivalente (conversión GNL a GNV)
+
+| Configuración | Cilindros | Capacidad Total | N° Cilindros | Peso Aprox. (kg) | Ventajas | Desventajas |
+|---------------|-----------|----------------|--------------|------------------|----------|-------------|
+| **Opción A** | 80 L | 1.36 m³ | 17 | 1,360 | Flexibilidad, fácil mantenimiento | Mayor número de conexiones |
+| **Opción B** | 100 L | 1.40 m³ | 14 | 1,120 | Menos cilindros, menor peso total | Menos flexibilidad |
+| **Opción C** | 150 L | 1.35 m³ | 9 | 1,350 | Mínimo número de cilindros | Menos flexibilidad, cilindros más pesados |
+| **Opción D** | 95 L @ 250 bar | 1.33 m³ | 14 | 1,680 | Menor volumen, menos cilindros | Requiere estaciones 250 bar, mayor costo |
+
+Cada opción tiene ventajas y desventajas en términos de espacio, peso, costo y flexibilidad. La selección debe basarse en las prioridades específicas del proyecto.
+
+#### 4.5.4 Consideraciones de Presión (200 bar vs 250 bar)
+
+| Aspecto | 200 bar (Estándar) | 250 bar (Alta Presión) |
+|---------|---------------------|-------------------------|
+| **Densidad energética** | ~7.5 MJ/m³ | ~9.4 MJ/m³ (+25%) |
+| **Disponibilidad estaciones** | Alta (estándar Colombia) | Media (menos común) |
+| **Tipo de tanques** | Tipo 3 o 4 | Principalmente Tipo 4 |
+| **Costo tanques** | Estándar | 20-30% mayor |
+| **Seguridad** | Estándar | Requiere mayor cuidado y certificaciones |
+| **Reducción volumen** | Base | -15% a -20% vs 200 bar |
+| **Certificaciones** | UNECE R110 estándar | UNECE R110 para alta presión |
+
+**Recomendación**: Evaluar disponibilidad de estaciones de 250 bar en rutas operativas antes de seleccionar esta opción. La mayoría de estaciones en Colombia operan a 200 bar.
+
+---
+
+### 4.6 Ejemplo de Cálculo Completo - Conversión GNL a GNV con Múltiples Configuraciones
+
+#### 4.6.1 Caso de Estudio: Tractor con Motor Weichai WP13NG460E62
+
+**Parámetros de entrada:**
+- Motor: Weichai WP13NG460E62 (dedicado GNL)
+- Consumo GNL: 50 L/100 km
+- Autonomía actual GNL: ~1,800 km (con 2,000 L de GNL)
+- Autonomía deseada equivalente: 800 km
+- Presión de llenado: 200 bar (estándar) o 250 bar (opción)
+- Temperatura: 25°C
+
+#### 4.6.2 Cálculo de Sistema GNV Equivalente
+
+**Paso 1: Volumen GNL requerido para autonomía deseada**
+\[ V_{\text{GNL}} = \frac{50 \times 800}{100} = 400 \, \text{L} \]
+
+**Paso 2: Energía requerida**
+\[ E = 400 \, \text{L} \times 22.5 \, \text{MJ/L} = 9,000 \, \text{MJ} \]
+
+**Paso 3: Masa de CH₄ requerida (η = 0.92)**
+\[ m_{\text{CH}_4} = \frac{9,000 \, \text{MJ}}{50.0 \, \text{MJ/kg} \times 0.92} = 195.7 \, \text{kg} \]
+
+**Paso 4: Volumen de gas a 200 bar**
+\[ V = \frac{195.7 \times 8.314 \times 298}{20,000,000 \times 0.01604 \times 0.85} = 1.33 \, \text{m}^3 \]
+
+#### 4.6.3 Comparación de Configuraciones Alternativas
+
+**Opción 1: Cilindros de 80L (Configuración Estándar)**
+- Número de cilindros: 17 × 80L = 1.36 m³
+- Peso adicional: 17 × 80 kg = 1,360 kg
+- **Ventajas**: Flexibilidad, fácil mantenimiento, amplia disponibilidad
+- **Desventajas**: Mayor número de conexiones, más puntos de falla potenciales
+- **Autonomía estimada**: ~230-280 km
+
+**Opción 2: Cilindros de 100L (Configuración Balanceada)**
+- Número de cilindros: 14 × 100L = 1.40 m³
+- Peso adicional: 14 × 80 kg = 1,120 kg
+- **Ventajas**: Menos cilindros, menor peso total, menor número de conexiones
+- **Desventajas**: Menos flexibilidad para futuras modificaciones
+- **Autonomía estimada**: ~240-290 km
+
+**Opción 3: Cilindros de 150L (Configuración Compacta)**
+- Número de cilindros: 9 × 150L = 1.35 m³
+- Peso adicional: 9 × 150 kg = 1,350 kg
+- **Ventajas**: Mínimo número de cilindros, máximo aprovechamiento de espacio
+- **Desventajas**: Menos flexibilidad, cilindros más pesados, puede requerir refuerzos estructurales
+- **Autonomía estimada**: ~230-280 km
+
+**Opción 4: Cilindros de 95L a 250 bar (Alta Presión)**
+- Volumen requerido a 250 bar: ~1.06 m³ (menor por mayor densidad energética)
+- Número de cilindros: 12 × 95L = 1.14 m³
+- Peso adicional: 12 × 100 kg = 1,200 kg
+- **Ventajas**: Menor volumen, menos cilindros, mayor densidad energética
+- **Desventajas**: Requiere estaciones de 250 bar (menos disponibles), mayor costo de tanques tipo 4, mayor complejidad
+- **Autonomía estimada**: ~230-280 km
+
+#### 4.6.4 Comparación de Resultados
+
+| Configuración | N° Cilindros | Volumen (m³) | Peso (kg) | Autonomía (km) | Reducción vs GNL | Costo Relativo |
+|---------------|--------------|--------------|-----------|----------------|------------------|----------------|
+| **GNL Actual** | 2 × 1,000L | 2,000 L | ~500 | 1,800 | Base | Base |
+| **Opción 1 (80L)** | 17 | 1.36 | 1,360 | 230-280 | 84-87% | ⭐⭐⭐ |
+| **Opción 2 (100L)** | 14 | 1.40 | 1,120 | 240-290 | 84-87% | ⭐⭐⭐ |
+| **Opción 3 (150L)** | 9 | 1.35 | 1,350 | 230-280 | 84-87% | ⭐⭐⭐⭐ |
+| **Opción 4 (95L @ 250 bar)** | 12 | 1.14 | 1,200 | 230-280 | 84-87% | ⭐⭐⭐⭐⭐ |
+
+**Conclusión**: Todas las opciones resultan en una reducción significativa de autonomía (84-87%) comparado con el sistema GNL actual. La selección debe basarse en:
+- Disponibilidad de espacio en chasis
+- Restricciones de peso
+- Disponibilidad de estaciones (200 bar vs 250 bar)
+- Presupuesto disponible
+- Flexibilidad operativa requerida
 
 ---
 

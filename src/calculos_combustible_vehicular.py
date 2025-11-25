@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from auth_system import verify_user, create_user, get_user_role
 from utils.auth_utils import load_remembered_user, save_remembered_user, clear_remembered_user
 from utils.manifest_utils import load_manifest, save_manifest, generate_manifest_html
-from utils.calculation_engine import calcular_sistema_gnv, calcular_sensibilidad
+from utils.calculation_engine import calcular_sistema_gnv, calcular_sistema_gnv_desde_gnl, calcular_sensibilidad
 from utils.file_handler import get_file_mime_type, create_download_link, file_exists, generar_pdf_desde_html
 from utils.documentos_utils import convertir_json_a_html, procesar_archivo_md
 from utils.drawio_integration import show_diagram_generator
@@ -33,7 +33,8 @@ from config import (
     DEFAULT_PRESION, DEFAULT_TEMPERATURA, DEFAULT_FACTOR_Z,
     DEFAULT_VOLUMEN_TANQUE, DEFAULT_PESO_TANQUE,
     DEFAULT_PESO_SOPORTES, DEFAULT_PESO_ACCESORIOS,
-    CONSTANTE_GASES, MASA_MOLAR_CH4
+    CONSTANTE_GASES, MASA_MOLAR_CH4,
+    DEFAULT_CONSUMO_GNL, DEFAULT_PODER_CALORIFICO_GNL, DEFAULT_EFICIENCIA_GNL_GNV
 )
 
 # Imports para sistema de notificaciones y seguimiento
@@ -339,6 +340,17 @@ if NOTIFICATIONS_ENABLED:
 with tabs[TAB_CALCULOS]:
     st.header("Cálculo de Sistema GNV/CNG")
     
+    # Selector de tipo de combustible origen
+    st.markdown("### 🔀 Tipo de Combustible de Origen")
+    tipo_combustible = st.radio(
+        "Seleccione el tipo de combustible actual del vehículo:",
+        ["Diésel", "GNL (Gas Natural Licuado)"],
+        horizontal=True,
+        help="Elija si el vehículo actualmente opera con diésel o GNL"
+    )
+    
+    st.markdown("---")
+    
     # Dividir en columnas para mejor organización
     col1, col2 = st.columns(2)
     
@@ -347,14 +359,25 @@ with tabs[TAB_CALCULOS]:
         
         # Parámetros de operación
         st.markdown("#### Parámetros de Operación")
-        consumo_diesel = st.number_input(
-            "Consumo de Diésel (L/100 km)",
-            min_value=1.0,
-            max_value=200.0,
-            value=35.0,
-            step=0.5,
-            help="Consumo de combustible diésel del vehículo"
-        )
+        
+        if tipo_combustible == "Diésel":
+            consumo_combustible = st.number_input(
+                "Consumo de Diésel (L/100 km)",
+                min_value=1.0,
+                max_value=200.0,
+                value=35.0,
+                step=0.5,
+                help="Consumo de combustible diésel del vehículo"
+            )
+        else:  # GNL
+            consumo_combustible = st.number_input(
+                "Consumo de GNL (L/100 km)",
+                min_value=1.0,
+                max_value=300.0,
+                value=DEFAULT_CONSUMO_GNL,
+                step=0.5,
+                help="Consumo de Gas Natural Licuado del vehículo. Nota: El consumo de GNL es típicamente mayor que el de diésel debido a menor densidad energética por volumen."
+            )
         
         autonomia_deseada = st.number_input(
             "Autonomía Deseada (km)",
@@ -367,14 +390,31 @@ with tabs[TAB_CALCULOS]:
         
         # Parámetros técnicos
         st.markdown("#### Parámetros Técnicos")
-        poder_calorifico_diesel = st.number_input(
-            "Poder Calorífico Diésel (MJ/L)",
-            min_value=30.0,
-            max_value=40.0,
-            value=35.8,
-            step=0.1,
-            help="Poder calorífico del diésel (ASTM D975)"
-        )
+        
+        if tipo_combustible == "Diésel":
+            poder_calorifico_combustible = st.number_input(
+                "Poder Calorífico Diésel (MJ/L)",
+                min_value=30.0,
+                max_value=40.0,
+                value=35.8,
+                step=0.1,
+                help="Poder calorífico del diésel (ASTM D975)"
+            )
+            eficiencia_label = "Eficiencia de Conversión GNV vs Diésel"
+            eficiencia_help = "Factor de eficiencia del sistema GNV comparado con diésel"
+            eficiencia_default = 0.95
+        else:  # GNL
+            poder_calorifico_combustible = st.number_input(
+                "Poder Calorífico GNL (MJ/L)",
+                min_value=18.0,
+                max_value=28.0,
+                value=DEFAULT_PODER_CALORIFICO_GNL,
+                step=0.1,
+                help="Poder calorífico del GNL. Rango típico: 20-25 MJ/L (valor representativo: 22.5 MJ/L)"
+            )
+            eficiencia_label = "Eficiencia de Conversión GNV vs GNL"
+            eficiencia_help = "Factor de eficiencia del sistema GNV comparado con GNL. Típicamente 0.90-0.95"
+            eficiencia_default = DEFAULT_EFICIENCIA_GNL_GNV
         
         lhv_ch4 = st.number_input(
             "LHV CH₄ - Poder Calorífico Inferior (MJ/kg)",
@@ -382,16 +422,16 @@ with tabs[TAB_CALCULOS]:
             max_value=55.0,
             value=50.0,
             step=0.1,
-            help="Lower Heating Value del metano (ISO 6976:2016)"
+            help="Lower Heating Value del metano (ISO 6976:2016). Tanto GNL como GNV usan metano (CH₄)"
         )
         
         eficiencia_conversion = st.number_input(
-            "Eficiencia de Conversión GNV vs Diésel",
+            eficiencia_label,
             min_value=0.80,
             max_value=1.0,
-            value=0.95,
+            value=eficiencia_default,
             step=0.01,
-            help="Factor de eficiencia del sistema GNV comparado con diésel"
+            help=eficiencia_help
         )
     
     with col2:
@@ -431,7 +471,7 @@ with tabs[TAB_CALCULOS]:
         volumen_unitario_tanque = st.number_input(
             "Volumen Unitario Tanque (m³)",
             min_value=0.01,
-            max_value=0.20,
+            max_value=100.20,
             value=0.080,
             step=0.005,
             help="Volumen de cada tanque individual"
@@ -440,16 +480,16 @@ with tabs[TAB_CALCULOS]:
         peso_tanque_vacio = st.number_input(
             "Peso Tanque Vacío (kg)",
             min_value=20.0,
-            max_value=150.0,
+            max_value=300.0,
             value=65.0,
             step=1.0,
-            help="Peso de un tanque tipo 3 vacío"
+            help="Peso de un tanque vacío"
         )
         
         peso_soportes = st.number_input(
             "Peso Soportes por Tanque (kg)",
             min_value=5.0,
-            max_value=30.0,
+            max_value=100.0,
             value=10.0,
             step=0.5,
             help="Peso de soportes y estructura por tanque"
@@ -458,7 +498,7 @@ with tabs[TAB_CALCULOS]:
         peso_accesorios = st.number_input(
             "Peso Accesorios por Tanque (kg)",
             min_value=1.0,
-            max_value=20.0,
+            max_value=100.0,
             value=5.0,
             step=0.5,
             help="Peso de válvulas, conexiones, etc. por tanque"
@@ -498,26 +538,48 @@ with tabs[TAB_CALCULOS]:
         st.markdown("---")
         st.header("📊 Resultados del Cálculo")
         
-        # Usar el motor de cálculos
-        resultado = calcular_sistema_gnv(
-            consumo_diesel,
-            autonomia_deseada,
-            poder_calorifico_diesel,
-            lhv_ch4,
-            eficiencia_conversion,
-            presion_llenado,
-            temperatura_operacion,
-            factor_compresibilidad,
-            volumen_unitario_tanque,
-            peso_tanque_vacio,
-            peso_soportes,
-            peso_accesorios,
-            constante_gases,
-            masa_molar_ch4
-        )
+        # Usar el motor de cálculos según el tipo de combustible
+        if tipo_combustible == "Diésel":
+            resultado = calcular_sistema_gnv(
+                consumo_combustible,
+                autonomia_deseada,
+                poder_calorifico_combustible,
+                lhv_ch4,
+                eficiencia_conversion,
+                presion_llenado,
+                temperatura_operacion,
+                factor_compresibilidad,
+                volumen_unitario_tanque,
+                peso_tanque_vacio,
+                peso_soportes,
+                peso_accesorios,
+                constante_gases,
+                masa_molar_ch4
+            )
+            # Extraer valores para compatibilidad con código existente
+            volumen_combustible_equivalente = resultado.get('volumen_diesel_equivalente', 0)
+            tipo_combustible_texto = "diésel"
+        else:  # GNL
+            resultado = calcular_sistema_gnv_desde_gnl(
+                consumo_combustible,
+                autonomia_deseada,
+                poder_calorifico_combustible,
+                lhv_ch4,
+                eficiencia_conversion,
+                presion_llenado,
+                temperatura_operacion,
+                factor_compresibilidad,
+                volumen_unitario_tanque,
+                peso_tanque_vacio,
+                peso_soportes,
+                peso_accesorios,
+                constante_gases,
+                masa_molar_ch4
+            )
+            # Extraer valores para compatibilidad con código existente
+            volumen_combustible_equivalente = resultado.get('volumen_gnl_equivalente', 0)
+            tipo_combustible_texto = "GNL"
         
-        # Extraer valores para compatibilidad con código existente
-        volumen_diesel_equivalente = resultado['volumen_diesel_equivalente']
         energia_requerida = resultado['energia_requerida']
         masa_ch4_requerida = resultado['masa_ch4_requerida']
         volumen_gas = resultado['volumen_gas']
@@ -539,16 +601,19 @@ with tabs[TAB_CALCULOS]:
             'peso': peso_adicional_total,
             'presion_llenado': resultado['presion_llenado'],
             'temperatura': resultado['temperatura_operacion'],
-            'volumen_diesel_equivalente': volumen_diesel_equivalente
+            'volumen_combustible_equivalente': volumen_combustible_equivalente,
+            'tipo_combustible_origen': tipo_combustible,
+            'volumen_diesel_equivalente': volumen_combustible_equivalente  # Para compatibilidad
         }
         
         # Guardar cálculos en BD si hay un submission activo
         if NOTIFICATIONS_ENABLED and 'current_submission_id' in st.session_state:
             try:
                 parametros_entrada = {
-                    'consumo_diesel': consumo_diesel,
+                    'tipo_combustible': tipo_combustible,
+                    'consumo_combustible': consumo_combustible,
                     'autonomia_deseada': autonomia_deseada,
-                    'poder_calorifico_diesel': poder_calorifico_diesel,
+                    'poder_calorifico_combustible': poder_calorifico_combustible,
                     'lhv_ch4': lhv_ch4,
                     'eficiencia_conversion': eficiencia_conversion,
                     'presion_llenado': presion_llenado,
@@ -580,23 +645,42 @@ with tabs[TAB_CALCULOS]:
         calculo_col1, calculo_col2 = st.columns(2)
         
         with calculo_col1:
-            st.markdown("""
-            **Paso 1: Volumen Diésel Equivalente**
-            ```
-            V_diesel = (Consumo × Autonomía) / 100
-            V_diesel = ({:.1f} L/100km × {:.1f} km) / 100
-            V_diesel = {:.2f} L
-            ```
-            """.format(consumo_diesel, autonomia_deseada, volumen_diesel_equivalente))
-            
-            st.markdown("""
-            **Paso 2: Energía Requerida**
-            ```
-            E = V_diesel × E_diesel
-            E = {:.2f} L × {:.1f} MJ/L
-            E = {:.2f} MJ
-            ```
-            """.format(volumen_diesel_equivalente, poder_calorifico_diesel, energia_requerida))
+            if tipo_combustible == "Diésel":
+                st.markdown("""
+                **Paso 1: Volumen Diésel Equivalente**
+                ```
+                V_diesel = (Consumo × Autonomía) / 100
+                V_diesel = ({:.1f} L/100km × {:.1f} km) / 100
+                V_diesel = {:.2f} L
+                ```
+                """.format(consumo_combustible, autonomia_deseada, volumen_combustible_equivalente))
+                
+                st.markdown("""
+                **Paso 2: Energía Requerida**
+                ```
+                E = V_diesel × E_diesel
+                E = {:.2f} L × {:.1f} MJ/L
+                E = {:.2f} MJ
+                ```
+                """.format(volumen_combustible_equivalente, poder_calorifico_combustible, energia_requerida))
+            else:  # GNL
+                st.markdown("""
+                **Paso 1: Volumen GNL Requerido**
+                ```
+                V_gnl = (Consumo × Autonomía) / 100
+                V_gnl = ({:.1f} L/100km × {:.1f} km) / 100
+                V_gnl = {:.2f} L
+                ```
+                """.format(consumo_combustible, autonomia_deseada, volumen_combustible_equivalente))
+                
+                st.markdown("""
+                **Paso 2: Energía Requerida**
+                ```
+                E = V_gnl × E_gnl
+                E = {:.2f} L × {:.1f} MJ/L
+                E = {:.2f} MJ
+                ```
+                """.format(volumen_combustible_equivalente, poder_calorifico_combustible, energia_requerida))
             
             st.markdown("""
             **Paso 3: Masa de CH₄ Requerida**
@@ -644,9 +728,14 @@ with tabs[TAB_CALCULOS]:
         st.markdown("---")
         st.subheader("📋 Resumen de Resultados")
         
+        if tipo_combustible == "Diésel":
+            volumen_label = "Volumen Diésel Equivalente"
+        else:
+            volumen_label = "Volumen GNL Requerido"
+        
         resumen_data = {
             "Parámetro": [
-                "Volumen Diésel Equivalente",
+                volumen_label,
                 "Energía Requerida",
                 "Masa CH₄ Requerida",
                 "Volumen de Gas (a {} bar)".format(presion_llenado),
@@ -654,7 +743,7 @@ with tabs[TAB_CALCULOS]:
                 "Peso Adicional Total"
             ],
             "Valor": [
-                "{:.2f} L".format(volumen_diesel_equivalente),
+                "{:.2f} L".format(volumen_combustible_equivalente),
                 "{:.2f} MJ".format(energia_requerida),
                 "{:.2f} kg".format(masa_ch4_requerida),
                 "{:.2f} m³ ({:.0f} L)".format(volumen_gas, volumen_gas * 1000),
@@ -1069,7 +1158,7 @@ with tabs[TAB_FORMULAS]:
         st.header("📐 Fórmulas y Procedimientos Numéricos")
         
         st.markdown("""
-        ## 4.1 Fórmulas Implementadas
+        ## 4.1 Fórmulas Implementadas - Conversión Diésel a GNV
         
         ### 4.1.1 Energía Requerida
         
@@ -1127,7 +1216,7 @@ with tabs[TAB_FORMULAS]:
         
         ---
         
-        ### 4.1.4 Número de Tanques Requeridos
+        ### 4.1.4 Número de Tanques Requeridos (con flexibilidad de tamaño)
         
         El número de tanques se calcula dividiendo el volumen total requerido entre 
         el volumen unitario de cada tanque, redondeando hacia arriba:
@@ -1135,6 +1224,10 @@ with tabs[TAB_FORMULAS]:
         $$
         n_{\\text{tanques}} = \\left\\lceil \\frac{V_{\\text{requerido}} \\, (\\text{m}^3)}{V_{\\text{unitario}} \\, (\\text{m}^3)} \\right\\rceil
         $$
+        
+        **Importante**: Los cilindros pueden tener diferentes capacidades según las necesidades del proyecto. 
+        No se limita a opciones predefinidas. El volumen unitario puede variar desde 0.028 m³ (28L) hasta 
+        0.200 m³ (200L) o más, dependiendo de las restricciones de espacio, peso y disponibilidad.
         
         Siempre se requiere un número entero de tanques.
         
@@ -1149,13 +1242,207 @@ with tabs[TAB_FORMULAS]:
         $$
         
         Donde:
-        - $m_{\\text{tanque}}$ = peso del tanque vacío (típicamente 50-80 kg para tipo 3)
+        - $m_{\\text{tanque}}$ = peso del tanque vacío (típicamente 30-80 kg para tipo 3, varía según capacidad)
         - $m_{\\text{soportes}}$ = peso de soportes y estructura por tanque (típicamente 10-15 kg)
         - $m_{\\text{accesorios}}$ = peso de válvulas, conexiones, etc. por tanque (típicamente 5-10 kg)
         
         ---
         
-        ## Ejemplo de Cálculo Completo
+        ## 4.2 Fórmulas Implementadas - Conversión GNL a GNV
+        
+        ### 4.2.1 Energía Requerida desde GNL
+        
+        La energía requerida se calcula multiplicando el volumen de GNL por su poder calorífico:
+        
+        $$
+        E \\, (\\text{MJ}) = V_{\\text{GNL}} \\, (\\text{L}) \\times E_{\\text{GNL}} \\, (\\text{MJ/L})
+        $$
+        
+        Donde:
+        - $E_{\\text{GNL}} = 22.5 \\, \\text{MJ/L}$ (poder calorífico GNL, rango típico: 20-25 MJ/L)
+        
+        **Nota**: El GNL tiene menor densidad energética por volumen que el diésel, pero ambos 
+        sistemas (GNL y GNV) usan metano (CH₄) como combustible base.
+        
+        ---
+        
+        ### 4.2.2 Masa de CH₄ Requerida
+        
+        La masa de metano requerida se obtiene dividiendo la energía requerida por el 
+        poder calorífico inferior del metano, ajustado por la eficiencia de conversión:
+        
+        $$
+        m_{\\text{CH}_4} \\, (\\text{kg}) = \\frac{E \\, (\\text{MJ})}{\\text{LHV}_{\\text{CH}_4} \\, (\\text{MJ/kg}) \\times \\eta_{\\text{GNL→GNV}}}
+        $$
+        
+        Donde:
+        - $\\text{LHV}_{\\text{CH}_4} = 50.0 \\, \\text{MJ/kg}$ (poder calorífico inferior metano según ISO 6976:2016)
+        - $\\eta_{\\text{GNL→GNV}}$ = eficiencia de conversión GNL a GNV (típicamente 0.90-0.95, valor representativo: 0.92)
+        
+        **Nota**: La eficiencia de conversión GNL→GNV es ligeramente menor que Diésel→GNV debido a 
+        pérdidas en el cambio de sistema de almacenamiento (criogénico a comprimido).
+        
+        ---
+        
+        ### 4.2.3 Volumen de Gas a Presión de Llenado
+        
+        Utilizando la misma ecuación de estado de gases reales que para conversión diésel:
+        
+        $$
+        V \\, (\\text{m}^3) = \\frac{m_{\\text{CH}_4} \\times R \\times T}{p \\times M \\times Z}
+        $$
+        
+        Donde los parámetros son los mismos que en la sección 4.1.3.
+        
+        ---
+        
+        ### 4.2.4 Número de Tanques Requeridos (con flexibilidad de tamaño)
+        
+        $$
+        n_{\\text{tanques}} = \\left\\lceil \\frac{V_{\\text{requerido}} \\, (\\text{m}^3)}{V_{\\text{unitario}} \\, (\\text{m}^3)} \\right\\rceil
+        $$
+        
+        **Importante**: Los cilindros pueden tener diferentes capacidades según las necesidades del proyecto. 
+        No se limita a opciones predefinidas. El volumen unitario puede variar desde 0.028 m³ (28L) hasta 
+        0.200 m³ (200L) o más, dependiendo de las restricciones de espacio, peso y disponibilidad.
+        
+        ---
+        
+        ### 4.2.5 Peso Adicional Estimado
+        
+        $$
+        P_{\\text{adicional}} \\, (\\text{kg}) = n_{\\text{tanques}} \\times (m_{\\text{tanque}} + m_{\\text{soportes}} + m_{\\text{accesorios}})
+        $$
+        
+        Donde los parámetros son similares a la sección 4.1.5, pero el peso puede variar según 
+        la capacidad del cilindro seleccionado.
+        
+        ---
+        
+        ## 4.3 Consideraciones de Pérdida de Autonomía
+        
+        ### 4.3.1 Comparación de Densidad Energética
+        
+        La conversión de GNL a GNV resulta en una reducción significativa de autonomía debido a 
+        la diferencia en densidad energética por volumen:
+        
+        | Combustible | Densidad Energética | Estado |
+        |-------------|---------------------|--------|
+        | GNL | ~22.5 MJ/L | Líquido criogénico (-162°C) |
+        | GNV (200 bar) | ~7.5 MJ/m³ ≈ 7.5 MJ/L | Gas comprimido |
+        | GNV (250 bar) | ~9.4 MJ/m³ ≈ 9.4 MJ/L | Gas comprimido |
+        
+        **Factor de conversión volumétrico**: Se requiere aproximadamente 3 veces más volumen 
+        de GNV (a 200 bar) para almacenar la misma energía que GNL.
+        
+        ---
+        
+        ### 4.3.2 Cálculo de Reducción de Autonomía
+        
+        La reducción de autonomía se puede estimar comparando las capacidades energéticas:
+        
+        $$
+        \\text{Reducción} = 1 - \\frac{E_{\\text{GNV}} / V_{\\text{GNV}}}{E_{\\text{GNL}} / V_{\\text{GNL}}}
+        $$
+        
+        Para una configuración típica:
+        - GNL: 2,000 L → ~1,800 km de autonomía
+        - GNV equivalente: 400-533 m³ (a 200 bar) → ~230-355 km de autonomía
+        - **Reducción típica: 55-85%** comparado con GNL
+        
+        ---
+        
+        ### 4.3.3 Factores que Afectan la Pérdida de Autonomía
+        
+        1. **Presión de trabajo**: Mayor presión (250 bar) aumenta densidad energética, reduciendo pérdida
+        2. **Capacidad de cilindros**: Cilindros más grandes pueden optimizar el uso del espacio
+        3. **Número de cilindros**: Más cilindros permiten mayor capacidad total
+        4. **Eficiencia del sistema**: Pérdidas en regulación y suministro afectan autonomía real
+        
+        ---
+        
+        ### 4.3.4 Estrategias de Mitigación
+        
+        Para reducir el impacto de la pérdida de autonomía:
+        
+        1. **Cilindros de mayor capacidad**: Usar cilindros de 100L, 150L o 200L en lugar de 80L
+        2. **Mayor presión de trabajo**: Operar a 250 bar en lugar de 200 bar (requiere tanques tipo 4)
+        3. **Optimización de espacio**: Maximizar número de cilindros según espacio disponible
+        4. **Sistema híbrido**: Considerar mantener GNL como sistema principal con GNV complementario
+        
+        ---
+        
+        ## 4.4 Flexibilidad en Selección de Cilindros
+        
+        ### 4.4.1 Rango de Capacidades Disponibles
+        
+        Los cilindros GNV están disponibles en un amplio rango de capacidades, **no limitándose a opciones predefinidas**:
+        
+        | Capacidad | Volumen (m³) | Aplicación Típica | Peso Aprox. (kg) |
+        |----------|--------------|-------------------|------------------|
+        | 28 L | 0.028 | Motocicletas, vehículos pequeños | 31 |
+        | 40 L | 0.040 | Automóviles, camionetas pequeñas | 45 |
+        | 55 L | 0.055 | Camionetas, vehículos medianos | 62 |
+        | 65 L | 0.065 | Vehículos medianos-grandes | 70 |
+        | 80 L | 0.080 | Vehículos pesados, buses pequeños | 65-80 |
+        | 95 L | 0.095 | Buses, camiones | 100 |
+        | 100 L | 0.100 | Camiones, tractores | 110 |
+        | 150 L | 0.150 | Vehículos pesados grandes | 130-150 |
+        | 200 L+ | 0.200+ | Aplicaciones especiales | 180-220 |
+        
+        **Nota**: Las capacidades pueden variar según fabricante y normativas locales. 
+        Se recomienda consultar con proveedores para opciones específicas.
+        
+        ---
+        
+        ### 4.4.2 Criterios de Selección Óptima
+        
+        Al seleccionar la configuración de cilindros, considerar:
+        
+        1. **Requerimientos energéticos**: Autonomía deseada y consumo del vehículo
+        2. **Restricciones de espacio**: Dimensiones disponibles en el chasis
+        3. **Restricciones de peso**: Capacidad de carga del vehículo
+        4. **Disponibilidad de estaciones**: Presión de llenado disponible (200 bar vs 250 bar)
+        5. **Costo vs beneficio**: Balance entre número de cilindros, capacidad y costo total
+        6. **Flexibilidad futura**: Posibilidad de agregar o modificar cilindros posteriormente
+        
+        ---
+        
+        ### 4.4.3 Comparación de Configuraciones Alternativas
+        
+        Para un mismo requerimiento energético, se pueden considerar múltiples configuraciones:
+        
+        **Ejemplo**: Requerimiento de 1.44 m³ de GNV (a 200 bar)
+        
+        | Configuración | Cilindros | Capacidad Total | N° Cilindros | Peso Aprox. |
+        |---------------|-----------|-----------------|--------------|-------------|
+        | Opción A | 80 L | 1.44 m³ | 18 | 1,440 kg |
+        | Opción B | 100 L | 1.50 m³ | 15 | 1,875 kg |
+        | Opción C | 150 L | 1.50 m³ | 10 | 1,500 kg |
+        | Opción D | 95 L @ 250 bar | 1.33 m³ | 14 | 1,680 kg |
+        
+        Cada opción tiene ventajas y desventajas en términos de espacio, peso, costo y flexibilidad.
+        
+        ---
+        
+        ### 4.4.4 Consideraciones de Presión (200 bar vs 250 bar)
+        
+        | Aspecto | 200 bar (Estándar) | 250 bar (Alta Presión) |
+        |---------|---------------------|-------------------------|
+        | Densidad energética | ~7.5 MJ/m³ | ~9.4 MJ/m³ (+25%) |
+        | Disponibilidad estaciones | Alta (estándar Colombia) | Media (menos común) |
+        | Tipo de tanques | Tipo 3 o 4 | Principalmente Tipo 4 |
+        | Costo tanques | Estándar | 20-30% mayor |
+        | Seguridad | Estándar | Requiere mayor cuidado |
+        | Reducción volumen | Base | -15% a -20% vs 200 bar |
+        
+        **Recomendación**: Evaluar disponibilidad de estaciones de 250 bar antes de seleccionar esta opción.
+        
+        ---
+        
+        ## 4.5 Ejemplos de Cálculo Completo
+        
+        ### 4.5.1 Ejemplo: Conversión Diésel a GNV
         
         **Parámetros de entrada:**
         - Consumo diésel: 35 L/100 km
@@ -1182,7 +1469,7 @@ with tabs[TAB_FORMULAS]:
         
         4. **Volumen de gas a 200 bar:**
            $$
-           V = \\frac{158.0 \\times 8.314 \\times 298}{20,000,000 \\times 0.01604 \\times 0.85} = 1.44 \\, \\text{m}^3
+           V = \\frac{211.0 \\times 8.314 \\times 298}{20,000,000 \\times 0.01604 \\times 0.85} = 1.44 \\, \\text{m}^3
            $$
         
         5. **Número de tanques (V_unitario = 0.080 m³):**
@@ -1194,6 +1481,92 @@ with tabs[TAB_FORMULAS]:
            $$
            P_{\\text{adicional}} = 18 \\times (65 + 10 + 5) = 1,440 \\, \\text{kg}
            $$
+        
+        ---
+        
+        ### 4.5.2 Ejemplo: Conversión GNL a GNV (Configuración Base)
+        
+        **Parámetros de entrada:**
+        - Consumo GNL: 50 L/100 km
+        - Autonomía deseada: 800 km
+        - Presión de llenado: 200 bar
+        - Temperatura: 25°C
+        - Autonomía actual con GNL: ~1,800 km (con 2,000 L de GNL)
+        
+        **Cálculos:**
+        
+        1. **Volumen GNL requerido:**
+           $$
+           V_{\\text{GNL}} = \\frac{50 \\times 800}{100} = 400 \\, \\text{L}
+           $$
+        
+        2. **Energía requerida:**
+           $$
+           E = 400 \\times 22.5 = 9,000 \\, \\text{MJ}
+           $$
+        
+        3. **Masa de CH₄ requerida (η = 0.92):**
+           $$
+           m_{\\text{CH}_4} = \\frac{9,000}{50.0 \\times 0.92} = 195.7 \\, \\text{kg}
+           $$
+        
+        4. **Volumen de gas a 200 bar:**
+           $$
+           V = \\frac{195.7 \\times 8.314 \\times 298}{20,000,000 \\times 0.01604 \\times 0.85} = 1.33 \\, \\text{m}^3
+           $$
+        
+        5. **Número de tanques (V_unitario = 0.080 m³):**
+           $$
+           n_{\\text{tanques}} = \\left\\lceil \\frac{1.33}{0.080} \\right\\rceil = 17 \\, \\text{tanques}
+           $$
+        
+        6. **Peso adicional:**
+           $$
+           P_{\\text{adicional}} = 17 \\times (65 + 10 + 5) = 1,360 \\, \\text{kg}
+           $$
+        
+        7. **Autonomía estimada con GNV:**
+           $$
+           \\text{Autonomía} = \\frac{1.33 \\times 100}{\\text{Consumo equivalente GNV}} \\approx 230-280 \\, \\text{km}
+           $$
+        
+        **Comparación con GNL:**
+        - Autonomía GNL: ~1,800 km
+        - Autonomía GNV: ~230-280 km
+        - **Reducción: ~84-87%** (significativa pérdida de autonomía)
+        
+        ---
+        
+        ### 4.5.3 Ejemplo: Conversión GNL a GNV (Múltiples Configuraciones Alternativas)
+        
+        **Mismo requerimiento**: 1.33 m³ de GNV (a 200 bar) para autonomía de 800 km equivalente
+        
+        **Opción 1: Cilindros de 80L (Configuración Estándar)**
+        - Número de cilindros: 17 × 80L
+        - Peso adicional: 1,360 kg
+        - Ventaja: Flexibilidad, fácil mantenimiento
+        - Desventaja: Mayor número de conexiones
+        
+        **Opción 2: Cilindros de 100L (Configuración Balanceada)**
+        - Número de cilindros: 14 × 100L (1.40 m³, excede requerimiento)
+        - Peso adicional: 1,120 kg (14 × 80 kg)
+        - Ventaja: Menos cilindros, menor peso total
+        - Desventaja: Menos flexibilidad
+        
+        **Opción 3: Cilindros de 150L (Configuración Compacta)**
+        - Número de cilindros: 9 × 150L (1.35 m³)
+        - Peso adicional: 1,350 kg (9 × 150 kg)
+        - Ventaja: Mínimo número de cilindros, máximo aprovechamiento de espacio
+        - Desventaja: Menos flexibilidad, cilindros más pesados
+        
+        **Opción 4: Cilindros de 95L a 250 bar (Alta Presión)**
+        - Volumen requerido a 250 bar: ~1.06 m³ (menor por mayor densidad)
+        - Número de cilindros: 12 × 95L
+        - Peso adicional: 1,440 kg
+        - Ventaja: Menor volumen, menos cilindros
+        - Desventaja: Requiere estaciones de 250 bar, mayor costo
+        
+        **Recomendación**: Seleccionar según prioridades (espacio, peso, costo, disponibilidad de estaciones).
         """)
     else:
         st.warning("🔒 **Acceso Restringido**: Solo los administradores pueden acceder a esta sección.")
@@ -1765,10 +2138,12 @@ with tabs[TAB_MANIFEST]:
                                                             max_value=100,
                                                             value=st.session_state['decisiones_respuestas'].get(f"{question_id}_pct_carretera", 80),
                                                             step=5,
+                                                            key=f"{question_id}_pct_carretera_slider",
                                                             help="¿Qué porcentaje del tiempo operan en carretera?")
                                     
+                                    # Calcular porcentaje urbano automáticamente
                                     pct_urbano = 100 - pct_carretera
-                                    st.metric("🏙️ Porcentaje en Ciudad", f"{pct_urbano}%")
+                                    st.metric("🏙️ Porcentaje en Ciudad", f"{pct_urbano}%", delta=None)
                                 
                                 altitud = st.slider("⛰️ Altitud Promedio de Operación (m.s.n.m.)",
                                                   min_value=0,
@@ -1786,6 +2161,7 @@ with tabs[TAB_MANIFEST]:
                                     st.session_state['decisiones_respuestas'][f"{question_id}_km_dia"] = km_dia
                                     st.session_state['decisiones_respuestas'][f"{question_id}_km_mes"] = km_mes
                                     st.session_state['decisiones_respuestas'][f"{question_id}_pct_carretera"] = pct_carretera
+                                    st.session_state['decisiones_respuestas'][f"{question_id}_pct_urbano"] = pct_urbano
                                     st.session_state['decisiones_respuestas'][f"{question_id}_altitud"] = altitud
                                     st.session_state['decisiones_respuestas'][f"{question_id}_observaciones"] = observaciones
                                     st.session_state['decisiones_respuestas'][f"{question_id}_estado"] = "Respondido"
@@ -2311,7 +2687,7 @@ with tabs[TAB_INFO]:
 
 | Parámetro | Valor Calculado |
 |-----------|------------------|
-| **Volumen diésel equivalente** | {resultado['volumen_diesel_equivalente']:.2f} L |
+| **{'Volumen diésel equivalente' if resultado.get('tipo_combustible_origen', 'Diésel') == 'Diésel' else 'Volumen GNL requerido'}** | {resultado.get('volumen_combustible_equivalente', resultado.get('volumen_diesel_equivalente', 0)):.2f} L |
 | **Energía requerida** | {resultado['energia']:.2f} MJ |
 | **Masa de CH₄ necesaria** | {resultado['masa_ch4']:.2f} kg |
 | **Volumen de CH₄ requerido** | {resultado['volumen']:.2f} m³ ({resultado['volumen']*1000:.0f} L) |
@@ -2482,8 +2858,8 @@ with tabs[TAB_INFO]:
             <td class="valor-destacado">{resultado['autonomia_objetivo']:.0f} km</td>
         </tr>
         <tr>
-            <td><strong>Volumen Diésel Equivalente</strong></td>
-            <td>{resultado['volumen_diesel_equivalente']:.2f} L</td>
+            <td><strong>{'Volumen Diésel Equivalente' if resultado.get('tipo_combustible_origen', 'Diésel') == 'Diésel' else 'Volumen GNL Requerido'}</strong></td>
+            <td>{resultado.get('volumen_combustible_equivalente', resultado.get('volumen_diesel_equivalente', 0)):.2f} L</td>
         </tr>
         <tr>
             <td><strong>Energía Requerida</strong></td>

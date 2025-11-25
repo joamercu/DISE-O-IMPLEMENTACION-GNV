@@ -101,3 +101,6 @@ El diagrama cumple con:
 **Versión:** PROPUESTA TECNICA - REVISION 0  
 **Ingeniero:** José Merchan (WELDTECH SOLUTION)
 
+
+
+
