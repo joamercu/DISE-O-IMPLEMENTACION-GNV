@@ -27,6 +27,467 @@ from utils.tank_calculator import (
     listar_materiales,
     MATERIALES
 )
+from datetime import datetime
+
+def generar_informe_html_tanques(capacidad_result, espesor_result, validacion, norma_usada, parametros, material_props, incluye_tapas):
+    """
+    Genera un informe HTML profesional para los resultados de la calculadora de tanques GNV
+    """
+    fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Formatear fecha en español
+    meses_es = {
+        1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril', 5: 'mayo', 6: 'junio',
+        7: 'julio', 8: 'agosto', 9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'
+    }
+    fecha_obj = datetime.now()
+    fecha_es = f"{fecha_obj.day} de {meses_es[fecha_obj.month]} de {fecha_obj.year}"
+    
+    # Determinar estado con color
+    estado_color = "#28a745" if validacion['es_valido'] else "#dc3545"
+    if validacion['es_valido'] and "Marginal" in validacion['estado']:
+        estado_color = "#ffc107"
+    
+    # Generar contenido de capacidad según si incluye tapas
+    if incluye_tapas:
+        capacidad_content = f"""
+        <div class="metric-grid">
+            <div class="metric">
+                <div class="metric-value">{capacidad_result['volumen_total_litros']:.2f} L</div>
+                <div class="metric-label">Volumen Total</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{capacidad_result['volumen_total_m3']:.4f} m³</div>
+                <div class="metric-label">Volumen Total</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{capacidad_result['volumen_cuerpo_litros']:.2f} L</div>
+                <div class="metric-label">Volumen Cuerpo</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{capacidad_result['volumen_tapas_litros']:.2f} L</div>
+                <div class="metric-label">Volumen Tapas</div>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Valor</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Diámetro Interno</td>
+                    <td>{capacidad_result['diametro_interno_mm']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+                <tr>
+                    <td>Radio Interno</td>
+                    <td>{capacidad_result['radio_interno_mm']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+                <tr>
+                    <td>Longitud del Cuerpo</td>
+                    <td>{capacidad_result['longitud_cuerpo_mm']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+            </tbody>
+        </table>
+        """
+    else:
+        capacidad_content = f"""
+        <div class="metric-grid">
+            <div class="metric">
+                <div class="metric-value">{capacidad_result['volumen_cuerpo_litros']:.2f} L</div>
+                <div class="metric-label">Volumen Interno</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{capacidad_result['volumen_total_m3']:.4f} m³</div>
+                <div class="metric-label">Volumen Interno</div>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Valor</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Diámetro Interno</td>
+                    <td>{capacidad_result['diametro_interno_mm']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+                <tr>
+                    <td>Radio Interno</td>
+                    <td>{capacidad_result['radio_interno_mm']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+            </tbody>
+        </table>
+        """
+    
+    # Generar advertencias
+    advertencias_html = ""
+    advertencias = []
+    
+    if validacion['factor_seguridad'] < 2.25:
+        advertencias.append("❌ **Factor de seguridad insuficiente**: El factor de seguridad calculado es menor al mínimo requerido (2.25 según NTC 3847)")
+    
+    if validacion['porcentaje_margen'] < 10:
+        advertencias.append("⚠️ **Margen bajo**: Se recomienda un margen mínimo del 10% sobre el espesor requerido")
+    
+    if parametros['espesor_actual'] < espesor_result['espesor_con_tolerancia_mm']:
+        advertencias.append("⚠️ **Tolerancia de fabricación**: El espesor actual es menor que el espesor requerido con tolerancia de fabricación (15%)")
+    
+    if parametros['espesor_actual'] < 5.0 or parametros['espesor_actual'] > 10.0:
+        advertencias.append("ℹ️ **Rango atípico**: El espesor está fuera del rango típico para cilindros GNV (5-8 mm para Tipo 1)")
+    
+    if advertencias:
+        advertencias_html = "<div class='advertencias'>"
+        for advertencia in advertencias:
+            advertencias_html += f"<div class='advertencia'>{advertencia}</div>"
+        advertencias_html += "</div>"
+    else:
+        advertencias_html = "<div class='success-message'>✅ No se detectaron problemas. El diseño cumple con todos los requisitos.</div>"
+    
+    html = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Cálculo - Tanque GNV</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }}
+        .container {{
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }}
+        .header {{
+            border-bottom: 4px solid #FF7A00;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }}
+        h1 {{
+            color: #0F1216;
+            margin: 0;
+            font-size: 28pt;
+        }}
+        h2 {{
+            color: #124272;
+            border-bottom: 2px solid #2AA1FF;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }}
+        h3 {{
+            color: #173e62;
+            margin-top: 25px;
+        }}
+        .info-box {{
+            background-color: #f4f4f4;
+            border-left: 4px solid #FF7A00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }}
+        .metric-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }}
+        .metric {{
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }}
+        .metric-value {{
+            font-size: 24pt;
+            font-weight: bold;
+            color: #0F1216;
+        }}
+        .metric-label {{
+            color: #6c757d;
+            font-size: 12pt;
+            margin-top: 5px;
+        }}
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 14px;
+        }}
+        th, td {{
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }}
+        th {{
+            background-color: #173e62;
+            color: #fff;
+            font-weight: bold;
+        }}
+        tr:nth-child(even) {{
+            background-color: #f9f9f9;
+        }}
+        .status-badge {{
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            background-color: {estado_color};
+        }}
+        .advertencias {{
+            margin: 20px 0;
+        }}
+        .advertencia {{
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }}
+        .success-message {{
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #155724;
+        }}
+        .formula-box {{
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }}
+        .footer {{
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #6B7280;
+            text-align: center;
+        }}
+        .print-button {{
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #FF7A00;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(255, 122, 0, 0.3);
+        }}
+        .print-button:hover {{
+            background-color: #FF9500;
+            box-shadow: 0 4px 10px rgba(255, 122, 0, 0.5);
+        }}
+        @media print {{
+            .print-button {{
+                display: none;
+            }}
+            body {{
+                background-color: white;
+            }}
+            .container {{
+                box-shadow: none;
+            }}
+        }}
+    </style>
+    <script>
+        function imprimirPDF() {{
+            window.print();
+        }}
+    </script>
+</head>
+<body>
+    <button class="print-button" onclick="imprimirPDF()">🖨️ Imprimir a PDF</button>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Informe de Cálculo - Tanque GNV</h1>
+            <p><strong>Fecha de Generación:</strong> {fecha_es}<br>
+            <strong>Norma Aplicada:</strong> {norma_usada}<br>
+            <strong>Estado de Validación:</strong> <span class="status-badge">{validacion['estado']}</span></p>
+        </div>
+
+        <h2>📥 Parámetros de Entrada</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Valor</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Diámetro Exterior</td>
+                    <td>{parametros['diametro_exterior']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+                <tr>
+                    <td>Longitud Total</td>
+                    <td>{parametros['longitud']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+                <tr>
+                    <td>Espesor Actual de Pared</td>
+                    <td>{parametros['espesor_actual']:.2f}</td>
+                    <td>mm</td>
+                </tr>
+                <tr>
+                    <td>Presión de Trabajo</td>
+                    <td>{parametros['presion_trabajo']:.0f}</td>
+                    <td>bar</td>
+                </tr>
+                <tr>
+                    <td>Presión de Prueba</td>
+                    <td>{parametros['presion_prueba']:.0f}</td>
+                    <td>bar</td>
+                </tr>
+                <tr>
+                    <td>Material</td>
+                    <td>{material_props['nombre']}</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Incluir Tapas Semiesféricas</td>
+                    <td>{'Sí' if incluye_tapas else 'No'}</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>📏 Resultados de Capacidad</h2>
+        {capacidad_content}
+
+        <h2>🛡️ Resultados de Espesor</h2>
+        <div class="metric-grid">
+            <div class="metric">
+                <div class="metric-value">{espesor_result['espesor_minimo_mm']:.2f} mm</div>
+                <div class="metric-label">Espesor Mínimo Requerido</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{espesor_result['espesor_con_tolerancia_mm']:.2f} mm</div>
+                <div class="metric-label">Espesor con Tolerancia (15%)</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{parametros['espesor_actual']:.2f} mm</div>
+                <div class="metric-label">Espesor Actual</div>
+            </div>
+        </div>
+
+        <h2>✅ Validación del Espesor</h2>
+        <div class="metric-grid">
+            <div class="metric">
+                <div class="metric-value">{validacion['factor_seguridad']:.2f}</div>
+                <div class="metric-label">Factor de Seguridad</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{validacion['diferencia_mm']:.2f} mm</div>
+                <div class="metric-label">Diferencia (Actual - Requerido)</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{validacion['porcentaje_margen']:.1f}%</div>
+                <div class="metric-label">Margen de Seguridad</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>Conclusión</h3>
+            <p>{validacion['mensaje']}</p>
+        </div>
+
+        <h2>⚠️ Advertencias y Recomendaciones</h2>
+        {advertencias_html}
+
+        <h2>🔬 Propiedades del Material</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Propiedad</th>
+                    <th>Valor</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Límite Elástico (Re)</td>
+                    <td>{material_props['limite_elastico_mpa']:.0f}</td>
+                    <td>MPa</td>
+                </tr>
+                <tr>
+                    <td>Resistencia a Tracción (Mín)</td>
+                    <td>{material_props['resistencia_traccion_min_mpa']:.0f}</td>
+                    <td>MPa</td>
+                </tr>
+                <tr>
+                    <td>Resistencia a Tracción (Máx)</td>
+                    <td>{material_props['resistencia_traccion_max_mpa']:.0f}</td>
+                    <td>MPa</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box">
+            <h3>Descripción del Material</h3>
+            <p>{material_props['descripcion']}</p>
+        </div>
+
+        <h2>📚 Referencias Normativas</h2>
+        <div class="info-box">
+            <h3>ISO 11439 / NTC 3847</h3>
+            <p>• <strong>ISO 11439:2013</strong>: Gas cylinders — High pressure cylinders for the on-board storage of natural gas as a fuel for automotive vehicles</p>
+            <p>• <strong>NTC 3847:2002</strong>: Cilindros de alta presión para almacenamiento de GNC para vehículos (equivalente a ISO 11439:2000)</p>
+            <p>• <strong>Factor de seguridad mínimo</strong>: 2.25</p>
+            <p>• <strong>Presión de prueba</strong>: 1.5 × Presión de trabajo</p>
+        </div>
+
+        <div class="info-box">
+            <h3>ASME Section VIII, Division 1</h3>
+            <p>• <strong>ASME Boiler and Pressure Vessel Code, Section VIII, Division 1</strong>: Rules for Construction of Pressure Vessels</p>
+            <p>• <strong>Condición de validez</strong>: P ≤ 0.385 × S × E</p>
+            <p>• <strong>Eficiencia de junta</strong>: E = 1.0 para cilindros sin costura</p>
+        </div>
+
+        <div class="footer">
+            <p><strong>WELDTECH SOLUTIONS - CALCULADORA DE TANQUES GNV</strong></p>
+            <p>Informe generado automáticamente el {fecha_actual}</p>
+            <p><em>Este documento es confidencial y de uso exclusivo del solicitante</em></p>
+        </div>
+    </div>
+</body>
+</html>"""
+    
+    return html
 
 # Configuración de la página
 st.set_page_config(
@@ -513,13 +974,47 @@ if 'capacidad_result' in st.session_state:
     - Tratamiento térmico: Temple y revenido
     """)
     
-    # Exportación de resultados (opcional)
+    # Exportación de resultados
     st.markdown("---")
     st.header("💾 Exportar Resultados")
     
-    if st.button("📄 Generar Reporte de Cálculo", use_container_width=True):
-        reporte = f"""
-# Reporte de Cálculo - Tanque GNV
+    col_export1, col_export2 = st.columns(2)
+    
+    with col_export1:
+        if st.button("📄 Generar Informe HTML", type="primary", use_container_width=True):
+            try:
+                # Generar informe HTML profesional
+                html_informe = generar_informe_html_tanques(
+                    capacidad_result=capacidad_result,
+                    espesor_result=espesor_result,
+                    validacion=validacion,
+                    norma_usada=norma_usada,
+                    parametros=parametros,
+                    material_props=material_props,
+                    incluye_tapas=st.session_state.get('incluye_tapas', True)
+                )
+                
+                # Nombre del archivo
+                nombre_archivo = f"informe_tanque_gnv_{parametros['diametro_exterior']:.0f}mm_{parametros['longitud']:.0f}mm_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+                
+                st.download_button(
+                    label="⬇️ Descargar Informe HTML",
+                    data=html_informe,
+                    file_name=nombre_archivo,
+                    mime="text/html",
+                    use_container_width=True
+                )
+                
+                st.success("✅ Informe HTML generado exitosamente!")
+                st.info("💡 **Tip:** Descargue el HTML y conviértalo a PDF usando su navegador (Archivo > Imprimir > Guardar como PDF)")
+                
+            except Exception as e:
+                st.error(f"❌ Error al generar informe HTML: {str(e)}")
+    
+    with col_export2:
+        if st.button("📝 Generar Reporte Texto", use_container_width=True):
+            try:
+                reporte = f"""# Reporte de Cálculo - Tanque GNV
 
 ## Parámetros de Entrada
 - Diámetro Exterior: {parametros['diametro_exterior']:.2f} mm
@@ -533,24 +1028,23 @@ if 'capacidad_result' in st.session_state:
 
 ## Resultados
 
-### Capacidad
-"""
-        if capacidad_result.get('incluye_tapas', True):
-            reporte += f"""
+### Capacidad"""
+                
+                if capacidad_result.get('incluye_tapas', True):
+                    reporte += f"""
 - Volumen Total: {capacidad_result['volumen_total_litros']:.2f} L ({capacidad_result['volumen_total_m3']:.4f} m³)
 - Volumen Cuerpo: {capacidad_result['volumen_cuerpo_litros']:.2f} L
 - Volumen Tapas: {capacidad_result['volumen_tapas_litros']:.2f} L
 - Diámetro Interno: {capacidad_result['diametro_interno_mm']:.2f} mm
 - Radio Interno: {capacidad_result['radio_interno_mm']:.2f} mm
-- Longitud Cuerpo: {capacidad_result['longitud_cuerpo_mm']:.2f} mm
-"""
-        else:
-            reporte += f"""
+- Longitud Cuerpo: {capacidad_result['longitud_cuerpo_mm']:.2f} mm"""
+                else:
+                    reporte += f"""
 - Volumen Interno: {capacidad_result['volumen_cuerpo_litros']:.2f} L ({capacidad_result['volumen_total_m3']:.4f} m³)
 - Diámetro Interno: {capacidad_result['diametro_interno_mm']:.2f} mm
-- Radio Interno: {capacidad_result['radio_interno_mm']:.2f} mm
-"""
-        reporte += """
+- Radio Interno: {capacidad_result['radio_interno_mm']:.2f} mm"""
+                
+                reporte += f"""
 
 ### Espesor Requerido
 - Espesor Mínimo: {espesor_result['espesor_minimo_mm']:.2f} mm
@@ -563,14 +1057,22 @@ if 'capacidad_result' in st.session_state:
 
 ## Conclusión
 {validacion['mensaje']}
+
+---
+Generado el {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+WELDTECH SOLUTIONS - Calculadora de Tanques GNV
 """
-        st.download_button(
-            label="⬇️ Descargar Reporte (.txt)",
-            data=reporte,
-            file_name=f"reporte_tanque_gnv_{parametros['diametro_exterior']:.0f}mm_{parametros['longitud']:.0f}mm.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
+                
+                st.download_button(
+                    label="⬇️ Descargar Reporte TXT",
+                    data=reporte,
+                    file_name=f"reporte_tanque_gnv_{parametros['diametro_exterior']:.0f}mm_{parametros['longitud']:.0f}mm.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+                
+            except Exception as e:
+                st.error(f"❌ Error al generar reporte de texto: {str(e)}")
 
 else:
     # Mensaje inicial
