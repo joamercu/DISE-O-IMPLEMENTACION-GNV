@@ -425,6 +425,7 @@ with tabs[TAB_CALCULOS]:
             help="Lower Heating Value del metano (ISO 6976:2016). Tanto GNL como GNV usan metano (CH₄)"
         )
         
+        # Parámetro de eficiencia de conversión
         eficiencia_conversion = st.number_input(
             eficiencia_label,
             min_value=0.80,
