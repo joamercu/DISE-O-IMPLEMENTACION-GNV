@@ -606,6 +606,25 @@ with tabs[TAB_CALCULOS]:
             'volumen_diesel_equivalente': volumen_combustible_equivalente  # Para compatibilidad
         }
         
+        # Guardar también los parámetros de entrada para el análisis de sensibilidad
+        st.session_state['parametros_entrada'] = {
+            'tipo_combustible': tipo_combustible,
+            'consumo_combustible': consumo_combustible,
+            'autonomia_deseada': autonomia_deseada,
+            'poder_calorifico_combustible': poder_calorifico_combustible,
+            'lhv_ch4': lhv_ch4,
+            'eficiencia_conversion': eficiencia_conversion,
+            'presion_llenado': presion_llenado,
+            'temperatura_operacion': temperatura_operacion,
+            'factor_compresibilidad': factor_compresibilidad,
+            'volumen_unitario_tanque': volumen_unitario_tanque,
+            'peso_tanque_vacio': peso_tanque_vacio,
+            'peso_soportes': peso_soportes,
+            'peso_accesorios': peso_accesorios,
+            'constante_gases': constante_gases,
+            'masa_molar_ch4': masa_molar_ch4
+        }
+        
         # Guardar cálculos en BD si hay un submission activo
         if NOTIFICATIONS_ENABLED and 'current_submission_id' in st.session_state:
             try:
@@ -1587,27 +1606,165 @@ with tabs[TAB_SENSIBILIDAD]:
     - Evaluar escenarios alternativos
     """)
     
-    # Parámetros base para análisis
-    st.subheader("Parámetros Base")
+    # ============================================
+    # VALIDACIÓN DE PARÁMETROS DISPONIBLES
+    # ============================================
+    
+    # Verificar si existen resultados de cálculos principales
+    if 'calculo_resultado' not in st.session_state or not st.session_state.get('calculo_resultado'):
+        st.error("""
+        🚫 **Análisis de Sensibilidad No Disponible**
+        
+        **¿Por qué necesita ejecutar primero los cálculos principales?**
+        
+        El análisis de sensibilidad debe usar **SUS parámetros específicos** (volumen de tanques, 
+        peso, presión, etc.) en lugar de valores genéricos por defecto. Esto garantiza:
+        
+        ✅ **Resultados precisos** para su aplicación específica  
+        ✅ **Consistencia** entre cálculos principales y análisis de sensibilidad  
+        ✅ **Parámetros reales** de tanques que usted configuró  
+        """)
+        
+        st.markdown("### 📋 Pasos para Continuar:")
+        st.markdown("""
+        1. **Vaya a la pestaña "Cálculos Principales"** 
+        2. **Configure todos los parámetros** del sistema (especialmente los de tanques)
+        3. **Haga clic en "Calcular Sistema GNV"**
+        4. **Regrese aquí** para el análisis de sensibilidad
+        """)
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("📊 Ir a Cálculos Principales", type="primary", use_container_width=True):
+                st.info("👆 **Instrucciones:** Haga clic en la pestaña 'Cálculos Principales' en la parte superior de la página.")
+        
+        st.stop()
+    
+    # ============================================
+    # EXTRACCIÓN DE PARÁMETROS DEL USUARIO
+    # ============================================
+    
+    # Obtener parámetros desde session_state (guardados en cálculos principales)
+    calculo_data = st.session_state['calculo_resultado']
+    
+    # Obtener parámetros de entrada del usuario desde session_state
+    if 'parametros_entrada' in st.session_state:
+        parametros_usuario = st.session_state['parametros_entrada']
+        
+        # Extraer parámetros específicos para el análisis
+        parametros_tanques = {
+            'volumen_unitario_tanque': parametros_usuario.get('volumen_unitario_tanque', DEFAULT_VOLUMEN_TANQUE),
+            'peso_tanque_vacio': parametros_usuario.get('peso_tanque_vacio', DEFAULT_PESO_TANQUE),
+            'peso_soportes': parametros_usuario.get('peso_soportes', DEFAULT_PESO_SOPORTES),
+            'peso_accesorios': parametros_usuario.get('peso_accesorios', DEFAULT_PESO_ACCESORIOS),
+            'presion_llenado': parametros_usuario.get('presion_llenado', DEFAULT_PRESION),
+            'temperatura_operacion': parametros_usuario.get('temperatura_operacion', DEFAULT_TEMPERATURA),
+            'factor_compresibilidad': parametros_usuario.get('factor_compresibilidad', DEFAULT_FACTOR_Z),
+            'poder_calorifico_combustible': parametros_usuario.get('poder_calorifico_combustible', DEFAULT_PODER_CALORIFICO),
+            'lhv_ch4': parametros_usuario.get('lhv_ch4', DEFAULT_LHV_CH4),
+            'eficiencia_conversion': parametros_usuario.get('eficiencia_conversion', DEFAULT_EFICIENCIA),
+            'constante_gases': parametros_usuario.get('constante_gases', CONSTANTE_GASES),
+            'masa_molar_ch4': parametros_usuario.get('masa_molar_ch4', MASA_MOLAR_CH4)
+        }
+        
+        parametros_origen = "configurados por el usuario"
+    else:
+        # Fallback a valores por defecto si no hay parámetros guardados
+        parametros_tanques = {
+            'volumen_unitario_tanque': DEFAULT_VOLUMEN_TANQUE,
+            'peso_tanque_vacio': DEFAULT_PESO_TANQUE,
+            'peso_soportes': DEFAULT_PESO_SOPORTES,
+            'peso_accesorios': DEFAULT_PESO_ACCESORIOS,
+            'presion_llenado': DEFAULT_PRESION,
+            'temperatura_operacion': DEFAULT_TEMPERATURA,
+            'factor_compresibilidad': DEFAULT_FACTOR_Z,
+            'poder_calorifico_combustible': DEFAULT_PODER_CALORIFICO,
+            'lhv_ch4': DEFAULT_LHV_CH4,
+            'eficiencia_conversion': DEFAULT_EFICIENCIA,
+            'constante_gases': CONSTANTE_GASES,
+            'masa_molar_ch4': MASA_MOLAR_CH4
+        }
+        
+        parametros_origen = "valores por defecto (no se encontraron parámetros del usuario)"
+    
+    # ============================================
+    # MOSTRAR PARÁMETROS ACTUALES
+    # ============================================
+    
+    if parametros_origen == "configurados por el usuario":
+        st.success("✅ **Usando parámetros de sus cálculos principales**")
+    else:
+        st.warning("⚠️ **Usando valores por defecto** - No se encontraron parámetros del usuario")
+    
+    with st.expander("🔍 Ver Parámetros que se Usarán en el Análisis", expanded=False):
+        st.markdown(f"**Origen de parámetros:** {parametros_origen}")
+        st.markdown("---")
+        
+        col_param1, col_param2 = st.columns(2)
+        
+        with col_param1:
+            st.markdown("**Parámetros de Tanques:**")
+            st.markdown(f"• Volumen unitario: {parametros_tanques['volumen_unitario_tanque']:.3f} m³")
+            st.markdown(f"• Peso tanque vacío: {parametros_tanques['peso_tanque_vacio']:.1f} kg")
+            st.markdown(f"• Peso soportes: {parametros_tanques['peso_soportes']:.1f} kg")
+            st.markdown(f"• Peso accesorios: {parametros_tanques['peso_accesorios']:.1f} kg")
+        
+        with col_param2:
+            st.markdown("**Parámetros de Sistema:**")
+            st.markdown(f"• Presión: {parametros_tanques['presion_llenado']:.0f} bar")
+            st.markdown(f"• Temperatura: {parametros_tanques['temperatura_operacion']:.0f} °C")
+            st.markdown(f"• Factor Z: {parametros_tanques['factor_compresibilidad']:.2f}")
+            st.markdown(f"• Eficiencia: {parametros_tanques['eficiencia_conversion']:.2f}")
+        
+        if parametros_origen == "configurados por el usuario":
+            st.info("💡 **Nota:** Estos son los valores que configuró en los cálculos principales. Si desea cambiarlos, regrese a esa pestaña, modifique los valores y vuelva a calcular.")
+        else:
+            st.warning("⚠️ **Nota:** Se están usando valores por defecto. Para usar sus propios parámetros, ejecute primero los cálculos principales.")
+    
+    # Botón para actualizar parámetros
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+    with col_btn2:
+        if parametros_origen != "configurados por el usuario":
+            st.markdown("### 🔄 Actualizar Parámetros")
+            st.markdown("Para obtener resultados más precisos, configure sus parámetros específicos:")
+            
+            if st.button("📊 Ir a Cálculos Principales", type="primary", use_container_width=True):
+                st.info("👆 **Instrucciones:** Vaya a la pestaña 'Cálculos Principales', configure sus parámetros, ejecute el cálculo y regrese aquí.")
+        else:
+            st.success("✅ **Parámetros actualizados** - El análisis usará sus configuraciones personalizadas")
+    
+    st.markdown("---")
+    
+    # ============================================
+    # PARÁMETROS BASE PARA ANÁLISIS
+    # ============================================
+    
+    st.subheader("Parámetros Base para Variación")
     col_sens1, col_sens2 = st.columns(2)
     
     with col_sens1:
+        # Usar valores del usuario si están disponibles, sino usar por defecto
+        consumo_default = parametros_usuario.get('consumo_combustible', 35.0) if 'parametros_entrada' in st.session_state else 35.0
+        autonomia_default = parametros_usuario.get('autonomia_deseada', DEFAULT_AUTONOMIA) if 'parametros_entrada' in st.session_state else DEFAULT_AUTONOMIA
+        
         consumo_base = st.number_input(
             "Consumo Base (L/100 km)",
             min_value=20.0,
             max_value=60.0,
-            value=35.0,
+            value=float(consumo_default),
             step=1.0,
-            key="sens_consumo"
+            key="sens_consumo",
+            help="Valor base para el análisis de sensibilidad. Se tomó de sus cálculos principales." if 'parametros_entrada' in st.session_state else "Valor base para el análisis de sensibilidad."
         )
         
         autonomia_base = st.number_input(
             "Autonomía Base (km)",
             min_value=400.0,
             max_value=1200.0,
-            value=DEFAULT_AUTONOMIA,
+            value=float(autonomia_default),
             step=50.0,
-            key="sens_autonomia"
+            key="sens_autonomia",
+            help="Valor base para el análisis de sensibilidad. Se tomó de sus cálculos principales." if 'parametros_entrada' in st.session_state else "Valor base para el análisis de sensibilidad."
         )
     
     with col_sens2:
@@ -1632,14 +1789,21 @@ with tabs[TAB_SENSIBILIDAD]:
                 if not math.isfinite(autonomia) or autonomia <= 0:
                     return {'energia': 0, 'masa_ch4': 0, 'volumen': 0, 'tanques': 0, 'peso': 0}
                 
-                # Usar el motor de cálculos
+                # Usar el motor de cálculos con parámetros del usuario
                 resultado = calcular_sistema_gnv(
                     consumo, autonomia,
-                    DEFAULT_PODER_CALORIFICO, DEFAULT_LHV_CH4, DEFAULT_EFICIENCIA,
-                    DEFAULT_PRESION, DEFAULT_TEMPERATURA, DEFAULT_FACTOR_Z,
-                    DEFAULT_VOLUMEN_TANQUE, DEFAULT_PESO_TANQUE,
-                    DEFAULT_PESO_SOPORTES, DEFAULT_PESO_ACCESORIOS,
-                    CONSTANTE_GASES, MASA_MOLAR_CH4
+                    parametros_tanques['poder_calorifico_combustible'], 
+                    parametros_tanques['lhv_ch4'], 
+                    parametros_tanques['eficiencia_conversion'],
+                    parametros_tanques['presion_llenado'], 
+                    parametros_tanques['temperatura_operacion'], 
+                    parametros_tanques['factor_compresibilidad'],
+                    parametros_tanques['volumen_unitario_tanque'], 
+                    parametros_tanques['peso_tanque_vacio'],
+                    parametros_tanques['peso_soportes'], 
+                    parametros_tanques['peso_accesorios'],
+                    parametros_tanques['constante_gases'], 
+                    parametros_tanques['masa_molar_ch4']
                 )
                 
                 # Validar que el resultado tenga todas las claves necesarias
