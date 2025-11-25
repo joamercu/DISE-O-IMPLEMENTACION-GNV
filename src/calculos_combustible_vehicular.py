@@ -418,8 +418,8 @@ with tabs[TAB_CALCULOS]:
         
         lhv_ch4 = st.number_input(
             "LHV CH₄ - Poder Calorífico Inferior (MJ/kg)",
-            min_value=45.0,
-            max_value=55.0,
+            min_value=1.0,
+            max_value=100.0,
             value=50.0,
             step=0.1,
             help="Lower Heating Value del metano (ISO 6976:2016). Tanto GNL como GNV usan metano (CH₄)"
@@ -471,7 +471,7 @@ with tabs[TAB_CALCULOS]:
         volumen_unitario_tanque = st.number_input(
             "Volumen Unitario Tanque (m³)",
             min_value=0.01,
-            max_value=100.20,
+            max_value=1.20,
             value=0.080,
             step=0.005,
             help="Volumen de cada tanque individual"
